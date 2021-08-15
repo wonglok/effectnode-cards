@@ -1,179 +1,141 @@
-import React, { useEffect, useRef, useState } from "react";
-import { ENRuntime, getEffectNodeData } from "effectnode";
+import { PerspectiveCamera, useGLTF, useTexture } from "@react-three/drei";
+import { Canvas, useThree, useFrame } from "@react-three/fiber";
+import { Suspense, useEffect } from "react";
+import {
+  Map3D,
+  UserContorls,
+  TailCursor,
+  SimpleBloomer,
+  StarSky,
+  TheHelper,
+  useComputeEnvMap,
+} from "../vfx-metaverse";
 
-import { OrbitControls } from "@react-three/drei";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-
-import { getCodes, firebaseConfig } from "../vfx/index.js";
-import { GraphEditorPage } from "effectnode-cms";
-import { PCFSoftShadowMap, sRGBEncoding } from "three";
-import { getGPUTier } from "detect-gpu";
-
-// visit
-// http://localhost:3000/cms
-
-export function Page() {
-  /* graphTitle: loklok */
-  /* canvasID: -MfyYdM7swln7PVk3_rp */
-  /* ownerID: NGpUixuU0NOkOlmLsLuepkaZxxt1 */
-  let canvasID = `-MfyYdM7swln7PVk3_rp`;
-  let ownerID = `NGpUixuU0NOkOlmLsLuepkaZxxt1`;
-
+export default function Page() {
   return (
-    <div style={{ width: "100%", height: "100%" }}>
-      <div style={{ height: "65%", width: "100%" }}>
-        <Canvas
-          onCreated={({ gl }) => {
-            gl.outputEncoding = sRGBEncoding;
-            gl.shadowMap.enabled = true;
-            gl.shadowMap.type = PCFSoftShadowMap;
-          }}
-        >
-          <EffectNodeRuntime
-            firebaseConfig={firebaseConfig}
-            canvasID={canvasID}
-            ownerID={ownerID}
-          >
-            {({ runtime }) => {
-              return (
-                <RuntimeComponent
-                  name={"MyCustomComponent"}
-                  runtime={runtime}
-                ></RuntimeComponent>
-              );
-            }}
-          </EffectNodeRuntime>
-
-          <AdaptivePixelRatio></AdaptivePixelRatio>
-
-          <OrbitControls></OrbitControls>
-        </Canvas>
-      </div>
-      <div style={{ height: "35%", width: "100%" }}>
-        <GraphEditorPage
-          firebaseConfig={firebaseConfig}
-          canvasID={canvasID}
-          ownerID={ownerID}
-          codes={getCodes()}
-        />
-      </div>
+    <div className="full">
+      <Canvas dpr={[0, 1.5]} style={{ width: "100%", height: "100%" }}>
+        <Suspense fallback={<LoadingScreen></LoadingScreen>}>
+          <Content3D></Content3D>
+        </Suspense>
+      </Canvas>
     </div>
   );
 }
 
-export function EffectNodeRuntime({ firebaseConfig, canvasID, children }) {
-  let mounter = useRef();
-  let [runtime, setRuntime] = useState(false);
-  let [endata, setENData] = useState(false);
-
-  useEffect(() => {
-    let h = () => {
-      getEffectNodeData({
-        firebaseConfig,
-        graphID: canvasID,
-      }).then((json) => {
-        setENData(json);
-      });
-    };
-    h();
-
-    window.addEventListener("change-graph", h);
-    return () => {
-      window.removeEventListener("change-graph", h);
-    };
-  }, [JSON.stringify(firebaseConfig), canvasID]);
-
-  useEffect(() => {
-    if (endata) {
-      let newRuntime = new ENRuntime({
-        json: endata,
-        codes: getCodes(),
-      });
-
-      setRuntime(newRuntime);
-
-      return () => {
-        if (newRuntime) {
-          newRuntime.mini.clean();
-          newRuntime.clean();
-        }
-      };
-    } else {
-      return () => {};
-    }
-  }, [endata]);
-
-  useFrame((three) => {
-    if (runtime) {
-      for (let kn in three) {
-        runtime.mini.set(kn, three[kn]);
-      }
-      if (mounter.current) {
-        runtime.mini.set("mounter", mounter.current);
-      }
-      runtime.mini.work();
-    }
-  });
+function Content3D() {
+  let gltf = useGLTF(`/map/demo-map-000.glb`);
 
   return (
-    <group ref={mounter}>
-      {runtime && typeof children === "function" && children({ runtime })}
+    <group>
+      {gltf.scene && (
+        <Map3D object={gltf.scene}>
+          {({ Now }) => {
+            return (
+              <group>
+                <UserContorls
+                  higherCamera={1.5}
+                  avatarSpeed={2}
+                  Now={Now}
+                ></UserContorls>
+                <TailCursor Now={Now} color={"#bababa"}></TailCursor>
+                <TheHelper Now={Now}></TheHelper>
+              </group>
+            );
+          }}
+        </Map3D>
+      )}
+
+      <SimpleBloomer></SimpleBloomer>
+
+      {/* Optional */}
+      <ShaderEnvLight imageURL={`/image/sky.png`}></ShaderEnvLight>
+
+      {/* Optional */}
+      <StarSky></StarSky>
     </group>
   );
 }
 
-function RuntimeComponent({ name, runtime }) {
-  let [instance, setCompos] = useState(() => {
-    return null;
-  });
+function ShaderEnvLight({ imageURL }) {
+  let tex = useTexture(imageURL);
+  let { get } = useThree();
+  let envMap = useComputeEnvMap(
+    /* glsl */ `
+      const mat2 m = mat2( 0.80,  0.60, -0.60,  0.80 );
+
+      float noise( in vec2 p ) {
+        return sin(p.x)*sin(p.y);
+      }
+
+      float fbm4( vec2 p ) {
+          float f = 0.0;
+          f += 0.5000 * noise( p ); p = m * p * 2.02;
+          f += 0.2500 * noise( p ); p = m * p * 2.03;
+          f += 0.1250 * noise( p ); p = m * p * 2.01;
+          f += 0.0625 * noise( p );
+          return f / 0.9375;
+      }
+
+      float fbm6( vec2 p ) {
+          float f = 0.0;
+          f += 0.500000*(0.5 + 0.5 * noise( p )); p = m*p*2.02;
+          f += 0.250000*(0.5 + 0.5 * noise( p )); p = m*p*2.03;
+          f += 0.125000*(0.5 + 0.5 * noise( p )); p = m*p*2.01;
+          f += 0.062500*(0.5 + 0.5 * noise( p )); p = m*p*2.04;
+          f += 0.031250*(0.5 + 0.5 * noise( p )); p = m*p*2.01;
+          f += 0.015625*(0.5 + 0.5 * noise( p ));
+          return f/0.96875;
+      }
+
+      float pattern (vec2 p) {
+        float vout = fbm4( p + time + fbm6(  p + fbm4( p + time )) );
+        return abs(vout);
+      }
+
+      uniform sampler2D textureBG;
+
+      vec4 mainImage (vec2 uv) {
+        vec4 bg = texture2D(textureBG, uv);
+
+        vec3 rainbow = vec3(
+          0.35 + pattern(uv * 1.70123 + -0.17 * cos(time * 0.05)),
+          0.35 + pattern(uv * 1.70123 +  0.0 * cos(time * 0.05)),
+          0.35 + pattern(uv * 1.70123 +  0.17 * cos(time * 0.05))
+        );
+
+        return vec4(rainbow.xyz, 1.0);
+      }
+  `.trim(),
+    {
+      textureBG: { value: tex },
+    },
+    128
+  );
 
   useEffect(() => {
-    runtime.mini.get(name).then((v) => {
-      setCompos(v);
-    });
+    let { scene } = get();
+    scene.environment = envMap;
     return () => {
-      setCompos(null);
+      scene.environment = null;
     };
-  }, [runtime]);
-
-  return instance;
-}
-
-//
-
-function AdaptivePixelRatio() {
-  let { gl } = useThree();
-  useEffect(() => {
-    getGPUTier({ glContext: gl.getContext() }).then((v) => {
-      let setDPR = ([a, b]) => {
-        let base = window.devicePixelRatio || 1;
-        if (b >= base) {
-          b = base;
-        }
-        gl.setPixelRatio(b);
-      };
-
-      if (v.gpu === "apple a9x gpu") {
-        setDPR([1, 1]);
-        return;
-      }
-      if (v.fps < 30) {
-        setDPR([1, 1]);
-        return;
-      }
-      if (v.tier >= 3) {
-        setDPR([1, 3]);
-      } else if (v.tier >= 2) {
-        setDPR([1, 2]);
-      } else if (v.tier >= 1) {
-        setDPR([1, 1]);
-      } else if (v.tier < 1) {
-        setDPR([1, 0.75]);
-      }
-    });
-  });
+  }, [envMap, get]);
 
   return null;
 }
 
-export default Page;
+function LoadingScreen() {
+  return (
+    <group>
+      <group rotation-x={Math.PI * 0}>
+        <gridHelper args={[150, 50, 0x232323, 0xbababa]}></gridHelper>
+      </group>
+
+      <PerspectiveCamera
+        position={[0, 30, 30]}
+        rotation-x={Math.PI * -0.25}
+        makeDefault={true}
+      ></PerspectiveCamera>
+    </group>
+  );
+}

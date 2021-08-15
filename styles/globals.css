@@ -1,6 +1,7 @@
 html,
 body,
-#__next {
+#__next,
+.full {
   width: 100%;
   height: 100%;
   padding: 0;
