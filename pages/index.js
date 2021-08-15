@@ -1,4 +1,10 @@
-import { PerspectiveCamera, useGLTF, useTexture } from "@react-three/drei";
+import {
+  PerspectiveCamera,
+  Text,
+  useGLTF,
+  useProgress,
+  useTexture,
+} from "@react-three/drei";
 import { Canvas, useThree, useFrame } from "@react-three/fiber";
 import { Suspense, useEffect } from "react";
 import { WelcomeAvatar } from "../vfx-content/welcome-page/WelcomeAvatar";
@@ -54,7 +60,11 @@ function Content3D() {
       {/* Optional */}
       <ShaderEnvLight imageURL={`/image/sky.png`}>
         {({ envMap }) => {
-          return <WelcomeAvatar core={{ envMap }}></WelcomeAvatar>;
+          return (
+            <group>
+              <WelcomeAvatar core={{ envMap }}></WelcomeAvatar>
+            </group>
+          );
         }}
       </ShaderEnvLight>
 
@@ -137,15 +147,17 @@ function ShaderEnvLight({ imageURL, children = () => {} }) {
 function LoadingScreen() {
   return (
     <group>
-      <group rotation-x={Math.PI * 0}>
-        <gridHelper args={[150, 50, 0x232323, 0xbababa]}></gridHelper>
-      </group>
-
-      <PerspectiveCamera
+      {/* <PerspectiveCamera
         position={[0, 30, 30]}
         rotation-x={Math.PI * -0.25}
         makeDefault={true}
-      ></PerspectiveCamera>
+      ></PerspectiveCamera> */}
+
+      {/* <group rotation-x={Math.PI * 0}>
+        <gridHelper args={[150, 50, 0x232323, 0xbababa]}></gridHelper>
+      </group> */}
+
+      <Text>Loading...</Text>
     </group>
   );
 }

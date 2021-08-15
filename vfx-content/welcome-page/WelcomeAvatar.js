@@ -18,7 +18,10 @@ export function WelcomeAvatar({ core = {} }) {
       // if (it.material.name === "Wolf3D_Eye") {
       //   return;
       // }
-      if (core.envMap) {
+
+      it.castShadow = true;
+
+      if (core && core.envMap) {
         it.material.envMap = core.envMap;
       }
       // it.material.metalness = 1.0;
