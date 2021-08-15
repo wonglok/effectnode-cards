@@ -29,20 +29,20 @@ export function Page() {
             gl.shadowMap.type = PCFSoftShadowMap;
           }}
         >
-          <EffectNodeInFiberCanvas
+          <EffectNodeRuntime
             firebaseConfig={firebaseConfig}
             canvasID={canvasID}
             ownerID={ownerID}
           >
             {({ runtime }) => {
               return (
-                <InsertEffectNodeCompos
+                <RuntimeComponent
                   name={"MyCustomComponent"}
                   runtime={runtime}
-                ></InsertEffectNodeCompos>
+                ></RuntimeComponent>
               );
             }}
-          </EffectNodeInFiberCanvas>
+          </EffectNodeRuntime>
 
           <AdaptivePixelRatio></AdaptivePixelRatio>
 
@@ -61,46 +61,7 @@ export function Page() {
   );
 }
 
-function AdaptivePixelRatio() {
-  let { gl } = useThree();
-  useEffect(() => {
-    getGPUTier({ glContext: gl.getContext() }).then((v) => {
-      let setDPR = ([a, b]) => {
-        let base = window.devicePixelRatio || 1;
-        if (b >= base) {
-          b = base;
-        }
-        gl.setPixelRatio(b);
-      };
-
-      if (v.gpu === "apple a9x gpu") {
-        setDPR([1, 1]);
-        return;
-      }
-      if (v.fps < 30) {
-        setDPR([1, 1]);
-        return;
-      }
-      if (v.tier >= 3) {
-        setDPR([1, 3]);
-      } else if (v.tier >= 2) {
-        setDPR([1, 2]);
-      } else if (v.tier >= 1) {
-        setDPR([1, 1]);
-      } else if (v.tier < 1) {
-        setDPR([1, 0.75]);
-      }
-    });
-  });
-
-  return null;
-}
-
-export function EffectNodeInFiberCanvas({
-  firebaseConfig,
-  canvasID,
-  children,
-}) {
+export function EffectNodeRuntime({ firebaseConfig, canvasID, children }) {
   let mounter = useRef();
   let [runtime, setRuntime] = useState(false);
   let [endata, setENData] = useState(false);
@@ -161,7 +122,7 @@ export function EffectNodeInFiberCanvas({
   );
 }
 
-function InsertEffectNodeCompos({ name, runtime }) {
+function RuntimeComponent({ name, runtime }) {
   let [instance, setCompos] = useState(() => {
     return null;
   });
@@ -179,5 +140,40 @@ function InsertEffectNodeCompos({ name, runtime }) {
 }
 
 //
+
+function AdaptivePixelRatio() {
+  let { gl } = useThree();
+  useEffect(() => {
+    getGPUTier({ glContext: gl.getContext() }).then((v) => {
+      let setDPR = ([a, b]) => {
+        let base = window.devicePixelRatio || 1;
+        if (b >= base) {
+          b = base;
+        }
+        gl.setPixelRatio(b);
+      };
+
+      if (v.gpu === "apple a9x gpu") {
+        setDPR([1, 1]);
+        return;
+      }
+      if (v.fps < 30) {
+        setDPR([1, 1]);
+        return;
+      }
+      if (v.tier >= 3) {
+        setDPR([1, 3]);
+      } else if (v.tier >= 2) {
+        setDPR([1, 2]);
+      } else if (v.tier >= 1) {
+        setDPR([1, 1]);
+      } else if (v.tier < 1) {
+        setDPR([1, 0.75]);
+      }
+    });
+  });
+
+  return null;
+}
 
 export default Page;
