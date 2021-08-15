@@ -6,7 +6,7 @@ import { applyAutoEvent, useAutoEvent } from "../utils/use-auto-event";
 // import { useMiniEngine } from '../utils/use-mini-engine'
 // import { CursorTrackerTail } from '../lib/CursorTrackerTail'
 import { PerspectiveCamera } from "@react-three/drei";
-
+import nipplejs from "nipplejs";
 export function UserContorls({
   Now,
   //
@@ -74,6 +74,7 @@ export function UserContorls({
       Now.keyD = true;
     }
   });
+
   useAutoEvent("keyup", (ev) => {
     // console.log(ev.key);
 
@@ -99,7 +100,7 @@ export function UserContorls({
     camera.updateProjectionMatrix();
 
     let fakeCam = new Camera();
-    let orbit = new OrbitControls(fakeCam, gl.domElement);
+    let orbit = new OrbitControls(fakeCam, get().gl.domElement);
     orbit.enableRotate = true;
     orbit.enablePan = false;
     orbit.enableZoom = false;
@@ -108,6 +109,9 @@ export function UserContorls({
 
     fakeCam.position.copy(Now.startAt);
     orbit.target.copy(Now.startLookAt);
+    if (Now.startAt.distanceTo(Now.startLookAt) <= 1) {
+      fakeCam.position.z += 10;
+    }
 
     let joystick = document.createElement("div");
 

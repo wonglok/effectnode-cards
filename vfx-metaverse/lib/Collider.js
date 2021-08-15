@@ -23,7 +23,7 @@ export class Collider {
 
     environment.updateMatrixWorld();
     environment.traverse((c) => {
-      if (c.geometry && !c.userData.isNotFloor) {
+      if (c.geometry && !c.userData.skipFloor) {
         const cloned = c.geometry.clone();
         cloned.applyMatrix4(c.matrixWorld);
 

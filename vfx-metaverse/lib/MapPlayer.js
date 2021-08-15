@@ -10,7 +10,7 @@ import {
 } from "three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 export class MapPlayer {
-  constructor({ collider, startAt, Now }) {
+  constructor({ collider, startAt = new Vector3(0, 0, 0), Now }) {
     this.collider = collider;
     const scale = 1;
     const radius = 1.3 * scale;

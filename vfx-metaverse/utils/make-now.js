@@ -1,11 +1,11 @@
-import { Vector3 } from 'three'
-import { makeShallowStore } from './make-shallow-store'
+import { Vector3 } from "three";
+import { makeShallowStore } from "./make-shallow-store";
 
 export const makeNow = () => {
   return makeShallowStore({
     //
-    startLookAt: new Vector3(),
-    startAt: new Vector3(),
+    startLookAt: new Vector3(0, 0, 0),
+    startAt: new Vector3(0, 0, 0),
     //
     moved: 0,
     goingTo: new Vector3(),
@@ -15,30 +15,30 @@ export const makeNow = () => {
     avatarRot: new Vector3(),
     avatarFaceLook: new Vector3(),
     avatarLoading: true,
-    avatarMode: 'standing',
+    avatarMode: "standing",
     avatarSpeed: 1.0,
 
-    tooltip: '',
+    tooltip: "",
     keyW: false,
     keyA: false,
     keyS: false,
     keyD: false,
     cursorPos: new Vector3(),
     cursorNormal: new Vector3(),
-    cursorType: 'hide',
+    cursorType: "hide",
     hoverData: false,
     isDown: false,
 
     // avatarAtPhy: new Vector3(),
 
-    camMode: 'first',
+    camMode: "first",
 
-    overlay: '',
+    overlay: "",
 
     profile: false,
     user: false,
 
     reload: [],
-    onlineUID: []
-  })
-}
+    onlineUID: [],
+  });
+};

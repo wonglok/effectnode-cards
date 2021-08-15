@@ -185,7 +185,10 @@ export class BloomLayer {
         if (it.material) {
           if (it?.userData?.enableDarken) {
             darken(it);
-          } else if (it?.userData?.enableBloom) {
+          } else if (
+            it?.userData?.enableBloom ||
+            it?.material?.userData?.enableBloom
+          ) {
           } else if (darkLayer.test(it.layers) || !bloomLayer.test(it.layers)) {
             darken(it);
           } else {

@@ -24,7 +24,8 @@ export default function Page() {
 }
 
 function Content3D() {
-  let gltf = useGLTF(`/map/demo-map-000.glb`);
+  let gltf = useGLTF(`/map/space-walk-001.glb`);
+  // let gltf = useGLTF(`/map/demo-map-000.glb`);
 
   return (
     <group>
@@ -99,9 +100,9 @@ function ShaderEnvLight({ imageURL }) {
         vec4 bg = texture2D(textureBG, uv);
 
         vec3 rainbow = vec3(
-          0.35 + pattern(uv * 1.70123 + -0.17 * cos(time * 0.05)),
-          0.35 + pattern(uv * 1.70123 +  0.0 * cos(time * 0.05)),
-          0.35 + pattern(uv * 1.70123 +  0.17 * cos(time * 0.05))
+          1.0 - pow(pattern(uv * 2.70123 + -0.17 * cos(time * 0.05)), 1.2),
+          1.0 - pow(pattern(uv * 2.70123 +  0.0 * cos(time * 0.05)), 1.2),
+          1.0 - pow(pattern(uv * 2.70123 +  0.17 * cos(time * 0.05)), 1.2)
         );
 
         return vec4(rainbow.xyz, 1.0);

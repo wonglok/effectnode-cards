@@ -13,6 +13,7 @@
     "@react-three/fiber": "^7.0.6",
     "detect-gpu": "^3.1.11",
     "effectnode": "^1.5.3",
+    "effectnode-3dworld": "^0.0.20",
     "effectnode-cms": "1.0.6",
     "firebase": "^8.9.0",
     "next": "^11.1.0",
@@ -24,6 +25,9 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "next-transpile-modules": "^8.0.0"
+    "autoprefixer": "^10.3.1",
+    "next-transpile-modules": "^8.0.0",
+    "postcss": "^8.3.6",
+    "tailwindcss": "^2.2.7"
   }
 }
