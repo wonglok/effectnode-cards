@@ -1,18 +1,18 @@
-import { Sphere } from '@react-three/drei'
-import { useFrame } from '@react-three/fiber'
-import React, { useEffect, useRef } from 'react'
-import { DoubleSide } from 'three'
+import { Sphere } from "@react-three/drei";
+import { useFrame } from "@react-three/fiber";
+import React, { useEffect, useRef } from "react";
+import { DoubleSide } from "three";
 
 export function StarSky() {
   let shaders = {
     vertexShader: /* glsl */ `
-    varying vec3 vPos;
+    // varying vec3 vPos;
     varying vec3 vUv3;
 
     void main() {
       vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
       gl_Position = projectionMatrix * mvPosition;
-      vPos = position;
+      // vPos = position;
       vUv3 = uv.xyx;
     }
     `,
@@ -91,19 +91,19 @@ export function StarSky() {
         return 2.2 * n_xyz;
       }
 
-      varying vec3 vPos;
+      // varying vec3 vPos;
       uniform float time;
       varying vec3 vUv3;
 
       void main() {
         float speed = time / 3.5;
         vec3 pp;
-        pp = vUv3.xyx * 600.0 + speed;
+        pp = vUv3.xyx * 600.0 + speed * 2.0;
         // pp += vPos * 0.25 + speed;
         float noise = clamp(cnoise(speed + pp / 250.0 + 0.0 ), 0.0, 1.0);
 
-        vec3 colorA = vec3(81.0, 135.0, 228.0) * 0.2 / 255.0;
-        vec3 colorB = vec3(0.0, 150.0, 136.0) * 0.2 / 255.0;
+        vec3 colorA = vec3(81.0, 135.0, 228.0) * 0.07 / 255.0;
+        vec3 colorB = vec3(0.0, 150.0, 136.0) * 0.07 / 255.0;
 
         vec4 backgroundColor = vec4(mix(colorA, colorB, noise), 1.0);
 
@@ -113,30 +113,30 @@ export function StarSky() {
 
         gl_FragColor.rgb += vec3(pow(starNoise, 1.3)) * 1.5;
       }
-      `
-  }
+      `,
+  };
 
-  let ref = useRef()
+  let ref = useRef();
 
   useEffect(() => {
     if (ref.current) {
-      ref.current.needsUpdate = true
+      ref.current.needsUpdate = true;
     }
-  }, [shaders, shaders.fragmentShader, shaders.vertexShader])
+  }, [shaders, shaders.fragmentShader, shaders.vertexShader]);
 
   let uniforms = useRef({
-    time: { value: 0 }
-  })
+    time: { value: 0 },
+  });
 
   useFrame(() => {
-    uniforms.current.time.value += 1 / 60
-  })
+    uniforms.current.time.value += 1 / 60;
+  });
 
   return (
     <Sphere
       frustumCulled={false}
       userData={{
-        enableBloom: true
+        enableBloom: true,
       }}
       scale={1}
       args={[800, 20, 20]}
@@ -152,5 +152,5 @@ export function StarSky() {
         {/*  */}
       </shaderMaterial>
     </Sphere>
-  )
+  );
 }

@@ -94,9 +94,9 @@ export function UserContorls({
 
   useEffect(() => {
     let camera = get().camera;
-    camera.near = 0.1;
+    camera.near = 0.05;
     camera.far = 10000;
-    camera.fov = 45;
+    camera.fov = 35;
     camera.updateProjectionMatrix();
 
     let fakeCam = new Camera();

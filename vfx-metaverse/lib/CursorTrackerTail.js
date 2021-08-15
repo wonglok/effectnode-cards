@@ -10,91 +10,91 @@ import {
   ShaderMaterial,
   Mesh,
   Object3D,
-  Color
-} from 'three'
+  Color,
+} from "three";
 // import { GPUComputationRenderer } from 'three-stdlib'
-import { Geometry } from 'three/examples/jsm/deprecated/Geometry.js'
-import { GPUComputationRenderer } from 'three/examples/jsm/misc/GPUComputationRenderer'
+import { Geometry } from "three/examples/jsm/deprecated/Geometry.js";
+import { GPUComputationRenderer } from "three/examples/jsm/misc/GPUComputationRenderer";
 
 class LokLokWiggleSimulation {
   constructor({ node, numberOfScans = 10, trailSize = 32 }) {
-    this.node = node
-    this.WIDTH = trailSize
-    this.HEIGHT = numberOfScans // number of trackers
-    this.COUNT = this.WIDTH * this.HEIGHT
-    this.v3v000 = new Vector3(0, 0, 0)
-    this.wait = this.setup({ node })
+    this.node = node;
+    this.WIDTH = trailSize;
+    this.HEIGHT = numberOfScans; // number of trackers
+    this.COUNT = this.WIDTH * this.HEIGHT;
+    this.v3v000 = new Vector3(0, 0, 0);
+    this.wait = this.setup({ node });
   }
 
   async setup({ node }) {
-    let renderer = await node.ready.gl
+    let renderer = await node.ready.gl;
 
     let gpu = (this.gpu = new GPUComputationRenderer(
       this.WIDTH,
       this.HEIGHT,
       renderer
-    ))
+    ));
 
-    gpu.setDataType(HalfFloatType)
+    gpu.setDataType(HalfFloatType);
 
-    const dtPosition = this.gpu.createTexture()
-    const lookUpTexture = this.gpu.createTexture()
-    this.fillPositionTexture(dtPosition)
-    this.fillLookupTexture(lookUpTexture)
+    const dtPosition = this.gpu.createTexture();
+    const lookUpTexture = this.gpu.createTexture();
+    this.fillPositionTexture(dtPosition);
+    this.fillLookupTexture(lookUpTexture);
 
     this.positionVariable = this.gpu.addVariable(
-      'texturePosition',
+      "texturePosition",
       this.positionShader(),
       dtPosition
-    )
+    );
     this.gpu.setVariableDependencies(this.positionVariable, [
-      this.positionVariable
-    ])
+      this.positionVariable,
+    ]);
 
-    this.positionUniforms = this.positionVariable.material.uniforms
-    this.positionUniforms.lookup = { value: lookUpTexture }
+    this.positionUniforms = this.positionVariable.material.uniforms;
+    this.positionUniforms.lookup = { value: lookUpTexture };
 
-    let h = this.HEIGHT
+    let h = this.HEIGHT;
     for (let ii = 0; ii < h; ii++) {
-      this.positionUniforms['mouse' + ii] = { value: new Vector3(0, 0, 0) }
+      this.positionUniforms["mouse" + ii] = { value: new Vector3(0, 0, 0) };
     }
 
-    this.positionUniforms.time = { value: 0 }
-    dtPosition.wrapS = RepeatWrapping
-    dtPosition.wrapT = RepeatWrapping
+    this.positionUniforms.time = { value: 0 };
+    dtPosition.wrapS = RepeatWrapping;
+    dtPosition.wrapT = RepeatWrapping;
 
     //
-    const error = this.gpu.init()
+    const error = this.gpu.init();
     if (error !== null) {
-      console.error(error)
+      console.error(error);
     }
   }
 
   positionShader() {
     let lookupRightLine = () => {
-      let str = `if (false) {}`
-      let h = this.HEIGHT
+      let str = `if (false) {}`;
+      let h = this.HEIGHT;
       for (let ii = 0; ii < h; ii++) {
         str += `
           else if (currentLine == ${ii.toFixed(0)}.0) {
             gl_FragColor = vec4(mouse${ii.toFixed(0)}, 1.0);
           }
-        `
+        `;
       }
-      return str
-    }
+      return str;
+    };
 
     let mouseUniforms = () => {
-      let str = ``
-      let h = this.HEIGHT
+      let str = ``;
+      let h = this.HEIGHT;
       for (let ii = 0; ii < h; ii++) {
         str += `
           uniform vec3 mouse${ii.toFixed(0)};
-        `
+        `;
       }
 
-      return str
-    }
+      return str;
+    };
     return /* glsl */ `
       ${mouseUniforms()}
 
@@ -124,74 +124,75 @@ class LokLokWiggleSimulation {
 
 
 			}
-    `
+    `;
   }
 
   fillPositionTexture(texture) {
-    let i = 0
-    const theArray = texture.image.data
+    let i = 0;
+    const theArray = texture.image.data;
 
     for (let y = 0; y < this.HEIGHT; y++) {
       for (let x = 0; x < this.WIDTH; x++) {
-        theArray[i++] = 0.0
-        theArray[i++] = 0.0
-        theArray[i++] = 0.0
-        theArray[i++] = 0.0
+        theArray[i++] = 0.0;
+        theArray[i++] = 0.0;
+        theArray[i++] = 0.0;
+        theArray[i++] = 0.0;
       }
     }
-    texture.needsUpdate = true
+    texture.needsUpdate = true;
   }
 
   fillLookupTexture(texture) {
-    let i = 0
-    const theArray = texture.image.data
-    let items = []
+    let i = 0;
+    const theArray = texture.image.data;
+    let items = [];
 
     for (let y = 0; y < this.HEIGHT; y++) {
       for (let x = 0; x < this.WIDTH; x++) {
-        let lastOneInArray = items[items.length - 1] || [0, 0]
-        theArray[i++] = lastOneInArray[0]
-        theArray[i++] = lastOneInArray[1]
-        theArray[i++] = this.WIDTH
-        theArray[i++] = this.HEIGHT
-        items.push([x / this.WIDTH, y / this.HEIGHT])
+        let lastOneInArray = items[items.length - 1] || [0, 0];
+        theArray[i++] = lastOneInArray[0];
+        theArray[i++] = lastOneInArray[1];
+        theArray[i++] = this.WIDTH;
+        theArray[i++] = this.HEIGHT;
+        items.push([x / this.WIDTH, y / this.HEIGHT]);
       }
     }
-    texture.needsUpdate = true
+    texture.needsUpdate = true;
   }
 
   render({ trackers }) {
-    this.positionUniforms.time.value = window.performance.now() / 1000
+    this.positionUniforms.time.value = window.performance.now() / 1000;
 
     trackers.forEach((track, idx) => {
-      let uniform = this.positionUniforms['mouse' + idx]
+      let uniform = this.positionUniforms["mouse" + idx];
       if (uniform && uniform.value) {
-        uniform.value.copy(track)
+        uniform.value.copy(track);
         // console.log(idx, track.toArray().join("-"));
       }
-    })
+    });
 
-    this.gpu.compute()
+    this.gpu.compute();
   }
 
   getTextureAfterCompute() {
     return {
-      posTexture: this.gpu.getCurrentRenderTarget(this.positionVariable).texture
-    }
+      posTexture: this.gpu.getCurrentRenderTarget(this.positionVariable)
+        .texture,
+    };
   }
 }
 
 class LokLokWiggleDisplay {
   constructor({ node, sim, mounter, color }) {
-    this.mounter = mounter
-    this.node = node
-    this.sim = sim
-    this.color = color
-    this.wait = this.setup({ node })
+    this.mounter = mounter;
+    this.node = node;
+    this.sim = sim;
+    this.color = color;
+    this.wait = this.setup({ node });
   }
 
   async setup({ node }) {
-    let mounter = this.mounter
+    let mounter = this.mounter;
 
     // let camera = await node.ready.camera;
     // let renderer = await node.ready.gl;
@@ -200,20 +201,20 @@ class LokLokWiggleDisplay {
       count: this.sim.HEIGHT,
       numSides: 4,
       subdivisions: this.sim.WIDTH * 2,
-      openEnded: false
-    })
+      openEnded: false,
+    });
 
-    geometry.instanceCount = count
+    geometry.instanceCount = count;
 
     let getPointAtByT = ({
       controlPointsResolution = 20,
       lineIdx = 0,
       lineCount = this.sim.HEIGHT,
-      textureName = 'CONTROL_POINTS'
+      textureName = "CONTROL_POINTS",
     }) => {
-      controlPointsResolution = Math.floor(controlPointsResolution)
+      controlPointsResolution = Math.floor(controlPointsResolution);
 
-      let floatval = `${Number(controlPointsResolution).toFixed(1)}`
+      let floatval = `${Number(controlPointsResolution).toFixed(1)}`;
 
       let res = `
       vec3 pointIDX_${textureName}_${lineIdx.toFixed(0)} (float index) {
@@ -266,60 +267,60 @@ class LokLokWiggleDisplay {
 
         return pointoutput;
       }
-      `
+      `;
 
       // console.log(res);
-      return res
-    }
+      return res;
+    };
 
     let getLinesPointAtT = () => {
       let str = `
-          if (false) {}`
+          if (false) {}`;
       for (let i = 0; i < this.sim.HEIGHT; i++) {
         str += `
           else if (lineIDXER == ${i.toFixed(1)}) {
             pt += getPointAt_${i.toFixed(0)}(t);
           }
-        `
+        `;
       }
       // console.log(str);
 
-      return str
-    }
+      return str;
+    };
 
     let pointLineMaker = () => {
-      let str = ''
+      let str = "";
       for (let i = 0; i < this.sim.HEIGHT; i++) {
         str +=
           getPointAtByT({
             lineIdx: i,
             lineCount: this.sim.HEIGHT,
             controlPointsResolution: subdivisions,
-            textureName: 'posTexture'
-          }) + '\n'
+            textureName: "posTexture",
+          }) + "\n";
       }
-      return str
-    }
+      return str;
+    };
 
-    let latestColor = new Color().copy(this.color)
-    window.addEventListener('set-tail-color', ({ detail: color }) => {
-      latestColor.set(color)
-    })
+    let latestColor = new Color().copy(this.color);
+    window.addEventListener("set-tail-color", ({ detail: color }) => {
+      latestColor.set(color);
+    });
 
     this.node.onLoop(() => {
-      this.color.lerp(latestColor, 0.03)
-    })
+      this.color.lerp(latestColor, 0.03);
+    });
 
     let matLine0 = new ShaderMaterial({
       uniforms: {
         tailColor: { value: this.color },
         time: { value: 0 },
         matcap: {
-          value: null
+          value: null,
           // value: new TextureLoader().load("/matcap/golden2.png"),
           // value: await node.ready.RainbowTexture,
         },
-        posTexture: { value: null }
+        posTexture: { value: null },
         // handTexture: { value: null },
       },
       vertexShader: /* glsl */ `
@@ -461,25 +462,25 @@ class LokLokWiggleDisplay {
       `,
       transparent: true,
       // blending: AdditiveBlending,
-      depthTest: false
-    })
+      depthTest: false,
+    });
 
-    let line0 = new Mesh(geometry, matLine0)
-    line0.frustumCulled = false
-    line0.userData.enableBloom = true
+    let line0 = new Mesh(geometry, matLine0);
+    line0.frustumCulled = false;
+    line0.userData.enableBloom = true;
 
-    mounter.add(line0)
+    mounter.add(line0);
     node.onClean(() => {
-      mounter.remove(line0)
-    })
+      mounter.remove(line0);
+    });
 
     this.sim.wait.then(() => {
       node.onLoop(() => {
-        let result = this.sim.getTextureAfterCompute()
-        matLine0.uniforms.posTexture.value = result.posTexture
-        matLine0.uniforms.time.value = window.performance.now() / 1000
-      })
-    })
+        let result = this.sim.getTextureAfterCompute();
+        matLine0.uniforms.posTexture.value = result.posTexture;
+        matLine0.uniforms.time.value = window.performance.now() / 1000;
+      });
+    });
   }
 
   // async enableMousePlane() {
@@ -569,10 +570,10 @@ class NoodleGeo {
       count = 20,
       numSides = 4,
       subdivisions = 50,
-      openEnded = true
-    } = props
-    const radius = 1
-    const length = 1
+      openEnded = true,
+    } = props;
+    const radius = 1;
+    const length = 1;
 
     const cylinderBufferGeo = new CylinderBufferGeometry(
       radius,
@@ -581,73 +582,73 @@ class NoodleGeo {
       numSides,
       subdivisions,
       openEnded
-    )
+    );
 
-    let baseGeometry = new Geometry()
-    baseGeometry = baseGeometry.fromBufferGeometry(cylinderBufferGeo)
+    let baseGeometry = new Geometry();
+    baseGeometry = baseGeometry.fromBufferGeometry(cylinderBufferGeo);
 
-    baseGeometry.rotateZ(Math.PI / 2)
+    baseGeometry.rotateZ(Math.PI / 2);
 
     // compute the radial angle for each position for later extrusion
-    const tmpVec = new Vector2()
-    const xPositions = []
-    const angles = []
-    const uvs = []
-    const vertices = baseGeometry.vertices
-    const faceVertexUvs = baseGeometry.faceVertexUvs[0]
-    const oPositions = []
+    const tmpVec = new Vector2();
+    const xPositions = [];
+    const angles = [];
+    const uvs = [];
+    const vertices = baseGeometry.vertices;
+    const faceVertexUvs = baseGeometry.faceVertexUvs[0];
+    const oPositions = [];
 
     // Now go through each face and un-index the geometry.
     baseGeometry.faces.forEach((face, i) => {
-      const { a, b, c } = face
-      const v0 = vertices[a]
-      const v1 = vertices[b]
-      const v2 = vertices[c]
-      const verts = [v0, v1, v2]
-      const faceUvs = faceVertexUvs[i]
+      const { a, b, c } = face;
+      const v0 = vertices[a];
+      const v1 = vertices[b];
+      const v2 = vertices[c];
+      const verts = [v0, v1, v2];
+      const faceUvs = faceVertexUvs[i];
 
       // For each vertex in this face...
       verts.forEach((v, j) => {
-        tmpVec.set(v.y, v.z).normalize()
+        tmpVec.set(v.y, v.z).normalize();
 
         // the radial angle around the tube
-        const angle = Math.atan2(tmpVec.y, tmpVec.x)
-        angles.push(angle)
+        const angle = Math.atan2(tmpVec.y, tmpVec.x);
+        angles.push(angle);
 
         // "arc length" in range [-0.5 .. 0.5]
-        xPositions.push(v.x)
-        oPositions.push(v.x, v.y, v.z)
+        xPositions.push(v.x);
+        oPositions.push(v.x, v.y, v.z);
 
         // copy over the UV for this vertex
-        uvs.push(faceUvs[j].toArray())
-      })
-    })
+        uvs.push(faceUvs[j].toArray());
+      });
+    });
 
     // build typed arrays for our attributes
-    const posArray = new Float32Array(xPositions)
-    const angleArray = new Float32Array(angles)
-    const uvArray = new Float32Array(uvs.length * 2)
+    const posArray = new Float32Array(xPositions);
+    const angleArray = new Float32Array(angles);
+    const uvArray = new Float32Array(uvs.length * 2);
 
-    const origPosArray = new Float32Array(oPositions)
+    const origPosArray = new Float32Array(oPositions);
 
     // unroll UVs
     for (let i = 0; i < posArray.length; i++) {
-      const [u, v] = uvs[i]
-      uvArray[i * 2 + 0] = u
-      uvArray[i * 2 + 1] = v
+      const [u, v] = uvs[i];
+      uvArray[i * 2 + 0] = u;
+      uvArray[i * 2 + 1] = v;
     }
 
-    const lineGeo = new InstancedBufferGeometry()
-    lineGeo.instanceCount = count
+    const lineGeo = new InstancedBufferGeometry();
+    lineGeo.instanceCount = count;
 
-    lineGeo.setAttribute('position', new BufferAttribute(origPosArray, 3))
-    lineGeo.setAttribute('tubeInfo', new BufferAttribute(posArray, 1))
-    lineGeo.setAttribute('angle', new BufferAttribute(angleArray, 1))
-    lineGeo.setAttribute('uv', new BufferAttribute(uvArray, 2))
+    lineGeo.setAttribute("position", new BufferAttribute(origPosArray, 3));
+    lineGeo.setAttribute("tubeInfo", new BufferAttribute(posArray, 1));
+    lineGeo.setAttribute("angle", new BufferAttribute(angleArray, 1));
+    lineGeo.setAttribute("uv", new BufferAttribute(uvArray, 2));
 
-    let offset = []
-    let ddxyz = Math.floor(Math.pow(count, 1 / 3))
-    let iii = 0
+    let offset = [];
+    let ddxyz = Math.floor(Math.pow(count, 1 / 3));
+    let iii = 0;
     for (let z = 0; z < ddxyz; z++) {
       for (let y = 0; y < ddxyz; y++) {
         for (let x = 0; x < ddxyz; x++) {
@@ -656,8 +657,8 @@ class NoodleGeo {
             0.0, //  * (y / ddxyz) * 2.0 - 1.0,
             0.0, //  * (z / ddxyz) * 2.0 - 1.0,
             iii
-          )
-          iii++
+          );
+          iii++;
         }
       }
     }
@@ -670,13 +671,13 @@ class NoodleGeo {
     // }
 
     lineGeo.setAttribute(
-      'offset',
+      "offset",
       new InstancedBufferAttribute(new Float32Array(offset), 4)
-    )
+    );
 
-    let eachLineIdx = []
+    let eachLineIdx = [];
     for (let c = 0; c < count; c++) {
-      eachLineIdx.push(c)
+      eachLineIdx.push(c);
     }
 
     // lineGeo.setAttribute(
@@ -687,72 +688,72 @@ class NoodleGeo {
     return {
       ...props,
       dataLength: posArray.length,
-      geometry: lineGeo
-    }
+      geometry: lineGeo,
+    };
   }
 }
 
 export class CursorTrackerTail {
-  constructor({ mini, mounter, cursor, color = new Color('#ffffff') }) {
-    let node = mini
-    let SCAN_COUNT = 8
-    let TAIL_LENGTH = 64
+  constructor({ mini, mounter, cursor, color = new Color("#ffffff") }) {
+    let node = mini;
+    let SCAN_COUNT = 8;
+    let TAIL_LENGTH = 64;
 
     //
     let sim = new LokLokWiggleSimulation({
       node,
       mounter,
       numberOfScans: SCAN_COUNT,
-      trailSize: TAIL_LENGTH
-    })
+      trailSize: TAIL_LENGTH,
+    });
 
-    let display = new LokLokWiggleDisplay({ node, sim, mounter, color })
-    this.display = display
+    let display = new LokLokWiggleDisplay({ node, sim, mounter, color });
+    this.display = display;
 
-    let trackers = []
+    let trackers = [];
 
     let makeTracker = ({ update, setup }) => {
-      let looker = new Object3D()
-      cursor.add(looker)
+      let looker = new Object3D();
+      cursor.add(looker);
       mini.onClean(() => {
-        cursor.remove(looker)
-      })
+        cursor.remove(looker);
+      });
 
-      let origin = new Object3D()
-      looker.add(origin)
-      let orbit = new Object3D()
-      origin.add(orbit)
-      let worldPos = new Vector3()
-      let lerpWorldPos = new Vector3()
+      let origin = new Object3D();
+      looker.add(origin);
+      let orbit = new Object3D();
+      origin.add(orbit);
+      let worldPos = new Vector3();
+      let lerpWorldPos = new Vector3();
 
-      setup({ origin, orbit })
+      setup({ origin, orbit });
 
       node.onLoop(() => {
-        update({ origin, orbit })
+        update({ origin, orbit });
 
         if (mini.now?.camera) {
-          looker.lookAt(mini.now.camera.position)
+          looker.lookAt(mini.now.camera.position);
         }
-        orbit.getWorldPosition(worldPos)
+        orbit.getWorldPosition(worldPos);
 
-        lerpWorldPos.lerp(worldPos, 0.3)
-      })
+        lerpWorldPos.lerp(worldPos, 0.3);
+      });
 
-      trackers.push(lerpWorldPos)
-    }
+      trackers.push(lerpWorldPos);
+    };
 
-    let count = 3
+    let count = 3;
     for (let i = 0; i < count; i++) {
       makeTracker({
         setup: ({ origin, orbit }) => {
-          origin.rotation.z += ((Math.PI * 2.0) / count) * i
+          origin.rotation.z += ((Math.PI * 2.0) / count) * i;
         },
         update: ({ origin, orbit }) => {
-          origin.rotation.z += 0.1
+          origin.rotation.z += 0.1;
           orbit.position.x =
-            0.85 + 0.85 * Math.sin((window.performance.now() / 1000) * 1)
-        }
-      })
+            0.85 + 0.85 * Math.sin((window.performance.now() / 1000) * 1);
+        },
+      });
     }
 
     // let makeCross = () => {
@@ -794,9 +795,9 @@ export class CursorTrackerTail {
     sim.wait.then(() => {
       node.onLoop(() => {
         sim.render({
-          trackers
-        })
-      })
-    })
+          trackers,
+        });
+      });
+    });
   }
 }

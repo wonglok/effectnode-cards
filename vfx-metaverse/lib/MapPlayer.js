@@ -31,7 +31,11 @@ export class MapPlayer {
     this.player = player;
 
     player.position.copy(startAt);
-    player.position.y += 5;
+    if (startAt.y <= 1) {
+      player.position.y += 1;
+    }
+
+    // player.position.y += 5;
 
     player.geometry.computeBoundingBox();
     player.collider = new Box3().copy(player.geometry.boundingBox);

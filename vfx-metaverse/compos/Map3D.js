@@ -53,7 +53,7 @@ export const Map3D = ({ children, object }) => {
       if (it instanceof PointLight && it.castShadow) {
         it.shadow.mapSize.width = 512;
         it.shadow.mapSize.height = 512;
-        it.shadow.camera.near = 0.5;
+        it.shadow.camera.near = 0.1;
         it.shadow.camera.far = 500;
       }
     });
