@@ -4,9 +4,9 @@ import { ENRuntime, getEffectNodeData } from "effectnode";
 import { OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 
-import { getCodes, firebaseConfig } from "../vfx/index.js";
+import { getCodes, firebaseConfig } from "../vfx-effectnode/index.js";
 import { GraphEditorPage } from "effectnode-cms";
-import { PCFSoftShadowMap, sRGBEncoding, useThree } from "three";
+import { PCFSoftShadowMap, sRGBEncoding } from "three";
 import { getGPUTier } from "detect-gpu";
 
 // visit
