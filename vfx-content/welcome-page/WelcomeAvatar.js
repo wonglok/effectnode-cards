@@ -57,7 +57,7 @@ export function WelcomeAvatar({ core = {} }) {
         // console.log(it.material);
         if (it.material) {
           it.material.roughnessMapIntensity = 0.1;
-          it.material.metalnessMapIntensity = 1.0;
+          it.material.metalnessMapIntensity = 2.0;
         }
       }
     });
@@ -77,7 +77,7 @@ export function WelcomeAvatar({ core = {} }) {
 
   return (
     <group>
-      <group userData={{ disableBloom: true }} ref={ref}></group>
+      <group ref={ref}></group>
     </group>
   );
 }

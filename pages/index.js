@@ -41,10 +41,10 @@ function Content3D() {
                 <group>
                   <UserContorls
                     higherCamera={-0.8}
-                    avatarSpeed={1.0}
+                    avatarSpeed={0.7}
                     Now={Now}
                   ></UserContorls>
-                  <TailCursor Now={Now} color={"#00ffff"}></TailCursor>
+                  <TailCursor Now={Now} color={"#ffffff"}></TailCursor>
                   <TheHelper Now={Now}></TheHelper>
                 </group>
               );
