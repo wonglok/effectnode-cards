@@ -9,6 +9,7 @@ import {
   StarSky,
   TheHelper,
   useComputeEnvMap,
+  AdaptivePixelRatio,
 } from "../vfx-metaverse";
 
 export default function Page() {
@@ -54,6 +55,9 @@ function Content3D() {
 
       {/* Optional */}
       <StarSky></StarSky>
+
+      {/* Optional */}
+      <AdaptivePixelRatio></AdaptivePixelRatio>
     </group>
   );
 }
