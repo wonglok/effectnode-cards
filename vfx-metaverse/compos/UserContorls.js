@@ -11,7 +11,7 @@ export function UserContorls({
   Now,
   //
   avatarSpeed = 2,
-  higherCamera = 1.5,
+  higherCamera = 0,
 }) {
   let { get, gl } = useThree();
   let works = useRef({

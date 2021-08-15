@@ -1,6 +1,7 @@
 import { PerspectiveCamera, useGLTF, useTexture } from "@react-three/drei";
 import { Canvas, useThree, useFrame } from "@react-three/fiber";
 import { Suspense, useEffect } from "react";
+import { WelcomeAvatar } from "../vfx-content/welcome-page/WelcomeAvatar";
 import {
   Map3D,
   UserContorls,
@@ -15,7 +16,7 @@ import {
 export default function Page() {
   return (
     <div className="full">
-      <Canvas dpr={[0, 1.5]} style={{ width: "100%", height: "100%" }}>
+      <Canvas style={{ width: "100%", height: "100%" }}>
         <Suspense fallback={<LoadingScreen></LoadingScreen>}>
           <Content3D></Content3D>
         </Suspense>
@@ -36,8 +37,8 @@ function Content3D() {
             return (
               <group>
                 <UserContorls
-                  higherCamera={1.5}
-                  avatarSpeed={2}
+                  higherCamera={0.0}
+                  avatarSpeed={1.5}
                   Now={Now}
                 ></UserContorls>
                 <TailCursor Now={Now} color={"#bababa"}></TailCursor>
@@ -51,7 +52,11 @@ function Content3D() {
       <SimpleBloomer></SimpleBloomer>
 
       {/* Optional */}
-      <ShaderEnvLight imageURL={`/image/sky.png`}></ShaderEnvLight>
+      <ShaderEnvLight imageURL={`/image/sky.png`}>
+        {({ envMap }) => {
+          return <WelcomeAvatar core={{ envMap }}></WelcomeAvatar>;
+        }}
+      </ShaderEnvLight>
 
       {/* Optional */}
       <StarSky></StarSky>
@@ -62,7 +67,7 @@ function Content3D() {
   );
 }
 
-function ShaderEnvLight({ imageURL }) {
+function ShaderEnvLight({ imageURL, children = () => {} }) {
   let tex = useTexture(imageURL);
   let { get } = useThree();
   let envMap = useComputeEnvMap(
@@ -126,7 +131,7 @@ function ShaderEnvLight({ imageURL }) {
     };
   }, [envMap, get]);
 
-  return null;
+  return children({ envMap }) || null;
 }
 
 function LoadingScreen() {
