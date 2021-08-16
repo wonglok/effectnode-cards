@@ -23,17 +23,22 @@ export default function Page() {
         dpr={[1, 3]}
         onCreated={({ gl }) => {
           getGPUTier({ glContext: gl.getContext() }).then((v) => {
+            //
             let setDPR = ([a, b]) => {
               let base = window.devicePixelRatio || 1;
               if (b >= base) {
                 b = base;
               }
+
+              //
               gl.setPixelRatio(b);
+
+              //
               setOK(true);
             };
 
             if (v.gpu === "apple a9x gpu") {
-              setDPR([1, 1.5]);
+              setDPR([1, 1]);
               return;
             }
 
@@ -53,6 +58,9 @@ export default function Page() {
             }
           });
         }}
+        //
+        //
+        //
         style={{ width: "100%", height: "100%" }}
       >
         {ok ? (
@@ -103,6 +111,7 @@ function Content3D() {
       >
         <WelcomeAvatar envMap={envMap}></WelcomeAvatar>
       </group>
+
       {/* Simple SimpleBloomer */}
       <SimpleBloomer></SimpleBloomer>
 
@@ -158,7 +167,7 @@ function useShaderEnvLight({}) {
     {
       // textureBG: { value: tex },
     },
-    128
+    32
   );
 
   useEffect(() => {
@@ -176,20 +185,23 @@ function LoadingScreen() {
   return (
     <group>
       <PerspectiveCamera
-        position={[0, 25, 25]}
-        rotation-x={Math.PI * -0.25}
+        // rotation-x={Math.PI * -0.25}
+
+        position={[0, 0, 25]}
         makeDefault={true}
       ></PerspectiveCamera>
 
       <Text
-        position={[0, 10, 10]}
-        rotation={[Math.PI * -0.25, 0, 0]}
-        fontSize={0.4}
+        // rotation={[Math.PI * -0.25, 0, 0]}
+
+        position={[0, 0, 10]}
+        fontSize={0.3}
         color="white"
         outlineColor={"black"}
         outlineWidth={0.01}
+        textAlign={"center"}
       >
-        Loading...
+        {`Loading you into my dream...\n`}
       </Text>
 
       {/* Optional */}

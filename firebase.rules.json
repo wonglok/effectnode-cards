@@ -2,6 +2,29 @@
   "rules": {
     ".read": false,
     ".write": false,
+    "usernames": {
+      "$username": {
+        ".write": "!data.exists() && auth!= null && newData.val() == auth.uid"
+      }
+    },
+    "places": {
+      ".read": true,
+      "$placeID": {
+        ".write": "(!data.exists() || data.child('author').val() == auth.uid) && (newData.child('author').val() == auth.uid || !newData.exists())"
+      }
+    },
+    "assets": {
+      ".read": true,
+      "$assetID": {
+        ".write": "root.child('admins/'+auth.uid).exists()"
+      }
+    },
+    "cards": {
+      ".read": true,
+      "$cardID": {
+        ".write": "root.child('admins/'+auth.uid).exists()"
+      }
+    },
     "profile": {
       "$owner_user_id": {
         "canvas": {

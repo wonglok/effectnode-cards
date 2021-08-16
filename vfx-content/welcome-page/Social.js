@@ -1,4 +1,6 @@
 import { useTexture } from "@react-three/drei";
+import { useFrame } from "@react-three/fiber";
+import { useRef } from "react";
 
 export function Social() {
   let web = useTexture(`/image/social-icons/web.png`);
@@ -25,8 +27,28 @@ export function Social() {
 }
 
 export function Icon({ map }) {
+  let ref = useRef();
+  let i = 0;
+  useFrame(() => {
+    if (ref.current) {
+      i += 1 / 60;
+      if (i >= 1) {
+        i = 1;
+      }
+      ref.current.scale.setScalar(i);
+      let meshLogo = ref.current.children[0];
+      if (meshLogo) {
+        meshLogo.material.opacity = i;
+      }
+      let meshPad = ref.current.children[1];
+      if (meshPad) {
+        meshPad.material.opacity = i * 0.7;
+      }
+    }
+  });
+
   return (
-    <group>
+    <group ref={ref}>
       <mesh position={[0, 0, 0.11]}>
         {/*  */}
         {/*  */}
