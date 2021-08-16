@@ -88,7 +88,6 @@ export class BloomLayer {
       shader.uniforms.globalDarkening = globalDarkening;
       let atBegin = `
         uniform bool globalDarkening;
-
       `;
       let atEnd = `
         if (globalDarkening) {
