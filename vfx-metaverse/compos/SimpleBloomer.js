@@ -58,7 +58,7 @@ export class BloomLayer {
     });
     efComposer.addPass(renderPass);
 
-    let unrealPass = new UnrealBloomPass(resBloom, 1.5, 1, 0.1);
+    let unrealPass = new UnrealBloomPass(resBloom, 1.0, 0.8, 0.2);
     mini.onResize(() => {
       resBloom.copy({
         x: get().gl.domElement.width,
@@ -308,9 +308,9 @@ export class Compositor {
 
             gl_FragColor = vec4(baseDiffuseColor.rgb,  baseDiffuseColor.a);
 
-            gl_FragColor.r += 1.0 * pow(bloomDiffuseColor.r, 1.0);
-            gl_FragColor.g += 1.0 * pow(bloomDiffuseColor.g, 1.0);
-            gl_FragColor.b += 1.0 * pow(bloomDiffuseColor.b, 1.0);
+            gl_FragColor.r += 0.7 * pow(bloomDiffuseColor.r, 1.2);
+            gl_FragColor.g += 0.7 * pow(bloomDiffuseColor.g, 1.2);
+            gl_FragColor.b += 0.7 * pow(bloomDiffuseColor.b, 1.2);
           }
         `,
     });

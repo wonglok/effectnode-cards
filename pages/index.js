@@ -2,6 +2,7 @@ import { PerspectiveCamera, Text, useGLTF } from "@react-three/drei";
 import { Canvas, useThree } from "@react-three/fiber";
 import { getGPUTier } from "detect-gpu";
 import { Suspense, useEffect, useState } from "react";
+// import { MeshLambertMaterial, MeshPhongMaterial } from "three";
 import { WelcomeAvatar } from "../vfx-content/welcome-page/WelcomeAvatar";
 import {
   Map3D,
@@ -19,7 +20,7 @@ export default function Page() {
   return (
     <div className="full">
       <Canvas
-        dpr={[1, 2]}
+        dpr={[1, 3]}
         onCreated={({ gl }) => {
           getGPUTier({ glContext: gl.getContext() }).then((v) => {
             let setDPR = ([a, b]) => {
@@ -28,17 +29,16 @@ export default function Page() {
                 b = base;
               }
               gl.setPixelRatio(b);
-
               setOK(true);
             };
 
             if (v.gpu === "apple a9x gpu") {
-              setDPR([1, 2]);
+              setDPR([1, 1.5]);
               return;
             }
 
-            if (v.fps < 30) {
-              setDPR([1, 1.5]);
+            if (v.fps <= 30) {
+              setDPR([1, 1]);
               return;
             }
 
@@ -149,9 +149,9 @@ function useShaderEnvLight({}) {
 
     vec4 mainImage (vec2 uv, vec3 direction, vec3 pos) {
       return vec4(vec3(
-        0.35 + pattern(direction.xy * 1.70123 + -0.17 * cos(time * 0.05)),
-        0.35 + pattern(direction.xy * 1.70123 +  0.0 * cos(time * 0.05)),
-        0.35 + pattern(direction.xy * 1.70123 +  0.17 * cos(time * 0.05))
+        1.0 - pattern(direction.xy * 1.70123 + -0.17 * cos(time * 0.05)),
+        1.0 - pattern(direction.xy * 1.70123 +  0.0 * cos(time * 0.05)),
+        1.0 - pattern(direction.xy * 1.70123 +  0.17 * cos(time * 0.05))
       ), 1.0);
     }
   `.trim(),
