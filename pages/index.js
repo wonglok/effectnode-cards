@@ -1,4 +1,9 @@
-import { PerspectiveCamera, useGLTF, useTexture } from "@react-three/drei";
+import {
+  PerspectiveCamera,
+  Text,
+  useGLTF,
+  useTexture,
+} from "@react-three/drei";
 import { Canvas, useThree, useFrame, createPortal } from "@react-three/fiber";
 import { Suspense, useEffect } from "react";
 import { WelcomeAvatar } from "../vfx-content/welcome-page/WelcomeAvatar";
@@ -16,7 +21,7 @@ import {
 export default function Page() {
   return (
     <div className="full">
-      <Canvas style={{ width: "100%", height: "100%" }}>
+      <Canvas dpr={[1, 2]} style={{ width: "100%", height: "100%" }}>
         <Suspense fallback={<LoadingScreen></LoadingScreen>}>
           <Content3D></Content3D>
         </Suspense>
@@ -28,49 +33,46 @@ export default function Page() {
 function Content3D() {
   let { envMap } = useShaderEnvLight({ imageURL: `/image/sky.png` });
   let gltf = useGLTF(`/map/space-walk-001.glb`);
-  // let gltf = useGLTF(`/map/demo-map-000.glb`);
 
   return (
     <group>
       {/* Optional */}
-      <AdaptivePixelRatio wait={null}>
-        {gltf.scene && (
-          <group>
-            <Map3D object={gltf.scene}>
-              {({ Now }) => {
-                return (
-                  <group>
-                    <UserContorls
-                      higherCamera={-0.6}
-                      avatarSpeed={0.7}
-                      Now={Now}
-                    ></UserContorls>
-                    <TailCursor Now={Now} color={"#ffffff"}></TailCursor>
-                    <TheHelper Now={Now}></TheHelper>
-                  </group>
-                );
-              }}
-            </Map3D>
-          </group>
-        )}
-
-        {/* Avatar */}
-        <group
-          position={[
-            //
-            gltf.scene.getObjectByName("welcomeAt").position.x,
-            0,
-            gltf.scene.getObjectByName("welcomeAt").position.z,
-          ]}
-        >
-          <WelcomeAvatar envMap={envMap}></WelcomeAvatar>
+      {gltf.scene && (
+        <group>
+          <Map3D object={gltf.scene}>
+            {({ Now }) => {
+              return (
+                <group>
+                  <UserContorls
+                    higherCamera={-0.6}
+                    avatarSpeed={0.9}
+                    Now={Now}
+                  ></UserContorls>
+                  <TailCursor Now={Now} color={"#ffffff"}></TailCursor>
+                  <TheHelper Now={Now}></TheHelper>
+                </group>
+              );
+            }}
+          </Map3D>
         </group>
-        {/* Simple SimpleBloomer */}
-        <SimpleBloomer></SimpleBloomer>
+      )}
 
-        {/* Optional */}
-        <StarSky></StarSky>
-      </AdaptivePixelRatio>
+      {/* Avatar */}
+      <group
+        position={[
+          //
+          gltf.scene.getObjectByName("welcomeAt").position.x,
+          0,
+          gltf.scene.getObjectByName("welcomeAt").position.z,
+        ]}
+      >
+        <WelcomeAvatar envMap={envMap}></WelcomeAvatar>
+      </group>
+      {/* Simple SimpleBloomer */}
+      <SimpleBloomer></SimpleBloomer>
+
+      {/* Optional */}
+      <StarSky></StarSky>
     </group>
   );
 }
@@ -139,14 +141,21 @@ function LoadingScreen() {
   return (
     <group>
       <PerspectiveCamera
-        position={[0, 5, 5]}
+        position={[0, 25, 25]}
         rotation-x={Math.PI * -0.25}
         makeDefault={true}
       ></PerspectiveCamera>
 
-      <group rotation-x={Math.PI * 0}>
-        <gridHelper args={[150, 50, 0x232323, 0xbababa]}></gridHelper>
-      </group>
+      <Text
+        position={[0, 10, 10]}
+        rotation={[Math.PI * -0.25, 0, 0]}
+        fontSize={0.4}
+        color="white"
+        outlineColor={"black"}
+        outlineWidth={0.01}
+      >
+        Loading...
+      </Text>
 
       {/* Optional */}
       <StarSky></StarSky>
