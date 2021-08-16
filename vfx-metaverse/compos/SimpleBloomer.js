@@ -39,13 +39,11 @@ export class BloomLayer {
   constructor({ mini }) {
     let { get } = mini.now;
 
-    let reducedRes = 0.5;
     let resBloom = new Vector2();
     resBloom.copy({
       x: get().gl.domElement.width,
       y: get().gl.domElement.height,
     });
-    resBloom.multiplyScalar(reducedRes);
 
     let efComposer = new EffectComposer(get().gl);
     efComposer.setPixelRatio(1);
@@ -56,8 +54,6 @@ export class BloomLayer {
         x: get().gl.domElement.width,
         y: get().gl.domElement.height,
       });
-      //
-      resBloom.multiplyScalar(reducedRes);
       renderPass.setSize(resBloom.x, resBloom.y);
     });
     efComposer.addPass(renderPass);
@@ -68,11 +64,11 @@ export class BloomLayer {
         x: get().gl.domElement.width,
         y: get().gl.domElement.height,
       });
-      resBloom.multiplyScalar(reducedRes);
       unrealPass.setSize(resBloom.x, resBloom.y);
     });
 
     efComposer.addPass(unrealPass);
+
     efComposer.renderToScreen = false;
 
     let dark = new Color("#000000");
@@ -247,7 +243,6 @@ export class BaseLayer {
     let resBase = new Vector2();
 
     resBase.copy({ x: size.width, y: size.height });
-    // resBase.multiplyScalar(gl.getPixelRatio());
 
     this.rtt = new WebGLRenderTarget(resBase.width, resBase.height, {
       encoding: sRGBEncoding,
@@ -261,8 +256,6 @@ export class BaseLayer {
         x: get().gl.domElement.width,
         y: get().gl.domElement.height,
       });
-
-      // resBase.multiplyScalar(gl.getPixelRatio());
 
       this.rtt = new WebGLRenderTarget(resBase.width, resBase.height, {
         encoding: sRGBEncoding,

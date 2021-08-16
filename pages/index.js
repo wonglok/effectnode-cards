@@ -1,11 +1,7 @@
-import {
-  PerspectiveCamera,
-  Text,
-  useGLTF,
-  useTexture,
-} from "@react-three/drei";
-import { Canvas, useThree, useFrame, createPortal } from "@react-three/fiber";
-import { Suspense, useEffect } from "react";
+import { PerspectiveCamera, Text, useGLTF } from "@react-three/drei";
+import { Canvas, useThree } from "@react-three/fiber";
+import { getGPUTier } from "detect-gpu";
+import { Suspense, useEffect, useState } from "react";
 import { WelcomeAvatar } from "../vfx-content/welcome-page/WelcomeAvatar";
 import {
   Map3D,
@@ -18,12 +14,57 @@ import {
 } from "../vfx-metaverse";
 
 export default function Page() {
+  let [ok, setOK] = useState(false);
+
   return (
     <div className="full">
-      <Canvas dpr={[1, 2]} style={{ width: "100%", height: "100%" }}>
-        <Suspense fallback={<LoadingScreen></LoadingScreen>}>
-          <Content3D></Content3D>
-        </Suspense>
+      <Canvas
+        dpr={[1, 2]}
+        onCreated={({ gl }) => {
+          getGPUTier({ glContext: gl.getContext() }).then((v) => {
+            let setDPR = ([a, b]) => {
+              let base = window.devicePixelRatio || 1;
+
+              if (base >= 2.5) {
+                base = 2.5;
+              }
+
+              if (b >= base) {
+                b = base;
+              }
+              gl.setPixelRatio(b);
+
+              setOK(true);
+            };
+
+            if (v.gpu === "apple a9x gpu") {
+              setDPR([1, 1]);
+              return;
+            }
+
+            if (v.fps < 30) {
+              setDPR([1, 1.5]);
+              return;
+            }
+
+            if (v.tier >= 3) {
+              setDPR([1, 3]);
+            } else if (v.tier >= 2) {
+              setDPR([1, 2]);
+            } else if (v.tier >= 1) {
+              setDPR([1, 1]);
+            } else if (v.tier < 1) {
+              setDPR([1, 1]);
+            }
+          });
+        }}
+        style={{ width: "100%", height: "100%" }}
+      >
+        {ok ? (
+          <Suspense fallback={<LoadingScreen></LoadingScreen>}>
+            <Content3D></Content3D>
+          </Suspense>
+        ) : null}
       </Canvas>
     </div>
   );
