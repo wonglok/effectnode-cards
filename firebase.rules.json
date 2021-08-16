@@ -1,9 +1,7 @@
-
 {
   "rules": {
     ".read": false,
     ".write": false,
-    
     "profile": {
       "$owner_user_id": {
         "canvas": {
@@ -31,25 +29,22 @@
           },
         }
       },
-        
     },
-      
-    
     "canvas": {
       "$canvasID": {
         ".read": true,
-      	"$ownerID": {
-            ".read": true,
-        		".write": "auth !== null && auth.uid === $ownerID || auth !== null && root.child('profile').child($ownerID).child('canvas').child($canvasID).child('shareACL').hasChild(auth.uid)"
+        "$ownerID": {
+          ".read": true,
+          ".write": "auth !== null && auth.uid === $ownerID || auth !== null && root.child('profile').child($ownerID).child('canvas').child($canvasID).child('shareACL').hasChild(auth.uid)"
         }
       }
     },
     "layout": {
       "$layoutID": {
         ".read": true,
-      	"$ownerID": {
-            ".read": true,
-        		".write": "auth !== null && auth.uid === $ownerID || auth !== null && root.child('profile').child($ownerID).child('layout').child($layoutID).child('shareACL').hasChild(auth.uid)"
+        "$ownerID": {
+          ".read": true,
+          ".write": "auth !== null && auth.uid === $ownerID || auth !== null && root.child('profile').child($ownerID).child('layout').child($layoutID).child('shareACL').hasChild(auth.uid)"
         }
       }
     }

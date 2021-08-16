@@ -1,10 +1,9 @@
 export const firebaseConfig = {
-  apiKey: "AIzaSyAPuwK2yMl025KLVTnGDdN34XxHBYQHoVk",
-  authDomain: "effect-node-by-you.firebaseapp.com",
-  databaseURL: "https://en-you.firebaseio.com/",
-  projectId: "effect-node-by-you",
-  storageBucket: "effect-node-by-you.appspot.com",
-  messagingSenderId: "587774316246",
-  appId: "1:587774316246:web:2a52c46bd184fc3a1d4377",
-  measurementId: "G-SYFGKL6VNR",
+  apiKey: "AIzaSyC7x57s-6fZIknaQ40QC3_6PRYwJ5KgTRo",
+  authDomain: "my3dworld-club.firebaseapp.com",
+  projectId: "my3dworld-club",
+  storageBucket: "my3dworld-club.appspot.com",
+  messagingSenderId: "612670919698",
+  appId: "1:612670919698:web:ce90eca2dc99117cd3f4cb",
+  measurementId: "G-V8TEN2M81F",
 };
