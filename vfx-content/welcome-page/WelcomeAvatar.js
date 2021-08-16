@@ -27,7 +27,7 @@ export function WelcomeAvatar({ envMap }) {
   }, [gltf]);
 
   let mixer = useMemo(() => {
-    let mixer = new AnimationMixer();
+    let mixer = new AnimationMixer(avatar);
     return mixer;
   }, [avatar]);
 
@@ -51,7 +51,7 @@ export function WelcomeAvatar({ envMap }) {
   let actions = useMemo(() => {
     let actions = {};
     for (let kn in fbx) {
-      actions[kn] = mixer.clipAction(fbx[kn].animations[0], avatar);
+      actions[kn] = mixer.clipAction(fbx[kn].animations[0]);
     }
     return actions;
   }, []);
