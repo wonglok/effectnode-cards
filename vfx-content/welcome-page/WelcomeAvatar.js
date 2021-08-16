@@ -2,17 +2,19 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Text, useFBX, useGLTF } from "@react-three/drei";
 import {
   AnimationMixer,
-  BackSide,
+  // BackSide,
   Frustum,
   OrthographicCamera,
   PerspectiveCamera,
   Vector3,
 } from "three";
-import { createPortal, useFrame } from "@react-three/fiber";
+import { useFrame } from "@react-three/fiber";
 import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
-import { useComputeEnvMap } from "../../vfx-metaverse";
+// import { useComputeEnvMap } from "../../vfx-metaverse";
 import { HelloSign } from "./HelloSign";
 import { Portal } from "./Portal";
+import { Social } from "./Social";
+import { ByeSign } from "./ByeSign";
 
 export function WelcomeAvatar({ envMap }) {
   let gltf = useGLTF(
@@ -39,9 +41,9 @@ export function WelcomeAvatar({ envMap }) {
     spin: useFBX(`/rpm-actions/spin-in-place.fbx`),
     happyIdle: useFBX(`/rpm-actions/happy-idle.fbx`),
     happyHand: useFBX(`/rpm-actions/happy-hand.fbx`),
-    warmup: useFBX(`/rpm-actions/mma-warmup.fbx`),
+    // warmup: useFBX(`/rpm-actions/mma-warmup.fbx`),
     sillyjoey: useFBX(`/rpm-actions/silly-dance.fbx`),
-    hiphop: useFBX(`/rpm-actions/dance-hiphop.fbx`),
+    // hiphop: useFBX(`/rpm-actions/dance-hiphop.fbx`),
     bow: useFBX(`/rpm-actions/bow-quick-formal.fbx`),
     hi0: useFBX(`/rpm-actions/hi-wave-both-hands.fbx`),
   };
@@ -52,7 +54,7 @@ export function WelcomeAvatar({ envMap }) {
       actions[kn] = mixer.clipAction(fbx[kn].animations[0], avatar);
     }
     return actions;
-  }, [avatar]);
+  }, []);
 
   useEffect(() => {
     avatar.traverse((it) => {
@@ -160,7 +162,7 @@ function Sequencer({ avatar, mixer, actions }) {
         actions.hi0.clampWhenFinished = true;
         actions.hi0.play();
         last = actions.hi0;
-        setShow("hands");
+        setShow("hi");
         setBannerText("Welcome to My Spaceship!");
       },
       () => {
@@ -173,8 +175,8 @@ function Sequencer({ avatar, mixer, actions }) {
         actions.happyHand.play();
         actions.happyHand.fadeIn(0.1);
         last = actions.happyHand;
+        setShow("none");
         setBannerText("My name is Lok Lok.");
-        setShow("orb");
       },
       () => {
         if (last) {
@@ -186,13 +188,13 @@ function Sequencer({ avatar, mixer, actions }) {
         actions.sillyjoey.play();
         actions.sillyjoey.fadeIn(0.1);
         last = actions.sillyjoey;
+        setShow("none");
         setBannerText("This is a place \nfor You to be You.");
       },
       () => {
         if (last) {
           last?.fadeOut(0.1);
         }
-        //
         actions.gesturePointer.reset();
         actions.gesturePointer.repetitions = 1;
         actions.gesturePointer.clampWhenFinished = true;
@@ -201,6 +203,7 @@ function Sequencer({ avatar, mixer, actions }) {
         last = actions.gesturePointer;
 
         //
+        setShow("social");
         setBannerText(
           "You can add your social media accounts or websites here."
         );
@@ -228,6 +231,7 @@ function Sequencer({ avatar, mixer, actions }) {
         actions.spin.fadeIn(0.1);
         last = actions.spin;
 
+        setShow("avatar");
         setBannerText("You can customize your own avatar.");
       },
 
@@ -242,6 +246,7 @@ function Sequencer({ avatar, mixer, actions }) {
         actions.happyIdle.fadeIn(0.1);
         last = actions.happyIdle;
 
+        setShow("visit");
         setBannerText("You can also visit your friend's place.");
       },
       () => {
@@ -256,6 +261,7 @@ function Sequencer({ avatar, mixer, actions }) {
         last = actions.handForward;
 
         //
+        setShow("enjoy");
         setBannerText("Enjoy your time here!");
       },
 
@@ -273,6 +279,7 @@ function Sequencer({ avatar, mixer, actions }) {
 
         //
         setBannerText("See you around!");
+        setShow("bye");
       },
       //
       //
@@ -289,6 +296,7 @@ function Sequencer({ avatar, mixer, actions }) {
 
         //
         setBannerText("Thank you for Visiting!");
+        setShow("bye");
       },
       //
     ];
@@ -366,13 +374,25 @@ function Sequencer({ avatar, mixer, actions }) {
       <group ref={ref}>
         <pointLight position={[0, 0, 10]} intensity={30}></pointLight>
 
-        {show === "hands" && <HelloSign avatar={avatar}></HelloSign>}
-      </group>
+        <HelloSign visible={show === "hi"} avatar={avatar}></HelloSign>
+        <ByeSign visible={show === "bye"} avatar={avatar}></ByeSign>
 
-      {/* <group position={[0, 5, 30]}>{<Portal avatar={avatar}></Portal>}</group> */}
+        <group visible={show === "social"}>
+          <Social avatar={avatar}></Social>
+        </group>
+        <group visible={show === "avatar"}>
+          <Portal avatar={avatar}></Portal>
+        </group>
+      </group>
     </group>
   );
 }
+
+/*
+
+
+
+*/
 
 /*
 Hips

@@ -1,7 +1,7 @@
 import { Text } from "@react-three/drei";
 import { createPortal } from "@react-three/fiber";
 
-export function HelloSign({ visible, avatar }) {
+export function ByeSign({ visible, avatar }) {
   //
   // avatar.traverse((it) => {
   //   if (it.isBone) {
@@ -29,7 +29,7 @@ export function HelloSign({ visible, avatar }) {
           outlineColor="white"
           outlineWidth={0.01}
         >
-          Hi
+          Bye
         </Text>,
         avatar.getObjectByName("LeftHand")
       )}
@@ -50,7 +50,7 @@ export function HelloSign({ visible, avatar }) {
           outlineColor="white"
           outlineWidth={0.01}
         >
-          Hi
+          Bye
         </Text>,
         avatar.getObjectByName("RightHand")
       )}
