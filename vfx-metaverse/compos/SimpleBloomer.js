@@ -308,9 +308,9 @@ export class Compositor {
 
             gl_FragColor = vec4(baseDiffuseColor.rgb,  baseDiffuseColor.a);
 
-            gl_FragColor.r += 0.75 * pow(bloomDiffuseColor.r, 0.75);
-            gl_FragColor.g += 0.75 * pow(bloomDiffuseColor.g, 0.75);
-            gl_FragColor.b += 0.75 * pow(bloomDiffuseColor.b, 0.75);
+            gl_FragColor.r += 1.0 * pow(bloomDiffuseColor.r, 1.0);
+            gl_FragColor.g += 1.0 * pow(bloomDiffuseColor.g, 1.0);
+            gl_FragColor.b += 1.0 * pow(bloomDiffuseColor.b, 1.0);
           }
         `,
     });
