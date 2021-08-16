@@ -192,6 +192,7 @@ function Sequencer({ avatar, mixer, actions }) {
         if (last) {
           last?.fadeOut(0.1);
         }
+        //
         actions.gesturePointer.reset();
         actions.gesturePointer.repetitions = 1;
         actions.gesturePointer.clampWhenFinished = true;
