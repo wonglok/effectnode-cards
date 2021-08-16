@@ -122,10 +122,12 @@ export class BloomLayer {
             it.material instanceof MeshPhysicalMaterial ||
             it.material instanceof MeshToonMaterial)
         ) {
-          if (!uniqueMaterialMap.has(it.uuid + it.material.uuid)) {
-            if (it.material?.clone) {
-              it.material = it.material.clone();
-              uniqueMaterialMap.set(it.uuid + it.material.uuid, true);
+          if (typeof it.text === "undefined") {
+            if (!uniqueMaterialMap.has(it.uuid + it.material.uuid)) {
+              if (it.material?.clone) {
+                it.material = it.material.clone();
+                uniqueMaterialMap.set(it.uuid + it.material.uuid, true);
+              }
             }
           }
         }
@@ -178,12 +180,10 @@ export class BloomLayer {
           it.visible = false;
         }
 
-        if (it?.userData?.disableBloom) {
-          it.visible = false;
-        }
-
         if (it.material) {
-          if (it?.userData?.enableDarken) {
+          if (it?.userData?.disableBloom) {
+            darken(it);
+          } else if (it?.userData?.enableDarken) {
             darken(it);
           } else if (
             it?.userData?.enableBloom ||
@@ -315,11 +315,11 @@ export class Compositor {
             vec4 baseDiffuseColor = texture2D(baseDiffuse, vUv);
             vec4 bloomDiffuseColor = texture2D(bloomDiffuse, vUv);
 
-            gl_FragColor = vec4(baseDiffuseColor.rgb * 1.0,  baseDiffuseColor.a);
+            gl_FragColor = vec4(baseDiffuseColor.rgb,  baseDiffuseColor.a);
 
-            gl_FragColor.r += 0.45 * pow(bloomDiffuseColor.r, 0.75);
-            gl_FragColor.g += 0.45 * pow(bloomDiffuseColor.g, 0.75);
-            gl_FragColor.b += 0.45 * pow(bloomDiffuseColor.b, 0.75);
+            gl_FragColor.r += 0.5 * pow(bloomDiffuseColor.r, 0.75);
+            gl_FragColor.g += 0.5 * pow(bloomDiffuseColor.g, 0.75);
+            gl_FragColor.b += 0.5 * pow(bloomDiffuseColor.b, 0.75);
           }
         `,
     });

@@ -26,7 +26,6 @@ export default function Page() {
 }
 
 function Content3D() {
-  let { get } = useThree();
   let { envMap } = useShaderEnvLight({ imageURL: `/image/sky.png` });
   let gltf = useGLTF(`/map/space-walk-001.glb`);
   // let gltf = useGLTF(`/map/demo-map-000.glb`);
@@ -40,7 +39,7 @@ function Content3D() {
               return (
                 <group>
                   <UserContorls
-                    higherCamera={-0.8}
+                    higherCamera={-0.6}
                     avatarSpeed={0.7}
                     Now={Now}
                   ></UserContorls>
@@ -50,20 +49,20 @@ function Content3D() {
               );
             }}
           </Map3D>
-
-          {/* Welcome Avatar */}
-          <group
-            position={[
-              //
-              gltf.scene.getObjectByName("welcomeAt").position.x,
-              0,
-              gltf.scene.getObjectByName("welcomeAt").position.z,
-            ]}
-          >
-            <WelcomeAvatar core={{ envMap }}></WelcomeAvatar>
-          </group>
         </group>
       )}
+
+      {/* Avatar */}
+      <group
+        position={[
+          //
+          gltf.scene.getObjectByName("welcomeAt").position.x,
+          0,
+          gltf.scene.getObjectByName("welcomeAt").position.z,
+        ]}
+      >
+        <WelcomeAvatar envMap={envMap}></WelcomeAvatar>
+      </group>
 
       {/* Simple Bloomder */}
       <SimpleBloomer></SimpleBloomer>
@@ -77,8 +76,7 @@ function Content3D() {
   );
 }
 
-function useShaderEnvLight({ imageURL, children = () => {} }) {
-  let tex = useTexture(imageURL);
+function useShaderEnvLight({}) {
   let { get } = useThree();
   let envMap = useComputeEnvMap(
     /* glsl */ `
@@ -113,10 +111,10 @@ function useShaderEnvLight({ imageURL, children = () => {} }) {
         return abs(vout);
       }
 
-      uniform sampler2D textureBG;
+      // uniform sampler2D textureBG;
 
       vec4 mainImage (vec2 uv) {
-        vec4 bg = texture2D(textureBG, uv);
+        // vec4 bg = texture2D(textureBG, uv);
 
         vec3 rainbow = vec3(
           1.0 - pow(pattern(uv * 2.70123 + -0.17 * cos(time * 0.05)), 1.2),
@@ -128,7 +126,7 @@ function useShaderEnvLight({ imageURL, children = () => {} }) {
       }
   `.trim(),
     {
-      textureBG: { value: tex },
+      // textureBG: { value: tex },
     },
     128
   );

@@ -4,8 +4,8 @@ import { makeShallowStore } from "./make-shallow-store";
 export const makeNow = () => {
   return makeShallowStore({
     //
-    startLookAt: new Vector3(0, 0, 0),
-    startAt: new Vector3(0, 0, 0),
+    startLookAt: new Vector3(0, 1.5, 1),
+    startAt: new Vector3(0, 1.5, 0),
     //
     moved: 0,
     goingTo: new Vector3(),
