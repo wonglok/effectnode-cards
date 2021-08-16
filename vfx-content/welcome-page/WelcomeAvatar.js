@@ -1,8 +1,18 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Text, useFBX, useGLTF } from "@react-three/drei";
-import { AnimationMixer, Vector3 } from "three";
-import { useFrame } from "@react-three/fiber";
+import {
+  AnimationMixer,
+  BackSide,
+  Frustum,
+  OrthographicCamera,
+  PerspectiveCamera,
+  Vector3,
+} from "three";
+import { createPortal, useFrame } from "@react-three/fiber";
 import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
+import { useComputeEnvMap } from "../../vfx-metaverse";
+import { HelloSign } from "./HelloSign";
+import { Portal } from "./Portal";
 
 export function WelcomeAvatar({ envMap }) {
   let gltf = useGLTF(
@@ -20,8 +30,15 @@ export function WelcomeAvatar({ envMap }) {
   }, [avatar]);
 
   let fbx = {
+    greetings: useFBX(`/rpm-actions/greetings.fbx`),
+    handForward: useFBX(`/rpm-actions/hand-forward.fbx`),
     idle: useFBX(`/rpm-actions/mma-idle.fbx`),
-    // kick: useFBX(`/rpm-actions/mma-kick.fbx`),
+    gesturePointer: useFBX(`/rpm-actions/guesture-pointer.fbx`),
+    gesturePointer2: useFBX(`/rpm-actions/guesture-pointer-2.fbx`),
+    excited: useFBX(`/rpm-actions/excited.fbx`),
+    spin: useFBX(`/rpm-actions/spin-in-place.fbx`),
+    happyIdle: useFBX(`/rpm-actions/happy-idle.fbx`),
+    happyHand: useFBX(`/rpm-actions/happy-hand.fbx`),
     warmup: useFBX(`/rpm-actions/mma-warmup.fbx`),
     sillyjoey: useFBX(`/rpm-actions/silly-dance.fbx`),
     hiphop: useFBX(`/rpm-actions/dance-hiphop.fbx`),
@@ -35,7 +52,7 @@ export function WelcomeAvatar({ envMap }) {
       actions[kn] = mixer.clipAction(fbx[kn].animations[0], avatar);
     }
     return actions;
-  }, Object.values(fbx));
+  }, [avatar]);
 
   useEffect(() => {
     avatar.traverse((it) => {
@@ -59,36 +76,62 @@ export function WelcomeAvatar({ envMap }) {
       }
     });
 
-    return () => {};
+    return () => {
+      //
+    };
   }, [avatar]);
 
   useFrame((st, dt) => {
-    mixer.update(1 / 60);
+    if (dt <= 1 / 60) {
+      dt = 1 / 60;
+    }
+    mixer.update(dt);
   });
 
   return (
     <group>
-      <ShakeCam avatar={avatar}></ShakeCam>
       <Sequencer avatar={avatar} mixer={mixer} actions={actions}></Sequencer>
+      <ShakeCam avatar={avatar}></ShakeCam>
     </group>
   );
 }
 
 export function ShakeCam({ avatar }) {
+  let currentPos = new Vector3();
   let current = new Vector3();
   let last = new Vector3();
   let diff = new Vector3();
-  let applyDiff = new Vector3();
+  let diffApply = new Vector3();
+  let cam = new PerspectiveCamera();
+  let frustum = new Frustum();
+  let ortho = new OrthographicCamera(100, 100);
   useFrame((st, dt) => {
-    let applyShake = last.length() !== 0.0;
-    last.copy(current);
-    avatar.getObjectByName("Head").getWorldDirection(current);
+    let tracker = avatar.getObjectByName("Head");
 
-    if (applyShake) {
+    if (tracker) {
+      tracker.getWorldPosition(currentPos);
+
+      cam.copy(st.camera);
+      cam.lookAt(currentPos);
+
+      st.camera.updateMatrix();
+      st.camera.updateProjectionMatrix();
+
+      ortho.copy(st.camera);
+      ortho.updateProjectionMatrix();
+
+      frustum.setFromProjectionMatrix(ortho.projectionMatrix);
+      let has = frustum.containsPoint(currentPos);
+
+      //
+      last.copy(current);
+      cam.getWorldDirection(current);
+
       diff.copy(current).sub(last);
-      applyDiff.lerp(diff, 0.02);
-      st.camera.rotation.x += 1.0 * applyDiff.x;
-      st.camera.rotation.y += 1.0 * applyDiff.y;
+      diffApply.lerp(diff, 0.2);
+
+      st.camera.rotation.x += diffApply.x;
+      st.camera.rotation.y += diffApply.y;
     }
   });
 
@@ -98,7 +141,8 @@ export function ShakeCam({ avatar }) {
 function Sequencer({ avatar, mixer, actions }) {
   let ref = useRef();
   let banner = useRef();
-  let [text, setText] = useState("Welcome to Your Card!");
+  let [text, setBannerText] = useState("Welcome to Your Card!");
+  let [show, setShow] = useState("hands");
 
   useEffect(() => {
     let skip = false;
@@ -116,7 +160,21 @@ function Sequencer({ avatar, mixer, actions }) {
         actions.hi0.clampWhenFinished = true;
         actions.hi0.play();
         last = actions.hi0;
-        setText("Welcome to our FANCY spaceship!");
+        setShow("hands");
+        setBannerText("Welcome to My Spaceship!");
+      },
+      () => {
+        if (last) {
+          last?.fadeOut(0.1);
+        }
+        actions.happyHand.reset();
+        actions.happyHand.repetitions = 1;
+        actions.happyHand.clampWhenFinished = true;
+        actions.happyHand.play();
+        actions.happyHand.fadeIn(0.1);
+        last = actions.happyHand;
+        setBannerText("My name is Lok Lok.");
+        setShow("orb");
       },
       () => {
         if (last) {
@@ -128,20 +186,95 @@ function Sequencer({ avatar, mixer, actions }) {
         actions.sillyjoey.play();
         actions.sillyjoey.fadeIn(0.1);
         last = actions.sillyjoey;
-        setText("This is a Place for You to be You.");
+        setBannerText("This is a place \nfor You to be You.");
       },
       () => {
         if (last) {
           last?.fadeOut(0.1);
         }
-        actions.warmup.reset();
-        actions.warmup.repetitions = 1;
-        actions.warmup.clampWhenFinished = true;
-        actions.warmup.play();
-        actions.warmup.fadeIn(0.1);
-        last = actions.warmup;
-        setText("You can add stuff here");
+        actions.gesturePointer.reset();
+        actions.gesturePointer.repetitions = 1;
+        actions.gesturePointer.clampWhenFinished = true;
+        actions.gesturePointer.play();
+        actions.gesturePointer.fadeIn(0.1);
+        last = actions.gesturePointer;
+
+        //
+        setBannerText(
+          "You can add your social media accounts or websites here."
+        );
       },
+      () => {
+        if (last) {
+          last?.fadeOut(0.1);
+        }
+        actions.gesturePointer2.reset();
+        actions.gesturePointer2.repetitions = 1;
+        actions.gesturePointer2.clampWhenFinished = true;
+        actions.gesturePointer2.play();
+        actions.gesturePointer2.fadeIn(0.1);
+        last = actions.gesturePointer2;
+      },
+
+      () => {
+        if (last) {
+          last?.fadeOut(0.1);
+        }
+        actions.spin.reset();
+        actions.spin.repetitions = 1;
+        actions.spin.clampWhenFinished = true;
+        actions.spin.play();
+        actions.spin.fadeIn(0.1);
+        last = actions.spin;
+
+        setBannerText("You can customize your own avatar.");
+      },
+
+      () => {
+        if (last) {
+          last?.fadeOut(0.1);
+        }
+        actions.happyIdle.reset();
+        actions.happyIdle.repetitions = 1;
+        actions.happyIdle.clampWhenFinished = true;
+        actions.happyIdle.play();
+        actions.happyIdle.fadeIn(0.1);
+        last = actions.happyIdle;
+
+        setBannerText("You can also visit your friend's place.");
+      },
+      () => {
+        if (last) {
+          last?.fadeOut(0.1);
+        }
+        actions.handForward.reset();
+        actions.handForward.repetitions = 1;
+        actions.handForward.clampWhenFinished = true;
+        actions.handForward.fadeIn(0.1);
+        actions.handForward.play();
+        last = actions.handForward;
+
+        //
+        setBannerText("Enjoy your time here!");
+      },
+
+      () => {
+        if (last) {
+          last?.fadeOut(0.1);
+        }
+
+        actions.greetings.reset();
+        actions.greetings.repetitions = 1;
+        actions.greetings.clampWhenFinished = true;
+        actions.greetings.fadeIn(0.1);
+        actions.greetings.play();
+        last = actions.greetings;
+
+        //
+        setBannerText("See you around!");
+      },
+      //
+      //
       () => {
         if (last) {
           last?.fadeOut(0.1);
@@ -152,8 +285,11 @@ function Sequencer({ avatar, mixer, actions }) {
         actions.bow.play();
         actions.bow.fadeIn(0.1);
         last = actions.bow;
-        setText("Thanks for visiting us!");
+
+        //
+        setBannerText("Thank you for Visiting!");
       },
+      //
     ];
 
     sequences[0]();
@@ -193,15 +329,27 @@ function Sequencer({ avatar, mixer, actions }) {
     };
   }, [avatar]);
 
+  let lookAtCam = new Vector3();
+  useFrame((st, dt) => {
+    lookAtCam.copy(st.camera.position);
+    if (ref.current) {
+      lookAtCam.y = ref.current.position.y;
+      ref.current.lookAt(lookAtCam);
+    }
+    if (banner.current) {
+      banner.current.lookAt(lookAtCam);
+    }
+  });
+
   return (
     <group>
       <Text
-        position={[0, 2, 0.5]}
         ref={banner}
+        position={[0, 2, 0.5]}
         textAlign={"center"}
         anchorX={"center"}
         anchorY={"bottom"}
-        maxWidth={3.5}
+        maxWidth={2}
         fontSize={0.15}
         font={`/font/Cronos-Pro-Light_12448.ttf`}
         frustumCulled={false}
@@ -214,7 +362,83 @@ function Sequencer({ avatar, mixer, actions }) {
         {text}
       </Text>
 
-      <group ref={ref}></group>
+      <group ref={ref}>
+        <pointLight position={[0, 0, 10]} intensity={30}></pointLight>
+
+        {show === "hands" && <HelloSign avatar={avatar}></HelloSign>}
+      </group>
+
+      {/* <group position={[0, 5, 30]}>{<Portal avatar={avatar}></Portal>}</group> */}
     </group>
   );
 }
+
+/*
+Hips
+Spine
+Spine1
+Spine2
+Neck
+Head
+HeadTop_End
+LeftEye
+RightEye
+LeftShoulder
+LeftArm
+LeftForeArm
+LeftHand
+LeftHandThumb1
+LeftHandThumb2
+LeftHandThumb3
+LeftHandThumb4
+LeftHandIndex1
+LeftHandIndex2
+LeftHandIndex3
+LeftHandIndex4
+LeftHandMiddle1
+LeftHandMiddle2
+LeftHandMiddle3
+LeftHandMiddle4
+LeftHandRing1
+LeftHandRing2
+LeftHandRing3
+LeftHandRing4
+LeftHandPinky1
+LeftHandPinky2
+LeftHandPinky3
+LeftHandPinky4
+RightShoulder
+RightArm
+RightForeArm
+RightHand
+RightHandThumb1
+RightHandThumb2
+RightHandThumb3
+RightHandThumb4
+RightHandIndex1
+RightHandIndex2
+RightHandIndex3
+RightHandIndex4
+RightHandMiddle1
+RightHandMiddle2
+RightHandMiddle3
+RightHandMiddle4
+RightHandRing1
+RightHandRing2
+RightHandRing3
+RightHandRing4
+RightHandPinky1
+RightHandPinky2
+RightHandPinky3
+RightHandPinky4
+LeftUpLeg
+LeftLeg
+LeftFoot
+LeftToeBase
+LeftToe_End
+RightUpLeg
+RightLeg
+RightFoot
+RightToeBase
+RightToe_End
+*/

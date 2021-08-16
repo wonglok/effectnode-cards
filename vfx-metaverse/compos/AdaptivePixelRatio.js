@@ -1,8 +1,9 @@
 import { useThree } from "@react-three/fiber";
 import { getGPUTier } from "detect-gpu";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
-export function AdaptivePixelRatio() {
+export function AdaptivePixelRatio({ children, wait }) {
+  let [ok, setOK] = useState(false);
   let { gl } = useThree();
   useEffect(() => {
     getGPUTier({ glContext: gl.getContext() }).then((v) => {
@@ -12,16 +13,20 @@ export function AdaptivePixelRatio() {
           b = base;
         }
         gl.setPixelRatio(b);
+
+        setOK(true);
       };
 
       if (v.gpu === "apple a9x gpu") {
         setDPR([1, 1]);
         return;
       }
+
       if (v.fps < 30) {
-        setDPR([1, 1]);
+        setDPR([1, 1.5]);
         return;
       }
+
       if (v.tier >= 3) {
         setDPR([1, 3]);
       } else if (v.tier >= 2) {
@@ -34,5 +39,5 @@ export function AdaptivePixelRatio() {
     });
   });
 
-  return null;
+  return ok ? children : wait;
 }
