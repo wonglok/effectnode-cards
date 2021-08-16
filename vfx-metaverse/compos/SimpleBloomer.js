@@ -200,6 +200,8 @@ export class BloomLayer {
       scene.background = origBG;
     };
 
+    //
+
     let restore = () => {
       let { scene } = get();
 
@@ -308,9 +310,9 @@ export class Compositor {
 
             gl_FragColor = vec4(baseDiffuseColor.rgb,  baseDiffuseColor.a);
 
-            gl_FragColor.r += 0.7 * pow(bloomDiffuseColor.r, 1.2);
-            gl_FragColor.g += 0.7 * pow(bloomDiffuseColor.g, 1.2);
-            gl_FragColor.b += 0.7 * pow(bloomDiffuseColor.b, 1.2);
+            gl_FragColor.r += 0.5 * pow(bloomDiffuseColor.r, 0.9);
+            gl_FragColor.g += 0.5 * pow(bloomDiffuseColor.g, 0.9);
+            gl_FragColor.b += 0.5 * pow(bloomDiffuseColor.b, 0.9);
           }
         `,
     });

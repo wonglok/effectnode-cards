@@ -57,6 +57,7 @@ export function UserContorls({
       Now.camMode = orig;
     };
   });
+
   //
   useAutoEvent("keydown", (ev) => {
     // console.log(ev.key);
