@@ -9,6 +9,11 @@ export function AdaptivePixelRatio({ children, wait }) {
     getGPUTier({ glContext: gl.getContext() }).then((v) => {
       let setDPR = ([a, b]) => {
         let base = window.devicePixelRatio || 1;
+
+        if (base >= 2.5) {
+          base = 2.5;
+        }
+
         if (b >= base) {
           b = base;
         }
