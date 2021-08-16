@@ -48,9 +48,7 @@ export class BloomLayer {
     resBloom.multiplyScalar(reducedRes);
 
     let efComposer = new EffectComposer(get().gl);
-    mini.onResize(() => {
-      efComposer.setPixelRatio(get().gl.getPixelRatio() * reducedRes);
-    });
+    efComposer.setPixelRatio(1);
 
     let renderPass = new RenderPass(get().scene, get().camera);
     mini.onResize(() => {
@@ -58,6 +56,7 @@ export class BloomLayer {
         x: get().gl.domElement.width,
         y: get().gl.domElement.height,
       });
+      //
       resBloom.multiplyScalar(reducedRes);
       renderPass.setSize(resBloom.x, resBloom.y);
     });
@@ -248,7 +247,7 @@ export class BaseLayer {
     let resBase = new Vector2();
 
     resBase.copy({ x: size.width, y: size.height });
-    resBase.multiplyScalar(gl.getPixelRatio());
+    // resBase.multiplyScalar(gl.getPixelRatio());
 
     this.rtt = new WebGLRenderTarget(resBase.width, resBase.height, {
       encoding: sRGBEncoding,
@@ -263,7 +262,7 @@ export class BaseLayer {
         y: get().gl.domElement.height,
       });
 
-      resBase.multiplyScalar(gl.getPixelRatio());
+      // resBase.multiplyScalar(gl.getPixelRatio());
 
       this.rtt = new WebGLRenderTarget(resBase.width, resBase.height, {
         encoding: sRGBEncoding,
@@ -317,9 +316,9 @@ export class Compositor {
 
             gl_FragColor = vec4(baseDiffuseColor.rgb,  baseDiffuseColor.a);
 
-            gl_FragColor.r += 0.5 * pow(bloomDiffuseColor.r, 0.75);
-            gl_FragColor.g += 0.5 * pow(bloomDiffuseColor.g, 0.75);
-            gl_FragColor.b += 0.5 * pow(bloomDiffuseColor.b, 0.75);
+            gl_FragColor.r += 0.75 * pow(bloomDiffuseColor.r, 0.75);
+            gl_FragColor.g += 0.75 * pow(bloomDiffuseColor.g, 0.75);
+            gl_FragColor.b += 0.75 * pow(bloomDiffuseColor.b, 0.75);
           }
         `,
     });
@@ -340,17 +339,17 @@ export class Compositor {
 export function SimpleBloomer() {
   let { mini } = useMiniEngine();
 
-  let looer = useRef(() => {});
+  let task = useRef(() => {});
 
   useEffect(() => {
-    mini.ready.get.then(() => {
+    mini.ready.gl.then(() => {
       //
       let base = new BaseLayer({ mini });
       let bloom = new BloomLayer({ mini });
       let compositor = new Compositor({ mini });
 
       //
-      looer.current = () => {
+      task.current = () => {
         base.renderTexture();
         bloom.renderTexture();
 
@@ -364,7 +363,7 @@ export function SimpleBloomer() {
 
   // invalidate orignal loop
   useFrame(() => {
-    looer.current();
+    task.current();
   }, 1000);
 
   return null;

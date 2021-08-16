@@ -15,7 +15,6 @@ import {
   StarSky,
   TheHelper,
   useComputeEnvMap,
-  AdaptivePixelRatio,
 } from "../vfx-metaverse";
 
 export default function Page() {
