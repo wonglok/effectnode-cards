@@ -44,16 +44,7 @@ function Spinner({ children }) {
     }
   });
 
-  //
-
-  return (
-    <group ref={ref}>
-      {children}
-      {/*  */}
-      {/*  */}
-      {/*  */}
-    </group>
-  );
+  return <group ref={ref}>{children}</group>;
 }
 
 function ScaleUp({ children }) {
