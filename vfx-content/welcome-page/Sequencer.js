@@ -153,7 +153,7 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
         last = actions.greetings;
 
         //
-        setBannerText("See you around!");
+        setBannerText("See you around in the spaceship!");
         setVFX("bye");
       },
 
