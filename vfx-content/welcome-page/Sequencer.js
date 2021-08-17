@@ -46,7 +46,7 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
         actions.happyHand.fadeIn(0.1);
         last = actions.happyHand;
         setVFX("none");
-        setBannerText("I'm Lok Lok.");
+        setBannerText("I'm Lok Lok. :D");
       },
 
       () => {
@@ -215,6 +215,7 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
     };
   }, [avatar]);
 
+  //
   let facingToCamera = new Vector3();
   useFrame((st, dt) => {
     facingToCamera.copy(st.camera.position);
@@ -320,6 +321,7 @@ LeftHandPinky1
 LeftHandPinky2
 LeftHandPinky3
 LeftHandPinky4
+
 RightShoulder
 RightArm
 RightForeArm
@@ -344,6 +346,7 @@ RightHandPinky1
 RightHandPinky2
 RightHandPinky3
 RightHandPinky4
+
 LeftUpLeg
 LeftLeg
 LeftFoot

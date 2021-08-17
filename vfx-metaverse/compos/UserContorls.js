@@ -165,9 +165,11 @@ export function UserContorls({
     // window.addEventListener('touchend', () => {
     //   isDown = false
     // })
-
+    let force = 1;
     manager.on("start move dir plain", function (evt, nipple) {
       if (nipple?.angle?.radian) {
+        force = nipple.force;
+
         nippleAngle = nipple?.angle?.radian;
         orbit.enableRotate = false;
 
@@ -183,6 +185,7 @@ export function UserContorls({
 
     manager.on("end", () => {
       nippleAngle = 0;
+      force = 0;
       works.current.endForward = () => {
         forward.multiplyScalar(0.8);
       };
@@ -229,6 +232,8 @@ export function UserContorls({
       } else {
         scaler = MathUtils.lerp(scaler, 0.0, 0.1);
       }
+
+      scaler *= force;
 
       // controls.getDirection(dir);
       if (Now.keyW) {

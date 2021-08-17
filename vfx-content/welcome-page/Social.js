@@ -8,19 +8,23 @@ export function Social() {
   let youtube = useTexture(`/image/social-icons/youtube.png`);
   let tiktok = useTexture(`/image/social-icons/tiktok.png`);
   return (
-    <group position={[1, 1, 0]}>
-      <group position={[0, 0.5, 0]}>
-        <Icon map={web}></Icon>
-      </group>
-      <group position={[0, 0.0, 0]}>
-        <Icon map={ig}></Icon>
+    <group position={[0, 0, 0.5]}>
+      <group position={[0.5, 1, 0]}>
+        <group position={[0, 0.5, 0]}>
+          <Icon map={youtube}></Icon>
+        </group>
+        <group position={[0, 0.0, 0]}>
+          <Icon map={tiktok}></Icon>
+        </group>
       </group>
 
-      <group position={[0.5, 0.5, 0]}>
-        <Icon map={youtube}></Icon>
-      </group>
-      <group position={[0.5, 0.0, 0]}>
-        <Icon map={tiktok}></Icon>
+      <group position={[-0.5, 1, 0]}>
+        <group position={[0, 0.5, 0]}>
+          <Icon map={web}></Icon>
+        </group>
+        <group position={[0, 0.0, 0]}>
+          <Icon map={ig}></Icon>
+        </group>
       </group>
     </group>
   );

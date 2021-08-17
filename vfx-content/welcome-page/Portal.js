@@ -21,8 +21,8 @@ export function Portal({ avatar }) {
 
   return (
     <group ref={ref}>
-      <mesh position={[0, 1.5, 0]}>
-        <sphereBufferGeometry args={[1.0, 35, 35]}></sphereBufferGeometry>
+      <mesh position={[0, 1.15, 0]}>
+        <sphereBufferGeometry args={[1.15, 35, 35]}></sphereBufferGeometry>
         <meshStandardMaterial
           color={"#ffffff"}
           // userData={{ enableBloom: true }}
@@ -35,3 +35,5 @@ export function Portal({ avatar }) {
     </group>
   );
 }
+
+//
