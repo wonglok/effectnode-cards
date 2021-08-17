@@ -6,12 +6,13 @@ import { HelloSign } from "./HelloSign";
 import { Portal } from "./Portal";
 import { Social } from "./Social";
 import { ByeSign } from "./ByeSign";
+import { EnjoySign } from "./EnjoySign";
 
 export function Sequencer({ avatar, mixer, actions, envMap }) {
   let ref = useRef();
   let banner = useRef();
   let [text, setBannerText] = useState("Welcome to Your Card!");
-  let [show, setShow] = useState("hands");
+  let [showVFX, setVFX] = useState("hands");
 
   useEffect(() => {
     mixer.stopAllAction();
@@ -30,7 +31,7 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
         actions.hi0.clampWhenFinished = true;
         actions.hi0.play();
         last = actions.hi0;
-        setShow("hi");
+        setVFX("hi");
         setBannerText("Welcome to My Spaceship!");
       },
       () => {
@@ -43,9 +44,10 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
         actions.happyHand.play();
         actions.happyHand.fadeIn(0.1);
         last = actions.happyHand;
-        setShow("none");
+        setVFX("none");
         setBannerText("I'm Lok Lok.");
       },
+
       () => {
         if (last) {
           last?.fadeOut(0.1);
@@ -56,7 +58,7 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
         actions.sillyjoey.play();
         actions.sillyjoey.fadeIn(0.1);
         last = actions.sillyjoey;
-        setShow("none");
+        setVFX("none");
         setBannerText("This is a place \nfor You to be You.");
       },
       () => {
@@ -71,11 +73,12 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
         last = actions.gesturePointer;
 
         //
-        setShow("social");
+        setVFX("social");
         setBannerText(
           "You can add your social media accounts or websites here."
         );
       },
+
       () => {
         if (last) {
           last?.fadeOut(0.1);
@@ -88,21 +91,6 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
         last = actions.gesturePointer2;
       },
 
-      // () => {
-      //   if (last) {
-      //     last?.fadeOut(0.1);
-      //   }
-      //   actions.spin.reset();
-      //   actions.spin.repetitions = 1;
-      //   actions.spin.clampWhenFinished = true;
-      //   actions.spin.play();
-      //   actions.spin.fadeIn(0.1);
-      //   last = actions.spin;
-
-      //   setShow("avatar");
-      //   setBannerText("You can customize your own avatar.");
-      // },
-
       () => {
         if (last) {
           last?.fadeOut(0.1);
@@ -114,7 +102,7 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
         actions.happyIdle.fadeIn(0.1);
         last = actions.happyIdle;
 
-        setShow("visit");
+        setVFX("visit");
         setBannerText("You can also visit your friend's place with portals.");
       },
       () => {
@@ -129,8 +117,27 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
         last = actions.handForward;
 
         //
-        setShow("enjoy");
+        setVFX("enjoy");
         setBannerText("Enjoy your time here!");
+      },
+
+      () => {
+        if (last) {
+          last?.fadeOut(0.1);
+        }
+        actions.warmup.reset();
+        actions.warmup.repetitions = 1;
+        actions.warmup.clampWhenFinished = true;
+        actions.warmup.play();
+        actions.warmup.fadeIn(0.1);
+        last = actions.warmup;
+
+        //
+        setVFX("warmup");
+        //
+        setBannerText(
+          "Let's use WASD keys or \n Joystick on screen \n to move around."
+        );
       },
 
       () => {
@@ -147,8 +154,9 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
 
         //
         setBannerText("See you around!");
-        setShow("bye");
+        setVFX("bye");
       },
+
       //
       //
       () => {
@@ -163,8 +171,8 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
         last = actions.bow;
 
         //
-        setBannerText("Thank you for Visiting!");
-        setShow("bye");
+        setBannerText("Thank You!");
+        setVFX("none");
       },
       //
     ];
@@ -248,14 +256,21 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
 
         <pointLight position={[0, 0, 10]} intensity={25}></pointLight>
 
-        <HelloSign visible={show === "hi"} avatar={avatar}></HelloSign>
-        <ByeSign visible={show === "bye"} avatar={avatar}></ByeSign>
+        <HelloSign visible={showVFX === "hi"} avatar={avatar}></HelloSign>
 
-        <group visible={show === "social"}>
+        <ByeSign visible={showVFX === "bye"} avatar={avatar}></ByeSign>
+
+        <EnjoySign
+          visible={showVFX === "enjoy"}
+          envMap={envMap}
+          avatar={avatar}
+        ></EnjoySign>
+
+        <group visible={showVFX === "social"}>
           <Social avatar={avatar}></Social>
         </group>
 
-        <group visible={show === "visit"}>
+        <group visible={showVFX === "visit"}>
           <Portal avatar={avatar}></Portal>
         </group>
       </group>

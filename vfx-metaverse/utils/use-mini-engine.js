@@ -1,26 +1,26 @@
-import { useFrame, useThree } from '@react-three/fiber'
-import { useEffect, useState } from 'react'
-import { Mini } from '../lib/Mini'
+import { useFrame, useThree } from "@react-three/fiber";
+import { useEffect, useMemo, useState } from "react";
+import { Mini } from "../lib/Mini";
 
 export function useMiniEngine() {
-  const { get } = useThree()
-  const [mini] = useState(() => {
-    return new Mini({})
-  })
+  const { get } = useThree();
+  const mini = useMemo(() => {
+    return new Mini({});
+  }, []);
 
   useEffect(() => {
     return () => {
-      mini.clean()
-    }
-  }, [])
+      mini.clean();
+    };
+  }, []);
 
   useFrame(() => {
-    const st = get()
+    const st = get();
     for (const kn in st) {
-      mini.set(kn, st[kn])
+      mini.set(kn, st[kn]);
     }
-    mini.work()
-  })
+    mini.work();
+  });
 
-  return { mini }
+  return { mini };
 }

@@ -22,7 +22,7 @@ export function WelcomeAvatar({ envMap }) {
   }, [avatar]);
 
   let fbx = {
-    // warmup: useFBX(`/rpm-actions/mma-warmup.fbx`),
+    warmup: useFBX(`/rpm-actions/mma-warmup.fbx`),
     // hiphop: useFBX(`/rpm-actions/dance-hiphop.fbx`),
 
     greetings: useFBX(`/rpm-actions/greetings.fbx`),

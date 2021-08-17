@@ -158,16 +158,16 @@ function useShaderEnvLight({}) {
 
     vec4 mainImage (vec2 uv, vec3 direction, vec3 pos) {
       return vec4(vec3(
-        1.0 - pattern(direction.xy * 1.70123 + -0.17 * cos(time * 0.05)),
-        1.0 - pattern(direction.xy * 1.70123 +  0.0 * cos(time * 0.05)),
-        1.0 - pattern(direction.xy * 1.70123 +  0.17 * cos(time * 0.05))
+        1.0 - pattern(direction.xy * 3.70123 + -0.17 * cos(time * 0.05)),
+        1.0 - pattern(direction.xy * 3.70123 +  0.0 * cos(time * 0.05)),
+        1.0 - pattern(direction.xy * 3.70123 +  0.17 * cos(time * 0.05))
       ), 1.0);
     }
   `.trim(),
     {
       // textureBG: { value: tex },
     },
-    32
+    64
   );
 
   useEffect(() => {
