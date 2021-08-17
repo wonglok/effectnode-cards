@@ -31,6 +31,7 @@ export async function getServerSideProps(context) {
           permanent: false,
         },
       };
+      2;
     } else {
       return {
         props: {
@@ -51,7 +52,9 @@ export async function getServerSideProps(context) {
 }
 
 export default function PageLoader({ meta, slug }) {
+  //
   console.log(slug, meta);
+  //
   return <div>{slug}</div>;
 }
 

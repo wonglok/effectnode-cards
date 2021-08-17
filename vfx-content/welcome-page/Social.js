@@ -59,7 +59,11 @@ export function Icon({ map }) {
         <cylinderBufferGeometry
           args={[0.2, 0.2, 0.05, 32, 1]}
         ></cylinderBufferGeometry>
-        <meshBasicMaterial color={"#bababa"}></meshBasicMaterial>
+        <meshStandardMaterial
+          metalness={1}
+          roughness={0}
+          color={"#bababa"}
+        ></meshStandardMaterial>
       </mesh>
     </group>
   );

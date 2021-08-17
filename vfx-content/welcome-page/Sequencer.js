@@ -7,6 +7,7 @@ import { Portal } from "./Portal";
 import { Social } from "./Social";
 import { ByeSign } from "./ByeSign";
 import { EnjoySign } from "./EnjoySign";
+import { HipsRing } from "./HipsRing";
 
 export function Sequencer({ avatar, mixer, actions, envMap }) {
   let ref = useRef();
@@ -58,7 +59,7 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
         actions.sillyjoey.play();
         actions.sillyjoey.fadeIn(0.1);
         last = actions.sillyjoey;
-        setVFX("none");
+        setVFX("place");
         setBannerText("This is a place \nfor You to be You.");
       },
       () => {
@@ -265,6 +266,12 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
           envMap={envMap}
           avatar={avatar}
         ></EnjoySign>
+
+        <HipsRing
+          visible={showVFX === "place"}
+          envMap={envMap}
+          avatar={avatar}
+        ></HipsRing>
 
         <group visible={showVFX === "social"}>
           <Social avatar={avatar}></Social>
