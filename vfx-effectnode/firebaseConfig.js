@@ -1,6 +1,8 @@
 export const firebaseConfig = {
   apiKey: "AIzaSyC7x57s-6fZIknaQ40QC3_6PRYwJ5KgTRo",
   authDomain: "my3dworld-club.firebaseapp.com",
+  databaseURL:
+    "https://my3dworld-club-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "my3dworld-club",
   storageBucket: "my3dworld-club.appspot.com",
   messagingSenderId: "612670919698",

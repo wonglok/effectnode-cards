@@ -77,7 +77,7 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
         //
         setVFX("social");
         setBannerText(
-          "You can add your social media accounts or websites in yor Zone."
+          "You can add your social media accounts or websites in your Zone."
         );
       },
 

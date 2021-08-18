@@ -16,6 +16,7 @@
     "effectnode-3dworld": "^0.0.20",
     "effectnode-cms": "1.0.6",
     "firebase": "^8.9.0",
+    "firebaseui": "^4.8.1",
     "next": "^11.1.0",
     "nipplejs": "^0.9.0",
     "react": "17.0.1",
