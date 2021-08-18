@@ -168,13 +168,13 @@ export class MapPlayer {
       }
     }
 
-    const steps = 4;
+    const steps = 3;
     const clock = new Clock();
 
     this.onSimulate = () => {
       let dt = clock.getDelta();
-      if (dt >= 1 / 30) {
-        dt = 1 / 30;
+      if (dt >= 1 / 24) {
+        dt = 1 / 24;
       }
 
       for (let i = 0; i < steps; i++) {

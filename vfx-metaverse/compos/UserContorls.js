@@ -155,7 +155,6 @@ export function UserContorls({
     let forward = new Vector3(0, 0, 0);
     let up = new Vector3(0, 1, 0);
 
-    let ttt = 0;
     let isUsing = false;
     let nippleAngle = 0;
 
@@ -175,11 +174,6 @@ export function UserContorls({
 
         isUsing = true;
         // Now.isDown = true;
-
-        clearTimeout(ttt);
-        ttt = setTimeout(() => {
-          isUsing = false;
-        }, 100);
       }
     });
 
@@ -220,7 +214,7 @@ export function UserContorls({
 
     works.current.ctrl2 = () => {
       if (isUsing) {
-        forward.set(0, 0, -1);
+        forward.set(0, 0, -1 * force);
         forward.applyAxisAngle(
           up,
           orbit.getAzimuthalAngle() + nippleAngle - Math.PI * 0.5 || 0.0
