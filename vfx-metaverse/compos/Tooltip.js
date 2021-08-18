@@ -16,7 +16,7 @@ export function Tooltip({ Now }) {
         font={`/font/Cronos-Pro-Light_12448.ttf`}
       >
         {Now.tooltip ? `${Now.tooltip}\n` : ``}
-        {Now.hoverData?.website ? `${Now.hoverData?.website}\n` : ""}
+        {/* {Now.hoverData?.website ? `${Now.hoverData?.website}\n` : ""} */}
         <meshStandardMaterial
           metalness={1.0}
           roughness={0.0}

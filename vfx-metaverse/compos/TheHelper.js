@@ -1,4 +1,5 @@
 import { useFrame, useThree } from "@react-three/fiber";
+import { useRouter } from "next/dist/client/router";
 import React, { useEffect, useRef } from "react";
 import { MathUtils } from "three";
 import { useAutoEvent } from "../utils/use-auto-event";
@@ -83,6 +84,7 @@ function Floating({ Now, children }) {
 }
 
 function ClickToOpen({ Now }) {
+  let router = useRouter();
   let { gl } = useThree();
 
   let move = 0;
@@ -114,13 +116,17 @@ function ClickToOpen({ Now }) {
       //
       if (Now && move <= 10) {
         if (Now?.hoverData?.website && isDown) {
-          isDown = false;
           let href = document.createElement("a");
           href.href = Now.hoverData.website;
           href.target = "_blank";
           href.click();
         }
+        if (Now?.hoverData?.router && isDown) {
+          router.push(Now.hoverData.router);
+        }
       }
+      isDown = false;
+
       //
     },
     { passive: false },

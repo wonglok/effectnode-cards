@@ -18,14 +18,18 @@ export const makeNow = () => {
     avatarMode: "standing",
     avatarSpeed: 1.0,
 
-    tooltip: "",
+    //
     keyW: false,
     keyA: false,
     keyS: false,
     keyD: false,
+    //
     cursorPos: new Vector3(),
     cursorNormal: new Vector3(),
     cursorType: "hide",
+
+    //
+    tooltip: "",
     hoverData: false,
     isDown: false,
 

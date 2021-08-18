@@ -100,7 +100,7 @@ export const Map3D = ({ children, object }) => {
     }));
 
     let lastState = "";
-    let changeTailColor = (state = "normal") => {
+    let notifyHoverType = (state = "normal") => {
       if (lastState !== state) {
         lastState = state;
         window.dispatchEvent(
@@ -122,13 +122,17 @@ export const Map3D = ({ children, object }) => {
 
       // hit
       if (hit) {
-        if (hit.object.userData.website || hit.object.userData.tooltip) {
-          changeTailColor("hovering");
+        if (
+          hit.object.userData.website ||
+          hit.object.userData.tooltip ||
+          hit.object.userData.router
+        ) {
+          notifyHoverType("hovering");
         } else {
-          changeTailColor("normal");
+          notifyHoverType("normal");
         }
       } else {
-        changeTailColor("normal");
+        notifyHoverType("normal");
       }
 
       // lighup
