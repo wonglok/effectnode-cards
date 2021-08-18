@@ -99,12 +99,12 @@ export const Map3D = ({ children, object }) => {
       Now,
     }));
 
-    let lastColor = "";
-    let changeTailColor = (color = "#ffffff") => {
-      if (lastColor !== color) {
-        lastColor = color;
+    let lastState = "";
+    let changeTailColor = (state = "normal") => {
+      if (lastState !== state) {
+        lastState = state;
         window.dispatchEvent(
-          new window.CustomEvent("set-tail-color", { detail: color })
+          new window.CustomEvent("set-tail-state", { detail: state })
         );
       }
     };
@@ -123,12 +123,12 @@ export const Map3D = ({ children, object }) => {
       // hit
       if (hit) {
         if (hit.object.userData.website || hit.object.userData.tooltip) {
-          changeTailColor(hit.object.userData.hoverColor || "#00ffff");
+          changeTailColor("hovering");
         } else {
-          changeTailColor("#ffffff");
+          changeTailColor("normal");
         }
       } else {
-        changeTailColor("#ffffff");
+        changeTailColor("normal");
       }
 
       // lighup

@@ -200,8 +200,8 @@ class LokLokWiggleDisplay {
     let { geometry, subdivisions, count } = new NoodleGeo({
       count: this.sim.HEIGHT,
       numSides: 4,
-      subdivisions: this.sim.WIDTH * 2,
-      openEnded: false,
+      subdivisions: this.sim.WIDTH * 1,
+      openEnded: true,
     });
 
     geometry.instanceCount = count;
@@ -301,10 +301,15 @@ class LokLokWiggleDisplay {
       }
       return str;
     };
+    //
 
     let latestColor = new Color().copy(this.color);
-    window.addEventListener("set-tail-color", ({ detail: color }) => {
-      latestColor.set(color);
+    window.addEventListener("set-tail-state", ({ detail: state }) => {
+      if (state === "hovering") {
+        latestColor.set("#ffff00");
+      } else {
+        latestColor.set("#ffffff");
+      }
     });
 
     this.node.onLoop(() => {
@@ -427,7 +432,7 @@ class LokLokWiggleDisplay {
 
           vT = t;
 
-          vec2 volume = vec2(0.0333, 0.0333) * (1.0 - t) * 2.0;
+          vec2 volume = vec2(0.01, 0.01);
           createTube(t, volume, transformed, objectNormal);
 
           vec3 transformedNormal = normalMatrix * objectNormal;
@@ -447,17 +452,64 @@ class LokLokWiggleDisplay {
         varying vec3 vViewPosition;
         // uniform sampler2D matcap;
         uniform vec3 tailColor;
+        uniform float time;
+
+
+        const float PI = 3.14159265;
+        const float SCALE = 1.0;
+        const mat3 m = mat3(
+          cos(PI * SCALE), -sin(PI * SCALE), 0.0,
+          sin(PI * SCALE),  cos(PI * SCALE), 0.0,
+          0.0,  0.0, 1.0
+        );
+
+        float noise( in vec3 p ) {
+          return cos(p.x) * sin(p.y) * cos(p.z);
+        }
+
+        float fbm4( vec3 p ) {
+            float f = 0.0;
+            f += 0.5000 * noise( p ); p = m * p * 2.02;
+            f += 0.2500 * noise( p ); p = m * p * 2.03;
+            f += 0.1250 * noise( p ); p = m * p * 2.01;
+            f += 0.0625 * noise( p );
+            return f / 0.9375;
+        }
+
+        float fbm6( vec3 p ) {
+            float f = 0.0;
+            f += 0.500000*(0.5 + 0.5 * noise( p )); p = m*p*2.02;
+            f += 0.250000*(0.5 + 0.5 * noise( p )); p = m*p*2.03;
+            f += 0.125000*(0.5 + 0.5 * noise( p )); p = m*p*2.01;
+            f += 0.062500*(0.5 + 0.5 * noise( p )); p = m*p*2.04;
+            f += 0.031250*(0.5 + 0.5 * noise( p )); p = m*p*2.01;
+            f += 0.015625*(0.5 + 0.5 * noise( p ));
+            return f/0.96875;
+        }
+
+        float pattern (vec3 p) {
+          float vout = fbm4( p + time + fbm6(  p + fbm4( p + time )) );
+          return abs(vout);
+        }
+
         void main (void) {
 
-          // vec3 viewDir = normalize( vViewPosition );
-          // vec3 x = normalize( vec3( viewDir.z, 0.0, - viewDir.x ) );
-          // vec3 y = cross( viewDir, x );
-          // vec2 uv = vec2( dot( x, vNormal ), dot( y, vNormal ) ) * 0.495 + 0.5; // 0.495 to remove artifacts caused by undersized matcap disks
+          vec3 viewDir = normalize( vViewPosition );
+          vec3 x = normalize( vec3( viewDir.z, 0.0, - viewDir.x ) );
+          vec3 y = cross( viewDir, x );
+          vec2 uv = vec2( dot( x, vNormal ), dot( y, vNormal ) ) * 0.495 + 0.5; // 0.495 to remove artifacts caused by undersized matcap disks
 
           // vec4 matcapColor = texture2D( matcap, uv );
 
           vec4 color = vec4((vNormal * vViewPosition), 1.0);
-          gl_FragColor = vec4(tailColor, (1.0 - vT));
+
+          gl_FragColor =  vec4(vec3(
+            4.0 * pow(pattern(vec3(vT + time * 0.3) + -0.35 * cos(time * 0.1)), 1.0),
+            4.0 * pow(pattern(vec3(vT + time * 0.3) +   0.0 * cos(time * 0.1)), 1.0),
+            4.0 * pow(pattern(vec3(vT + time * 0.3) +  0.35 * cos(time * 0.1)), 1.0)
+          ), (1.0 - vT));
+
+          // gl_FragColor = vec4(tailColor, (1.0 - vT));
         }
       `,
       transparent: true,
@@ -696,6 +748,8 @@ class NoodleGeo {
 export class CursorTrackerTail {
   constructor({ mini, mounter, cursor, color = new Color("#ffffff") }) {
     let node = mini;
+
+    // minimum 8
     let SCAN_COUNT = 8;
     let TAIL_LENGTH = 64;
 
@@ -736,22 +790,24 @@ export class CursorTrackerTail {
         }
         orbit.getWorldPosition(worldPos);
 
-        lerpWorldPos.lerp(worldPos, 0.3);
+        lerpWorldPos.lerp(worldPos, 0.1);
       });
 
       trackers.push(lerpWorldPos);
     };
 
-    let count = 3;
+    let count = 7;
     for (let i = 0; i < count; i++) {
       makeTracker({
         setup: ({ origin, orbit }) => {
           origin.rotation.z += ((Math.PI * 2.0) / count) * i;
         },
         update: ({ origin, orbit }) => {
+          //
           origin.rotation.z += 0.1;
           orbit.position.x =
-            0.5 + 0.5 * Math.sin((window.performance.now() / 1000) * 1);
+            0.35 + 0.35 * Math.sin((window.performance.now() / 1000) * 1);
+          //
         },
       });
     }

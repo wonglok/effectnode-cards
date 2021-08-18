@@ -1,6 +1,8 @@
+import { useRouter } from "next/dist/client/router";
 import { AdminGate } from "../../vfx-cms/common/AdminGate";
 import { logout } from "../../vfx-effectnode/admin/firelib";
 export default function Admin() {
+  let router = useRouter();
   return (
     <AdminGate>
       <div>Admin Page</div>
@@ -18,6 +20,8 @@ export default function Admin() {
     </AdminGate>
   );
 }
+
+//
 
 //
 

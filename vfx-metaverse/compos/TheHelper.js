@@ -1,8 +1,8 @@
-import { useFrame, useThree } from '@react-three/fiber'
-import React, { useEffect, useRef } from 'react'
-import { MathUtils } from 'three'
-import { useAutoEvent } from '../utils/use-auto-event'
-import { Tooltip } from './Tooltip'
+import { useFrame, useThree } from "@react-three/fiber";
+import React, { useEffect, useRef } from "react";
+import { MathUtils } from "three";
+import { useAutoEvent } from "../utils/use-auto-event";
+import { Tooltip } from "./Tooltip";
 
 export function TheHelper({ Now }) {
   return (
@@ -12,170 +12,149 @@ export function TheHelper({ Now }) {
       <Tooltip Now={Now}></Tooltip>
       <HideCursor></HideCursor>
     </group>
-  )
+  );
 }
 
 function TheCursor({ Now }) {
-  let core = useRef()
-  let orbit = useRef()
+  let core = useRef();
+  let orbit = useRef();
 
-  let mouse1 = useRef()
-  let mouse2 = useRef()
+  let mouse1 = useRef();
 
-  useAutoEvent('set-tail-color', ({ detail }) => {
+  useAutoEvent("set-tail-state", ({ detail: state }) => {
     if (mouse1.current) {
-      mouse1.current.material.color.set(detail)
+      if (state === "hovering") {
+        mouse1.current.userData.enableBloom = true;
+      } else {
+        mouse1.current.userData.enableBloom = false;
+      }
     }
-    if (mouse2.current) {
-      mouse2.current.material.color.set(detail)
-    }
-  })
+  });
 
   useFrame(({ camera }) => {
     if (core.current) {
-      core.current.position.copy(camera.position)
-      core.current.rotation.copy(camera.rotation)
+      core.current.position.copy(camera.position);
+      core.current.rotation.copy(camera.rotation);
     }
-  })
+  });
 
   return (
     <group>
       <group ref={core}>
         <group ref={orbit} scale={[1, 1, 1]} position={[0, 0, -1]}>
-          {/* <Text
-            fontSize={0.01}
-            outlineColor='black'
-            outlineWidth={0.001}
-            color='white'
-          >
-            +
-          </Text> */}
-          <group scale={0.001} rotation={[0, 0, Math.PI * 0.25]}>
+          <group scale={0.0007} rotation={[0, 0, Math.PI * 0.25]}>
             <Floating Now={Now}>
               {/*  */}
-              <mesh
-                userData={{ disableBloom: true }}
-                ref={mouse1}
-                position={[0, -9 / 2, 0]}
-              >
+              <mesh ref={mouse1} position={[0, -9 / 2, 0]}>
                 <coneBufferGeometry args={[4, 9, 3, 1]}></coneBufferGeometry>
-                <meshBasicMaterial color='#000000'></meshBasicMaterial>
-              </mesh>
-              {/*  */}
-              <mesh
-                userData={{ disableBloom: true }}
-                ref={mouse2}
-                position={[0, -11, 0]}
-              >
-                <boxBufferGeometry args={[2, 5, 2]}></boxBufferGeometry>
-                <meshBasicMaterial color='#000000'></meshBasicMaterial>
+                <meshStandardMaterial
+                  //
+                  metalness={1.0}
+                  roughness={0.0}
+                ></meshStandardMaterial>
               </mesh>
             </Floating>
           </group>
         </group>
       </group>
     </group>
-  )
+  );
 }
 
 function Floating({ Now, children }) {
-  const ref = useRef()
+  const ref = useRef();
   useFrame(({ clock }) => {
-    let time = clock.getElapsedTime()
+    let time = clock.getElapsedTime();
     if (ref.current) {
       //
-      let target = 0
+      let target = 0;
       if (Now?.hoverData?.website) {
-        target = -3 + Math.cos(time * 5.0) * 3
+        target = -3 + Math.cos(time * 5.0) * 3;
       }
       ref.current.position.y = MathUtils.lerp(
         ref.current.position.y,
         target,
         0.5
-      )
+      );
     }
-  })
+  });
   //
-  return <group ref={ref}>{children}</group>
+  return <group ref={ref}>{children}</group>;
 }
 
 function ClickToOpen({ Now }) {
-  let { gl } = useThree()
+  let { gl } = useThree();
 
-  let move = 0
-  let isDown = false
+  let move = 0;
+  let isDown = false;
   useAutoEvent(
-    'pointerdown',
+    "pointerdown",
     () => {
-      isDown = true
-      move = 0
+      isDown = true;
+      move = 0;
     },
     { passive: false },
     gl.domElement
-  )
-  useAutoEvent(
-    'pointerup',
-    () => {
-      isDown = false
-    },
-    { passive: false },
-    gl.domElement
-  )
+  );
 
   useAutoEvent(
-    'pointermove',
+    "pointermove",
     () => {
       if (isDown) {
-        move++
+        move++;
       }
     },
     { passive: false },
     gl.domElement
-  )
+  );
 
   useAutoEvent(
-    'pointerup',
+    "pointerup",
     () => {
       //
       if (Now && move <= 10) {
-        if (Now?.hoverData?.website) {
-          let href = document.createElement('a')
-          href.href = Now.hoverData.website
-          href.target = '_blank'
-          href.click()
+        if (Now?.hoverData?.website && isDown) {
+          isDown = false;
+          let href = document.createElement("a");
+          href.href = Now.hoverData.website;
+          href.target = "_blank";
+          href.click();
         }
       }
+      //
     },
     { passive: false },
     gl.domElement
-  )
+  );
 
-  return null
+  return null;
 }
 
 function HideCursor() {
   useAutoEvent(
-    'pointerdown',
+    "pointerdown",
     () => {
-      document.body.style.cursor = 'none'
+      document.body.style.cursor = "none";
     },
     { passive: false },
     document.body
-  )
+  );
   useAutoEvent(
-    'pointerup',
+    "pointerup",
     () => {
-      document.body.style.cursor = 'grabbing'
+      document.body.style.cursor = "grabbing";
     },
     { passive: false },
     document.body
-  )
+  );
 
   useEffect(() => {
-    document.body.style.cursor = 'grabbing'
+    document.body.style.cursor = "grabbing";
     return () => {
-      document.body.style.cursor = ''
-    }
-  }, [])
-  return null
+      document.body.style.cursor = "";
+    };
+  }, []);
+  return null;
 }
+
+// they have meta verses i have bible verses

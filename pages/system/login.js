@@ -10,8 +10,15 @@ import { useEffect, useRef } from "react";
 import "firebaseui/dist/firebaseui.css";
 
 export default function System() {
-  let ref = useRef();
+  let loginRef = useRef();
   let errRef = useRef();
+  let msgRef = useRef();
+
+  useEffect(() => {
+    if (window.location.search === "?logout=successful") {
+      msgRef.current.innerHTML = "Successfully logged out";
+    }
+  }, []);
 
   let tryGoAdminPage = () => {
     testAdminRights().then(
@@ -22,7 +29,8 @@ export default function System() {
       () => {
         console.log("bad login");
 
-        errRef.current.innerHTML = "no access rights";
+        errRef.current.innerHTML = "No access rights";
+        msgRef.current.innerHTML = "";
       }
     );
   };
@@ -37,7 +45,7 @@ export default function System() {
 
     ui.disableAutoSignIn();
 
-    ui.start(ref.current, {
+    ui.start(loginRef.current, {
       signInOptions: [
         {
           // Google provider must be enabled in Firebase Console to support one-tap
@@ -53,7 +61,10 @@ export default function System() {
         firebase.auth.EmailAuthProvider.PROVIDER_ID,
       ],
       //
-      credentialHelper: firebaseui.auth.CredentialHelper.GOOGLE_YOLO,
+      credentialHelper:
+        window.innerWidth <= 1024
+          ? firebaseui.auth.CredentialHelper.NONE
+          : firebaseui.auth.CredentialHelper.GOOGLE_YOLO,
 
       callbacks: {
         signInSuccess: function (authResult, redirectUrl) {
@@ -61,7 +72,7 @@ export default function System() {
           // window.location.href.
           // ...
 
-          console.log("login ok", 123);
+          msgRef.current.innerHTML = "Logging you in to the system";
           tryGoAdminPage();
 
           return false;
@@ -71,17 +82,80 @@ export default function System() {
 
     return () => {};
   }, []);
-
   return (
-    <div>
-      <div className="text-red-500" ref={errRef}></div>
-      <div ref={ref}></div>
-      <div>
-        {typeof window !== "undefined" &&
-        window.location.search === "?logout=successful"
-          ? "Successfully logged out."
-          : ""}
-      </div>
+    //
+    <div className="bg-white font-family-karla h-screen">
+      <section className="bg-white font-family-karla h-screen">
+        <div className="w-full flex flex-wrap">
+          <div className="w-full md:w-1/2 flex flex-col">
+            <div className="flex justify-center md:justify-start pt-12 md:pl-12 md:-mb-24">
+              <a href="#" className="bg-black text-white font-bold text-xl p-4">
+                System Admin Login
+              </a>
+            </div>
+
+            <div className="flex flex-col justify-center md:justify-start my-auto pt-8 md:pt-0 px-8 md:px-24 lg:px-32">
+              <p className="text-center text-3xl">Welcome.</p>
+
+              <div className="block lg:hidden h-24"></div>
+              <div ref={loginRef}></div>
+
+              <div className="text-red-500  text-center" ref={errRef}></div>
+              <div className="text-yellow-700  text-center" ref={msgRef}></div>
+
+              {/* <form
+                className="flex flex-col pt-3 md:pt-8"
+                onsubmit="event.preventDefault();"
+              >
+                <div className="flex flex-col pt-4">
+                  <label for="email" className="text-lg">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    placeholder="your@email.com"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mt-1 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+
+                <div className="flex flex-col pt-4">
+                  <label for="password" className="text-lg">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    id="password"
+                    placeholder="Password"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mt-1 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+
+                <input
+                  type="submit"
+                  value="Log In"
+                  className="bg-black text-white font-bold text-lg hover:bg-gray-700 p-2 mt-8"
+                />
+              </form> */}
+              {/* <div className="text-center pt-12 pb-12">
+                <p>
+                  Don't have an account?{" "}
+                  <a href="register.html" className="underline font-semibold">
+                    Register here.
+                  </a>
+                </p>
+              </div> */}
+            </div>
+          </div>
+
+          <div className="w-1/2 shadow-2xl">
+            <img
+              className="object-cover w-full h-screen hidden md:block"
+              src="https://source.unsplash.com/PgkSsx4kKus"
+            />
+          </div>
+        </div>
+      </section>
 
       <button
         onClick={() => {

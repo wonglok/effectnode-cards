@@ -2,6 +2,7 @@ import { PerspectiveCamera, Text, useGLTF } from "@react-three/drei";
 import { Canvas, useThree } from "@react-three/fiber";
 import { getGPUTier } from "detect-gpu";
 import { Suspense, useEffect, useState } from "react";
+import { LoginOverlay } from "../vfx-content/welcome-overlays/LoginOverlay";
 // import { MeshLambertMaterial, MeshPhongMaterial } from "three";
 import { WelcomeAvatar } from "../vfx-content/welcome-page/WelcomeAvatar";
 import {
@@ -12,7 +13,13 @@ import {
   StarSky,
   TheHelper,
   useComputeEnvMap,
+  makeShallowStore,
 } from "../vfx-metaverse";
+
+let UI = makeShallowStore({
+  //
+  layer: "none",
+});
 
 export default function Page() {
   let [ok, setOK] = useState(false);
@@ -69,7 +76,20 @@ export default function Page() {
           </Suspense>
         ) : null}
       </Canvas>
+
+      <Overlays></Overlays>
     </div>
+  );
+}
+
+function Overlays() {
+  UI.makeKeyReactive("layer");
+  return (
+    <>
+      {/*  */}
+      {UI.layer === "login" && <LoginOverlay></LoginOverlay>}
+      {/*  */}
+    </>
   );
 }
 
@@ -117,6 +137,38 @@ function Content3D() {
 
       {/* Optional */}
       <StarSky></StarSky>
+
+      <mesh
+        position={[-3, 2, 0]}
+        userData={{
+          website: "https://effectnode.com",
+          tooltip: "EffectNode Engine",
+        }}
+      >
+        <sphereBufferGeometry></sphereBufferGeometry>
+        <meshStandardMaterial
+          metalness={1}
+          roughness={0}
+          envMap={envMap}
+          color="#00ffff"
+        ></meshStandardMaterial>
+      </mesh>
+
+      <mesh
+        position={[3, 2, 0]}
+        userData={{
+          website: "https://instagram.com/wonglok831",
+          tooltip: "Lok Lok Instagram",
+        }}
+      >
+        <sphereBufferGeometry></sphereBufferGeometry>
+        <meshStandardMaterial
+          metalness={1}
+          roughness={0}
+          envMap={envMap}
+          color="#ff00ff"
+        ></meshStandardMaterial>
+      </mesh>
     </group>
   );
 }
@@ -204,9 +256,9 @@ function useShaderEnvLight({}) {
 
     vec4 mainImage (vec2 uv, vec3 direction, vec3 pos) {
       return vec4(vec3(
-        0.1 + 0.8 - 0.8 * pow(pattern(direction.xyz + -0.15 * cos(time * 0.1)), 0.7),
-        0.1 + 0.8 - 0.8 * pow(pattern(direction.xyz +   0.0 * cos(time * 0.1)), 0.7),
-        0.1 + 0.8 - 0.8 * pow(pattern(direction.xyz +  0.15 * cos(time * 0.1)), 0.7)
+        -0.2 + 1.0 - 1.0 * pow(pattern(direction.xyz + -0.15 * cos(time * 0.1)), 1.25),
+        -0.2 + 1.0 - 1.0 * pow(pattern(direction.xyz +   0.0 * cos(time * 0.1)), 1.25),
+        -0.2 + 1.0 - 1.0 * pow(pattern(direction.xyz +  0.15 * cos(time * 0.1)), 1.25)
       ), 1.0);
     }
   `.trim(),
@@ -239,7 +291,6 @@ function LoadingScreen() {
 
       <Text
         // rotation={[Math.PI * -0.25, 0, 0]}
-
         position={[0, 0, 10]}
         fontSize={0.3}
         color="white"
