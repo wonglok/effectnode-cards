@@ -102,30 +102,30 @@ export class BloomLayer {
       );
     };
 
-    let uniqueMaterialMap = new Map();
+    // let uniqueMaterialMap = new Map();
     let setup = () => {
-      let { scene } = get();
-      scene.traverse((it) => {
-        if (
-          it.material &&
-          (it.material instanceof MeshStandardMaterial ||
-            it.material instanceof MeshPhongMaterial ||
-            it.material instanceof MeshBasicMaterial ||
-            it.material instanceof MeshLambertMaterial ||
-            it.material instanceof MeshMatcapMaterial ||
-            it.material instanceof MeshPhysicalMaterial ||
-            it.material instanceof MeshToonMaterial)
-        ) {
-          if (typeof it.text === "undefined") {
-            if (!uniqueMaterialMap.has(it.uuid + it.material.uuid)) {
-              if (it.material?.clone) {
-                it.material = it.material.clone();
-                uniqueMaterialMap.set(it.uuid + it.material.uuid, true);
-              }
-            }
-          }
-        }
-      });
+      // let { scene } = get();
+      // scene.traverse((it) => {
+      //   if (
+      //     it.material &&
+      //     (it.material instanceof MeshStandardMaterial ||
+      //       it.material instanceof MeshPhongMaterial ||
+      //       it.material instanceof MeshBasicMaterial ||
+      //       it.material instanceof MeshLambertMaterial ||
+      //       it.material instanceof MeshMatcapMaterial ||
+      //       it.material instanceof MeshPhysicalMaterial ||
+      //       it.material instanceof MeshToonMaterial)
+      //   ) {
+      //     if (typeof it.text === "undefined") {
+      //       if (!uniqueMaterialMap.has(it.uuid + it.material.uuid)) {
+      //         if (it.material?.clone) {
+      //           // it.material = it.material.clone();
+      //           uniqueMaterialMap.set(it.uuid + it.material.uuid, true);
+      //         }
+      //       }
+      //     }
+      //   }
+      // });
     };
 
     let enableDarkenMap = new Map();

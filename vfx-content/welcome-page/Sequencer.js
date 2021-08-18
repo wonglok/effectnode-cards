@@ -77,7 +77,7 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
         //
         setVFX("social");
         setBannerText(
-          "You can add your social media accounts or websites here."
+          "You can add your social media accounts or websites in yor Zone."
         );
       },
 
@@ -104,7 +104,9 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
         actions.happyIdle.fadeIn(0.1);
         last = actions.happyIdle;
 
+        //
         setVFX("visit");
+        //
         setBannerText("You can also visit your friend's place with portals.");
       },
 
@@ -159,23 +161,7 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
 
         //
         setVFX("enjoy");
-        setBannerText("Enjoy your time here!");
-      },
-
-      () => {
-        if (last) {
-          last?.fadeOut(0.1);
-        }
-        actions.bow.reset();
-        actions.bow.repetitions = 1;
-        actions.bow.clampWhenFinished = true;
-        actions.bow.play();
-        actions.bow.fadeIn(0.1);
-        last = actions.bow;
-
-        //
-        setBannerText("Thank You!");
-        setVFX("none");
+        setBannerText("Anyways, Enjoy your time here!");
       },
 
       () => {
@@ -192,10 +178,26 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
 
         //
         setBannerText("See you around in the spaceship!");
-        setVFX("bye");
+        setVFX("none");
       },
 
       //
+
+      () => {
+        if (last) {
+          last?.fadeOut(0.1);
+        }
+        actions.bow.reset();
+        actions.bow.repetitions = 1;
+        actions.bow.clampWhenFinished = true;
+        actions.bow.play();
+        actions.bow.fadeIn(0.1);
+        last = actions.bow;
+
+        //
+        setBannerText("Thank You for visiting!");
+        setVFX("none");
+      },
     ];
 
     // sequences[0]();
