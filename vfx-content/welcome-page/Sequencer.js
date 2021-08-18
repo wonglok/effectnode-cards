@@ -140,7 +140,7 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
         last = actions.shoot;
 
         //
-        setBannerText("Wait! Bubble gun fight!");
+        setBannerText("Alert! Bubble Gun Fight!");
         setVFX("gun");
       },
       //
