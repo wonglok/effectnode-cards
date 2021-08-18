@@ -107,21 +107,6 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
         setVFX("visit");
         setBannerText("You can also visit your friend's place with portals.");
       },
-      () => {
-        if (last) {
-          last?.fadeOut(0.1);
-        }
-        actions.handForward.reset();
-        actions.handForward.repetitions = 1;
-        actions.handForward.clampWhenFinished = true;
-        actions.handForward.fadeIn(0.1);
-        actions.handForward.play();
-        last = actions.handForward;
-
-        //
-        setVFX("enjoy");
-        setBannerText("Enjoy your time here!");
-      },
 
       () => {
         if (last) {
@@ -155,26 +140,26 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
         last = actions.shoot;
 
         //
-        setBannerText("Bubble gun fight!");
+        setBannerText("Wait! Bubble gun fight!");
         setVFX("gun");
       },
       //
       //
+
       () => {
         if (last) {
           last?.fadeOut(0.1);
         }
-
-        actions.greetings.reset();
-        actions.greetings.repetitions = 1;
-        actions.greetings.clampWhenFinished = true;
-        actions.greetings.fadeIn(0.1);
-        actions.greetings.play();
-        last = actions.greetings;
+        actions.handForward.reset();
+        actions.handForward.repetitions = 1;
+        actions.handForward.clampWhenFinished = true;
+        actions.handForward.fadeIn(0.1);
+        actions.handForward.play();
+        last = actions.handForward;
 
         //
-        setBannerText("See you around in the spaceship!");
-        setVFX("bye");
+        setVFX("enjoy");
+        setBannerText("Enjoy your time here!");
       },
 
       () => {
@@ -192,6 +177,24 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
         setBannerText("Thank You!");
         setVFX("none");
       },
+
+      () => {
+        if (last) {
+          last?.fadeOut(0.1);
+        }
+
+        actions.greetings.reset();
+        actions.greetings.repetitions = 1;
+        actions.greetings.clampWhenFinished = true;
+        actions.greetings.fadeIn(0.1);
+        actions.greetings.play();
+        last = actions.greetings;
+
+        //
+        setBannerText("See you around in the spaceship!");
+        setVFX("bye");
+      },
+
       //
     ];
 
