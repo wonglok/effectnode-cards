@@ -298,7 +298,7 @@ function LoadingScreen() {
         outlineWidth={0.01}
         textAlign={"center"}
       >
-        {`Loading you into my dream...\n`}
+        {`Loading What's Yours...`}
       </Text>
 
       {/* Optional */}
