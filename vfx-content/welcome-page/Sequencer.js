@@ -8,6 +8,7 @@ import { Social } from "./Social";
 import { ByeSign } from "./ByeSign";
 import { EnjoySign } from "./EnjoySign";
 import { HipsRing } from "./HipsRing";
+import { BubbleGun } from "./BubbleGun";
 
 export function Sequencer({ avatar, mixer, actions, envMap }) {
   let ref = useRef();
@@ -146,6 +147,24 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
           last?.fadeOut(0.1);
         }
 
+        actions.shoot.reset();
+        actions.shoot.repetitions = 3;
+        actions.shoot.clampWhenFinished = true;
+        actions.shoot.fadeIn(0.1);
+        actions.shoot.play();
+        last = actions.shoot;
+
+        //
+        setBannerText("Bubble gun fight!");
+        setVFX("gun");
+      },
+      //
+      //
+      () => {
+        if (last) {
+          last?.fadeOut(0.1);
+        }
+
         actions.greetings.reset();
         actions.greetings.repetitions = 1;
         actions.greetings.clampWhenFinished = true;
@@ -158,8 +177,6 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
         setVFX("bye");
       },
 
-      //
-      //
       () => {
         if (last) {
           last?.fadeOut(0.1);
@@ -178,7 +195,15 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
       //
     ];
 
-    sequences[0]();
+    // sequences[0]();
+
+    let isDebugging = false;
+    if (isDebugging) {
+      sequences[sequences.length - 3]();
+      actions.shoot.repetitions = Infinity;
+    } else {
+      sequences[0]();
+    }
 
     let h = {
       loop: () => {
@@ -191,7 +216,7 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
         cursor++;
         cursor = cursor % sequences.length;
 
-        if (!skip) {
+        if (!skip && !isDebugging) {
           sequences[cursor]();
         }
       },
@@ -281,6 +306,8 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
         <group visible={showVFX === "visit"}>
           <Portal avatar={avatar}></Portal>
         </group>
+
+        <BubbleGun visible={showVFX === "gun"} avatar={avatar}></BubbleGun>
       </group>
     </group>
   );

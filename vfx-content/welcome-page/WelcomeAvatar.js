@@ -37,6 +37,7 @@ export function WelcomeAvatar({ envMap }) {
     sillyjoey: useFBX(`/rpm-actions/silly-dance.fbx`),
     bow: useFBX(`/rpm-actions/bow-quick-formal.fbx`),
     hi0: useFBX(`/rpm-actions/hi-wave-both-hands.fbx`),
+    shoot: useFBX(`/rpm-actions/gun-shoot.fbx`),
   };
 
   let actions = useMemo(() => {
