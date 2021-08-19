@@ -17,6 +17,8 @@ export function TheHelper({ Now }) {
 }
 
 function TheCursor({ Now }) {
+  Now.makeKeyReactive("hint");
+
   let core = useRef();
 
   let mouse1 = useRef();
@@ -37,8 +39,6 @@ function TheCursor({ Now }) {
       core.current.rotation.copy(camera.rotation);
     }
   });
-
-  Now.makeKeyReactive("hint");
 
   return (
     <group>

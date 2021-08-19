@@ -2,7 +2,7 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
 import "firebase/analytics";
-import { firebaseConfig } from "../firebaseConfig";
+import { firebaseConfig } from "./firebaseConfig";
 let initMap = new Map();
 
 export function getFirebase() {
@@ -16,7 +16,7 @@ export function getFirebase() {
 
 /**
  *
- * @returns @type {firebaseui.auth.AuthUI}
+ * @returns @type firebaseui.auth.AuthUI
  */
 export function getUI() {
   let firebase = getFirebase();
@@ -25,6 +25,8 @@ export function getUI() {
     var fireUI = new firebaseui.auth.AuthUI(firebase.auth());
     initMap.set("ui", fireUI);
   }
+
+  /** @type firebaseui.auth.AuthUI */
   return initMap.get("ui");
 }
 
@@ -88,6 +90,8 @@ export function loginGoogle() {
 
         console.log(error);
         reject(error);
+
+        // firebase.auth().signInWithRedirect(provider)
       });
   });
 }

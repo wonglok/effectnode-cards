@@ -4,7 +4,7 @@ import {
   getUI,
   loginGoogle,
   testAdminRights,
-} from "../../vfx-effectnode/admin/firelib";
+} from "../../vfx-firebase/firelib.js";
 import router from "next/router";
 import { useEffect, useRef } from "react";
 import "firebaseui/dist/firebaseui.css";
@@ -102,49 +102,6 @@ export default function System() {
 
               <div className="text-red-500  text-center" ref={errRef}></div>
               <div className="text-yellow-700  text-center" ref={msgRef}></div>
-
-              {/* <form
-                className="flex flex-col pt-3 md:pt-8"
-                onsubmit="event.preventDefault();"
-              >
-                <div className="flex flex-col pt-4">
-                  <label for="email" className="text-lg">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    placeholder="your@email.com"
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mt-1 leading-tight focus:outline-none focus:shadow-outline"
-                  />
-                </div>
-
-                <div className="flex flex-col pt-4">
-                  <label for="password" className="text-lg">
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    id="password"
-                    placeholder="Password"
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mt-1 leading-tight focus:outline-none focus:shadow-outline"
-                  />
-                </div>
-
-                <input
-                  type="submit"
-                  value="Log In"
-                  className="bg-black text-white font-bold text-lg hover:bg-gray-700 p-2 mt-8"
-                />
-              </form> */}
-              {/* <div className="text-center pt-12 pb-12">
-                <p>
-                  Don't have an account?{" "}
-                  <a href="register.html" className="underline font-semibold">
-                    Register here.
-                  </a>
-                </p>
-              </div> */}
             </div>
           </div>
 

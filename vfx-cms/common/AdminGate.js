@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { testAdminRights } from "../../vfx-effectnode/admin/firelib";
+import { testAdminRights } from "../../vfx-firebase/firelib.js";
 
 export function AdminGate({ children }) {
   //

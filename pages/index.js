@@ -1,11 +1,10 @@
-import { PerspectiveCamera, Text, useGLTF } from "@react-three/drei";
+import { PerspectiveCamera, Preload, Text, useGLTF } from "@react-three/drei";
 import { Canvas, useThree } from "@react-three/fiber";
 import { getGPUTier } from "detect-gpu";
 import { Suspense, useEffect, useState } from "react";
 import { LoginOverlay } from "../vfx-content/welcome-overlays/LoginOverlay";
 // import { MeshLambertMaterial, MeshPhongMaterial } from "three";
 import { WelcomeAvatar } from "../vfx-content/welcome-page/WelcomeAvatar";
-import router from "next/router";
 import {
   Map3D,
   UserContorls,
@@ -18,6 +17,7 @@ import {
 } from "../vfx-metaverse";
 
 import { Now } from "../vfx-metaverse/lib/Now";
+import { LoginBall } from "../vfx-content/welcome-page/LoginBall";
 
 let UI = makeShallowStore({
   //
@@ -30,6 +30,7 @@ export default function Page() {
   return (
     <div className="full">
       <Canvas
+        concurrent
         dpr={[1, 3]}
         onCreated={({ gl }) => {
           getGPUTier({ glContext: gl.getContext() }).then((v) => {
@@ -76,6 +77,7 @@ export default function Page() {
         {ok ? (
           <Suspense fallback={<LoadingScreen></LoadingScreen>}>
             <Content3D></Content3D>
+            <Preload all />
           </Suspense>
         ) : null}
       </Canvas>
@@ -132,37 +134,18 @@ function Content3D() {
       <TheHelper Now={Now}></TheHelper>
 
       <SimpleBloomer></SimpleBloomer>
-
       <StarSky></StarSky>
 
-      <mesh
-        position={[-3, 2, 0]}
-        userData={{
-          onClick: () => {
-            console.log("emit on click");
-          },
-          hint: "Login",
-        }}
-        onClick={() => {
-          router.push("/login");
-        }}
-      >
-        <sphereBufferGeometry></sphereBufferGeometry>
-        <meshStandardMaterial
-          metalness={1}
-          roughness={0}
-          envMap={envMap}
-          color="#00ffff"
-        ></meshStandardMaterial>
-      </mesh>
-
+      <LoginBall envMap={envMap}></LoginBall>
       <mesh
         onClick={() => {
           console.log("click IG");
         }}
         position={[3, 2, 0]}
         userData={{
-          website: "https://instagram.com/wonglok831",
+          onClick: () => {
+            console.log("emit on fun");
+          },
           hint: "Activate With Lok Lok Card",
         }}
       >
@@ -303,7 +286,7 @@ function LoadingScreen() {
         outlineWidth={0.01}
         textAlign={"center"}
       >
-        {`Wait... I'm loading it...`}
+        {`Loading...`}
       </Text>
 
       {/* Optional */}
