@@ -1,8 +1,7 @@
-import { PerspectiveCamera, Preload, Text, useGLTF } from "@react-three/drei";
+import { Preload, useGLTF } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { getGPUTier } from "detect-gpu";
-import { Suspense, useEffect, useRef, useState } from "react";
-import { LoginOverlay } from "../vfx-content/welcome-overlays/LoginOverlay";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 // import { MeshLambertMaterial, MeshPhongMaterial } from "three";
 import { WelcomeAvatar } from "../vfx-content/welcome-page/WelcomeAvatar";
 import {
@@ -18,6 +17,8 @@ import {
 
 import { Now } from "../vfx-metaverse/lib/Now";
 import { LoginBall } from "../vfx-content/welcome-page/LoginBall";
+import { LoadingScreen } from "../vfx-content/welcome-page/LoadingScreen";
+import { MathUtils } from "three";
 
 let UI = makeShallowStore({
   //
@@ -25,8 +26,7 @@ let UI = makeShallowStore({
 });
 
 export default function Page() {
-  let [ok, setOK] = useState(false);
-
+  let [wait, setOK] = useState(false);
   return (
     <div className="full">
       <Canvas
@@ -34,7 +34,6 @@ export default function Page() {
         dpr={[1, 3]}
         onCreated={({ gl }) => {
           getGPUTier({ glContext: gl.getContext() }).then((v) => {
-            //
             let setDPR = ([a, b]) => {
               let base = window.devicePixelRatio || 1;
               if (b >= base) {
@@ -43,8 +42,6 @@ export default function Page() {
 
               //
               gl.setPixelRatio(b);
-
-              //
               setOK(true);
             };
 
@@ -74,12 +71,9 @@ export default function Page() {
         //
         style={{ width: "100%", height: "100%" }}
       >
-        {ok ? (
-          <Suspense fallback={<LoadingScreen></LoadingScreen>}>
-            <Content3D></Content3D>
-            <Preload all />
-          </Suspense>
-        ) : null}
+        <Suspense fallback={<LoadingScreen></LoadingScreen>}>
+          {wait && <Content3D></Content3D>}
+        </Suspense>
       </Canvas>
 
       {/* <Overlays></Overlays> */}
@@ -95,7 +89,7 @@ function Overlays() {
       let cur = cursorRef.current;
       if (cur) {
         cur.innerHTML = JSON.stringify(
-          Now.cursorPos.toArray().map((e) => e.toFixed(2) + 0)
+          Now.cursorPos.toArray().map((e) => Number(e.toFixed(2)))
         );
       }
     });
@@ -109,8 +103,6 @@ function Overlays() {
 
   return (
     <>
-      {/*  */}
-      {/*  */}
       <div className="absolute top-0 right-0" ref={cursorRef}></div>
     </>
   );
@@ -121,7 +113,7 @@ function Overlays() {
 
 function Content3D() {
   let { envMap } = useShaderEnvLight({ imageURL: `/image/sky.png` });
-  let gltf = useGLTF(`/map/space-walk-001.glb`);
+  let gltf = useGLTF(`/map/spaewalk/space-walk-v003.glb`);
 
   return (
     <group>
@@ -176,6 +168,45 @@ function Content3D() {
           color="#ff00ff"
         ></meshStandardMaterial>
       </mesh> */}
+
+      <Suspense fallback={null}>
+        <HoneyShip></HoneyShip>
+      </Suspense>
+    </group>
+  );
+}
+
+// public/objects
+
+function HoneyShip() {
+  let gltf = useGLTF(`/objects/spaceship-05/spaceship-05.glb`);
+
+  let latest = useRef(0);
+  useMemo(() => {
+    let honey = gltf.scene;
+
+    honey.traverse((it) => {
+      if (it?.material) {
+        it.userData.hint = "Travel to Ship";
+        it.userData.onClick = () => {};
+        // it.material.color = new Color("#00ffff");
+        // it.material.emissive = new Color("#0000ff");
+      }
+    });
+  }, [gltf]);
+
+  useFrame(({ clock, camera }) => {
+    gltf.scene.position.y = Math.sin(clock.getElapsedTime()) * 0.4;
+
+    gltf.scene.lookAt(camera.position);
+
+    gltf.scene.rotation.x +=
+      0.17 + Math.sin(clock.getElapsedTime() * 1.3) * 0.05;
+  });
+
+  return (
+    <group scale={1} rotation={[0, Math.PI, 0]} position={[0, 3, 80]}>
+      <primitive object={gltf.scene}></primitive>
     </group>
   );
 }
@@ -183,44 +214,6 @@ function Content3D() {
 function useShaderEnvLight({}) {
   let { get } = useThree();
 
-  // const mat2 m = mat2( 0.80,  0.60, -0.60,  0.80 );
-
-  // float noise( in vec2 p ) {
-  //   return sin(p.x)*sin(p.y);
-  // }
-
-  // float fbm4( vec2 p ) {
-  //     float f = 0.0;
-  //     f += 0.5000 * noise( p ); p = m * p * 2.02;
-  //     f += 0.2500 * noise( p ); p = m * p * 2.03;
-  //     f += 0.1250 * noise( p ); p = m * p * 2.01;
-  //     f += 0.0625 * noise( p );
-  //     return f / 0.9375;
-  // }
-
-  // float fbm6( vec2 p ) {
-  //     float f = 0.0;
-  //     f += 0.500000*(0.5 + 0.5 * noise( p )); p = m*p*2.02;
-  //     f += 0.250000*(0.5 + 0.5 * noise( p )); p = m*p*2.03;
-  //     f += 0.125000*(0.5 + 0.5 * noise( p )); p = m*p*2.01;
-  //     f += 0.062500*(0.5 + 0.5 * noise( p )); p = m*p*2.04;
-  //     f += 0.031250*(0.5 + 0.5 * noise( p )); p = m*p*2.01;
-  //     f += 0.015625*(0.5 + 0.5 * noise( p ));
-  //     return f/0.96875;
-  // }
-
-  // float pattern (vec2 p) {
-  //   float vout = fbm4( p + time + fbm6(  p + fbm4( p + time )) );
-  //   return abs(vout);
-  // }
-
-  // vec4 mainImage (vec2 uv, vec3 direction, vec3 pos) {
-  //   return vec4(vec3(
-  //     1.0 - pattern(direction.xy * 3.70123 + -0.17 * cos(time * 0.05)),
-  //     1.0 - pattern(direction.xy * 3.70123 +  0.0 * cos(time * 0.05)),
-  //     1.0 - pattern(direction.xy * 3.70123 +  0.17 * cos(time * 0.05))
-  //   ), 1.0);
-  // }
   let envMap = useComputeEnvMap(
     /* glsl */ `
 
@@ -286,30 +279,41 @@ function useShaderEnvLight({}) {
   return { envMap };
 }
 
-function LoadingScreen() {
-  return (
-    <group>
-      <PerspectiveCamera
-        // rotation-x={Math.PI * -0.25}
+// const mat2 m = mat2( 0.80,  0.60, -0.60,  0.80 );
 
-        position={[0, 0, 25]}
-        makeDefault={true}
-      ></PerspectiveCamera>
+// float noise( in vec2 p ) {
+//   return sin(p.x)*sin(p.y);
+// }
 
-      <Text
-        // rotation={[Math.PI * -0.25, 0, 0]}
-        position={[0, 0, 10]}
-        fontSize={0.3}
-        color="white"
-        outlineColor={"black"}
-        outlineWidth={0.01}
-        textAlign={"center"}
-      >
-        {`Loading...`}
-      </Text>
+// float fbm4( vec2 p ) {
+//     float f = 0.0;
+//     f += 0.5000 * noise( p ); p = m * p * 2.02;
+//     f += 0.2500 * noise( p ); p = m * p * 2.03;
+//     f += 0.1250 * noise( p ); p = m * p * 2.01;
+//     f += 0.0625 * noise( p );
+//     return f / 0.9375;
+// }
 
-      {/* Optional */}
-      <StarSky></StarSky>
-    </group>
-  );
-}
+// float fbm6( vec2 p ) {
+//     float f = 0.0;
+//     f += 0.500000*(0.5 + 0.5 * noise( p )); p = m*p*2.02;
+//     f += 0.250000*(0.5 + 0.5 * noise( p )); p = m*p*2.03;
+//     f += 0.125000*(0.5 + 0.5 * noise( p )); p = m*p*2.01;
+//     f += 0.062500*(0.5 + 0.5 * noise( p )); p = m*p*2.04;
+//     f += 0.031250*(0.5 + 0.5 * noise( p )); p = m*p*2.01;
+//     f += 0.015625*(0.5 + 0.5 * noise( p ));
+//     return f/0.96875;
+// }
+
+// float pattern (vec2 p) {
+//   float vout = fbm4( p + time + fbm6(  p + fbm4( p + time )) );
+//   return abs(vout);
+// }
+
+// vec4 mainImage (vec2 uv, vec3 direction, vec3 pos) {
+//   return vec4(vec3(
+//     1.0 - pattern(direction.xy * 3.70123 + -0.17 * cos(time * 0.05)),
+//     1.0 - pattern(direction.xy * 3.70123 +  0.0 * cos(time * 0.05)),
+//     1.0 - pattern(direction.xy * 3.70123 +  0.17 * cos(time * 0.05))
+//   ), 1.0);
+// }

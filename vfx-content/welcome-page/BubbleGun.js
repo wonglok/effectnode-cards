@@ -3,7 +3,7 @@ import { createPortal, useFrame } from "@react-three/fiber";
 import { useRef } from "react";
 
 export function BubbleGun({ avatar, visible }) {
-  let gltf = useGLTF(`/objects/bubble-gun.glb`);
+  let gltf = useGLTF(`/objects/bubble-gun/bubble-gun.glb`);
   //
 
   //
