@@ -768,6 +768,7 @@ export class CursorTrackerTail {
 
     let makeTracker = ({ update, setup }) => {
       let looker = new Object3D();
+
       cursor.add(looker);
       mini.onClean(() => {
         cursor.remove(looker);

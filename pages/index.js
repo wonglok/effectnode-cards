@@ -5,6 +5,7 @@ import { Suspense, useEffect, useState } from "react";
 import { LoginOverlay } from "../vfx-content/welcome-overlays/LoginOverlay";
 // import { MeshLambertMaterial, MeshPhongMaterial } from "three";
 import { WelcomeAvatar } from "../vfx-content/welcome-page/WelcomeAvatar";
+import router from "next/router";
 import {
   Map3D,
   UserContorls,
@@ -15,6 +16,8 @@ import {
   useComputeEnvMap,
   makeShallowStore,
 } from "../vfx-metaverse";
+
+import { Now } from "../vfx-metaverse/lib/Now";
 
 let UI = makeShallowStore({
   //
@@ -93,56 +96,55 @@ function Overlays() {
   );
 }
 
+/*
+ */
+
 function Content3D() {
   let { envMap } = useShaderEnvLight({ imageURL: `/image/sky.png` });
   let gltf = useGLTF(`/map/space-walk-001.glb`);
 
   return (
     <group>
-      {/* Optional */}
       {gltf.scene && (
         <group>
-          <Map3D object={gltf.scene}>
-            {({ Now }) => {
-              return (
-                <group>
-                  <UserContorls
-                    higherCamera={-0.6}
-                    avatarSpeed={0.9}
-                    Now={Now}
-                  ></UserContorls>
-                  <TailCursor Now={Now} color={"#ffffff"}></TailCursor>
-                  <TheHelper Now={Now}></TheHelper>
-                </group>
-              );
-            }}
-          </Map3D>
+          <Map3D object={gltf.scene}></Map3D>
+
+          <group
+            position={[
+              //
+              gltf.scene.getObjectByName("welcomeAt").position.x,
+              0,
+              gltf.scene.getObjectByName("welcomeAt").position.z,
+            ]}
+          >
+            <WelcomeAvatar envMap={envMap}></WelcomeAvatar>
+          </group>
         </group>
       )}
 
-      {/* Avatar */}
-      <group
-        position={[
-          //
-          gltf.scene.getObjectByName("welcomeAt").position.x,
-          0,
-          gltf.scene.getObjectByName("welcomeAt").position.z,
-        ]}
-      >
-        <WelcomeAvatar envMap={envMap}></WelcomeAvatar>
-      </group>
+      <UserContorls
+        higherCamera={-0.6}
+        avatarSpeed={0.9}
+        Now={Now}
+      ></UserContorls>
 
-      {/* Simple SimpleBloomer */}
+      <TailCursor Now={Now} color={"#ffffff"}></TailCursor>
+      <TheHelper Now={Now}></TheHelper>
+
       <SimpleBloomer></SimpleBloomer>
 
-      {/* Optional */}
       <StarSky></StarSky>
 
       <mesh
         position={[-3, 2, 0]}
         userData={{
-          website: "https://effectnode.com",
-          tooltip: "EffectNode Engine",
+          onClick: () => {
+            console.log("emit on click");
+          },
+          tooltip: "Login",
+        }}
+        onClick={() => {
+          router.push("/login");
         }}
       >
         <sphereBufferGeometry></sphereBufferGeometry>
@@ -155,6 +157,9 @@ function Content3D() {
       </mesh>
 
       <mesh
+        onClick={() => {
+          console.log("click IG");
+        }}
         position={[3, 2, 0]}
         userData={{
           website: "https://instagram.com/wonglok831",
@@ -298,7 +303,7 @@ function LoadingScreen() {
         outlineWidth={0.01}
         textAlign={"center"}
       >
-        {`Loading What's Yours...`}
+        {`Wait... I'm loading it...`}
       </Text>
 
       {/* Optional */}

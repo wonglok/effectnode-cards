@@ -7,6 +7,7 @@ import { applyAutoEvent, useAutoEvent } from "../utils/use-auto-event";
 // import { CursorTrackerTail } from '../lib/CursorTrackerTail'
 import { PerspectiveCamera } from "@react-three/drei";
 import nipplejs from "nipplejs";
+
 export function UserContorls({
   Now,
   //
@@ -22,7 +23,7 @@ export function UserContorls({
     //
     Now.avatarAt.copy(Now.startAt);
     Now.goingTo.copy(Now.startAt);
-  });
+  }, []);
 
   useAutoEvent(
     `touchstart`,

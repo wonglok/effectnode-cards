@@ -1,24 +1,23 @@
+import { Text } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import { useRouter } from "next/dist/client/router";
+import router from "next/dist/client/router";
 import React, { useEffect, useRef } from "react";
 import { MathUtils } from "three";
 import { useAutoEvent } from "../utils/use-auto-event";
-import { Tooltip } from "./Tooltip";
+// import { Tooltip } from "./Tooltip";
 
 export function TheHelper({ Now }) {
   return (
     <group>
-      <TheCursor Now={Now}></TheCursor>
       <ClickToOpen Now={Now}></ClickToOpen>
-      <Tooltip Now={Now}></Tooltip>
-      <HideCursor></HideCursor>
+      <TheCursor Now={Now}></TheCursor>
+      <DomCursor></DomCursor>
     </group>
   );
 }
 
 function TheCursor({ Now }) {
   let core = useRef();
-  let orbit = useRef();
 
   let mouse1 = useRef();
 
@@ -39,11 +38,32 @@ function TheCursor({ Now }) {
     }
   });
 
+  Now.makeKeyReactive("tooltip");
+
   return (
     <group>
       <group ref={core}>
-        <group ref={orbit} scale={[1, 1, 1]} position={[0, 0, -1]}>
-          <group scale={0.0007} rotation={[0, 0, Math.PI * 0.25]}>
+        <group position={[0.01, -0.01, -1]}>
+          <Text
+            anchorX="left"
+            anchorY="top"
+            userData={{ enableBloom: true }}
+            outlineWidth={0.001333}
+            fontSize={0.024}
+            font={`/font/Cronos-Pro-Light_12448.ttf`}
+          >
+            {Now.tooltip ? `${Now.tooltip}\n` : ``}
+            {/* {Now.hoverData?.website ? `${Now.hoverData?.website}\n` : ""} */}
+            <meshStandardMaterial
+              metalness={1.0}
+              roughness={0.0}
+              userData={{ enableBloom: true }}
+            ></meshStandardMaterial>
+          </Text>
+        </group>
+
+        <group scale={[1, 1, 1]} position={[0, 0, -1]}>
+          <group scale={0.001} rotation={[0, 0, Math.PI * 0.25]}>
             <Floating Now={Now}>
               {/*  */}
               <mesh ref={mouse1} position={[0, -9 / 2, 0]}>
@@ -84,7 +104,6 @@ function Floating({ Now, children }) {
 }
 
 function ClickToOpen({ Now }) {
-  let router = useRouter();
   let { gl } = useThree();
 
   let move = 0;
@@ -120,12 +139,19 @@ function ClickToOpen({ Now }) {
           href.href = Now.hoverData.website;
           href.target = "_blank";
           href.click();
+          isDown = false;
         }
         if (Now?.hoverData?.router && isDown) {
           router.push(Now.hoverData.router);
+          isDown = false;
+        }
+        if (Now?.hoverData?.onClick && isDown) {
+          if (typeof Now?.hoverData?.onClick === "function") {
+            Now?.hoverData?.onClick();
+          }
+          isDown = false;
         }
       }
-      isDown = false;
 
       //
     },
@@ -136,7 +162,7 @@ function ClickToOpen({ Now }) {
   return null;
 }
 
-function HideCursor() {
+function DomCursor() {
   useAutoEvent(
     "pointerdown",
     () => {

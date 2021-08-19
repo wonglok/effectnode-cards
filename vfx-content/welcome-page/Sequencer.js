@@ -236,14 +236,14 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
     };
   }, []);
 
-  useEffect(() => {
-    let refer = ref.current;
-    //
-    refer.add(avatar);
-    return () => {
-      refer.remove(avatar);
-    };
-  }, [avatar]);
+  // useEffect(() => {
+  //   ref.current.add(avatar);
+  //   return () => {
+  //     if (ref.current) {
+  //       ref.current.remove(avatar);
+  //     }
+  //   };
+  // }, [avatar]);
 
   //
   let facingToCamera = new Vector3();
@@ -261,6 +261,7 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
   return (
     <group>
       <group ref={ref}>
+        <primitive object={avatar}></primitive>
         <Text
           ref={banner}
           position={[0, 2, 0.5]}

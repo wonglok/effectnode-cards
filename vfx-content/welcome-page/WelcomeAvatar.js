@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { useFBX, useGLTF } from "@react-three/drei";
+import { Text, useFBX, useGLTF } from "@react-three/drei";
 import { AnimationMixer, PerspectiveCamera, Vector3 } from "three";
 import { useFrame } from "@react-three/fiber";
 import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
@@ -13,13 +13,36 @@ export function WelcomeAvatar({ envMap }) {
 
   let avatar = useMemo(() => {
     let scene = SkeletonUtils.clone(gltf.scene);
-    return scene;
-  }, [gltf]);
+    let avatar = scene;
+
+    avatar.traverse((it) => {
+      it.frustumCulled = false;
+
+      if (it.material) {
+        if (
+          it.material.name === "Wolf3D_Skin" ||
+          it.material.name === "Wolf3D_Eye"
+        ) {
+        } else {
+          if (envMap) {
+            it.material.envMap = envMap;
+
+            it.material.metalness = 1.0;
+            it.material.roughness = 0.05;
+            it.material.roughnessMapIntensity = 0.02;
+            it.material.metalnessMapIntensity = 1.0;
+          }
+        }
+      }
+    });
+
+    return avatar;
+  }, []);
 
   let mixer = useMemo(() => {
     let mixer = new AnimationMixer(avatar);
     return mixer;
-  }, [avatar]);
+  }, []);
 
   let fbx = {
     warmup: useFBX(`/rpm-actions/mma-warmup.fbx`),
@@ -47,33 +70,6 @@ export function WelcomeAvatar({ envMap }) {
     }
     return actions;
   }, []);
-
-  useEffect(() => {
-    avatar.traverse((it) => {
-      it.frustumCulled = false;
-
-      if (it.material) {
-        if (
-          it.material.name === "Wolf3D_Skin" ||
-          it.material.name === "Wolf3D_Eye"
-        ) {
-        } else {
-          if (envMap) {
-            it.material.envMap = envMap;
-
-            it.material.metalness = 1.0;
-            it.material.roughness = 0.05;
-            it.material.roughnessMapIntensity = 0.02;
-            it.material.metalnessMapIntensity = 1.0;
-          }
-        }
-      }
-    });
-
-    return () => {
-      //
-    };
-  }, [avatar]);
 
   useFrame((st, dt) => {
     if (dt <= 1 / 60) {

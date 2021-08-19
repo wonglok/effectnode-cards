@@ -1,42 +1,44 @@
 import { useThree } from "@react-three/fiber";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Collider } from "../lib/Collider";
 import { useMiniEngine } from "../utils/use-mini-engine";
-import { makeNow } from "../utils/make-now";
 import { MapPlayer } from "../lib/MapPlayer";
 import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
 import { PCFSoftShadowMap, PointLight } from "three";
+import { Now } from "../lib/Now";
 
-export const Map3D = ({ children, object }) => {
+export const Map3D = ({ object }) => {
   const { get } = useThree();
-  const nowRef = useRef();
-
   const { mini } = useMiniEngine();
   const colliderRef = useRef();
   const mapPlayerRef = useRef();
 
-  const [floor, setFloor] = useState(false);
+  // const [floor, setFloor] = useState(false);
 
-  useEffect(() => {
-    let { gl } = get();
-
-    gl.shadowMap.enabled = true;
-    gl.shadowMap.type = PCFSoftShadowMap;
-    //
-    return () => {};
-  }, []);
-
-  let handleLights = (floor) => {
-    let { gl } = get();
-
-    gl.physicallyCorrectLights = true;
-
+  let floor = useMemo(() => {
+    let floor = SkeletonUtils.clone(object);
     floor.traverse((it) => {
+      if (it) {
+        if (it.geometry) {
+          it.userData.isFloor = true;
+        }
+
+        if (it.userData.startAt) {
+          it.getWorldPosition(Now.startAt);
+        }
+
+        if (it.userData.startLookAt) {
+          it.getWorldPosition(Now.startLookAt);
+        }
+      }
+
       //
       if (it?.userData?.castShadow) {
         it.castShadow = true;
         it.traverse((sub) => {
-          sub.castShadow = true;
+          if (sub) {
+            sub.castShadow = true;
+          }
         });
       }
 
@@ -44,12 +46,13 @@ export const Map3D = ({ children, object }) => {
       if (it?.userData?.receiveShadow) {
         it.receiveShadow = true;
         it.traverse((sub) => {
-          sub.receiveShadow = true;
+          if (sub) {
+            sub.receiveShadow = true;
+          }
         });
       }
-    });
 
-    floor.traverse((it) => {
+      //
       if (it instanceof PointLight && it.castShadow) {
         it.shadow.mapSize.width = 512;
         it.shadow.mapSize.height = 512;
@@ -58,35 +61,23 @@ export const Map3D = ({ children, object }) => {
       }
     });
 
-    return () => {
-      gl.physicallyCorrectLights = false;
-    };
-  };
+    return floor;
+  }, [object]);
 
   useEffect(() => {
-    //
-    const Now = (nowRef.current = makeNow());
+    let { gl } = get();
 
-    let floor = SkeletonUtils.clone(object);
-    floor.traverse((it) => {
-      if (it) {
-        if (it.userData.startAt) {
-          it.getWorldPosition(Now.startAt);
-        }
+    let handleShadows = () => {
+      gl.physicallyCorrectLights = true;
+      gl.shadowMap.enabled = true;
+      gl.shadowMap.type = PCFSoftShadowMap;
 
-        if (it.userData.startLookAt) {
-          it.getWorldPosition(Now.startLookAt);
-        }
+      return () => {
+        gl.physicallyCorrectLights = false;
+      };
+    };
 
-        if (it.geometry) {
-          it.userData.isFloor = true;
-          it.material.writeDepth = true;
-        }
-      }
-    });
-
-    let cleanPhysical = handleLights(floor);
-    setFloor(floor);
+    let cleanPhysical = handleShadows();
 
     const colliderManager = (colliderRef.current = new Collider({
       floor,
@@ -177,11 +168,7 @@ export const Map3D = ({ children, object }) => {
 
   return (
     <group>
-      {floor && <primitive object={floor}></primitive>}
-
-      {nowRef.current &&
-        typeof children === "function" &&
-        children({ Now: nowRef.current })}
+      <primitive object={floor}></primitive>
     </group>
   );
 };
