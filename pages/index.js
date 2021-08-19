@@ -1,7 +1,7 @@
 import { PerspectiveCamera, Preload, Text, useGLTF } from "@react-three/drei";
-import { Canvas, useThree } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { getGPUTier } from "detect-gpu";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { LoginOverlay } from "../vfx-content/welcome-overlays/LoginOverlay";
 // import { MeshLambertMaterial, MeshPhongMaterial } from "three";
 import { WelcomeAvatar } from "../vfx-content/welcome-page/WelcomeAvatar";
@@ -82,18 +82,36 @@ export default function Page() {
         ) : null}
       </Canvas>
 
-      <Overlays></Overlays>
+      {/* <Overlays></Overlays> */}
     </div>
   );
 }
 
 function Overlays() {
   UI.makeKeyReactive("layer");
+  let cursorRef = useRef();
+  useEffect(() => {
+    let tt = setInterval(() => {
+      let cur = cursorRef.current;
+      if (cur) {
+        cur.innerHTML = JSON.stringify(
+          Now.cursorPos.toArray().map((e) => e.toFixed(2) + 0)
+        );
+      }
+    });
+    //
+    //
+    //
+    return () => {
+      clearInterval(tt);
+    };
+  });
+
   return (
     <>
       {/*  */}
-      {UI.layer === "login" && <LoginOverlay></LoginOverlay>}
       {/*  */}
+      <div className="absolute top-0 right-0" ref={cursorRef}></div>
     </>
   );
 }

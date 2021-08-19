@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { testAdminRights } from "../../vfx-firebase/firelib.js";
 
 export function AdminGate({ children }) {
-  //
   let [ok, setOK] = useState("loading");
 
   useEffect(() => {
@@ -15,7 +14,7 @@ export function AdminGate({ children }) {
       }
     );
   }, []);
-  //
+
   //
   return (
     <div>

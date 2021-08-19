@@ -17,9 +17,6 @@ export function LoginBall() {
       loginGoogle().then(
         ({ user }) => {
           opening = false;
-
-          User.userID = user.uid;
-          console.log(user);
         },
         () => {
           opening = false;
@@ -50,10 +47,14 @@ export function LoginBall() {
         if (user) {
           User.status = "loggedIn";
           User.userID = user.uid;
+          User.displayName = user.displayName;
+          User.photoURL = user.photoURL;
           console.log(user);
         } else {
           User.status = "loggedOut";
           User.userID = false;
+          User.displayName = "";
+          User.photoURL = "";
         }
       });
   }, []);
@@ -95,6 +96,7 @@ export function LoginBall() {
         <group>
           <Text
             position={[0, 1, 0]}
+            textAlign="center"
             anchorX="center"
             anchorY="bottom"
             userData={{ enableBloom: true }}
@@ -102,7 +104,7 @@ export function LoginBall() {
             fontSize={0.5123}
             font={`/font/Cronos-Pro-Light_12448.ttf`}
           >
-            Welcome Back!
+            {`Welcome Back!\n${User.displayName || ""}`}
           </Text>
           <mesh
             // ref={ref}
