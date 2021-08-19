@@ -278,6 +278,12 @@ export function UserContorls({
     };
 
     works.current.ctrl = () => {
+      if (camera.userData.lookAtTarget) {
+        fakeCam.lookAt(camera.userData.lookAtTarget);
+        camera.lookAt(camera.userData.lookAtTarget);
+        orbit.target.copy(camera.userData.lookAtTarget);
+      }
+
       orbit.update();
 
       Now.goingTo.add(forward);
