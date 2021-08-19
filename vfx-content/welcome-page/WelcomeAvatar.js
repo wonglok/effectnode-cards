@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo } from "react";
-import { Text, useFBX, useGLTF } from "@react-three/drei";
-import { AnimationMixer, PerspectiveCamera, Vector3 } from "three";
+import React, { useMemo } from "react";
+import { useFBX, useGLTF } from "@react-three/drei";
+import { AnimationMixer } from "three";
 import { useFrame } from "@react-three/fiber";
 import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
 import { Sequencer } from "./Sequencer";

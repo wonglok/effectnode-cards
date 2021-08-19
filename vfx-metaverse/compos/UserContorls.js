@@ -278,10 +278,19 @@ export function UserContorls({
     };
 
     works.current.ctrl = () => {
-      if (camera.userData.lookAtTarget) {
-        fakeCam.lookAt(camera.userData.lookAtTarget);
-        camera.lookAt(camera.userData.lookAtTarget);
-        orbit.target.copy(camera.userData.lookAtTarget);
+      if (camera.userData.lookAt) {
+        camera.lookAt(camera.userData.lookAt);
+        fakeCam.lookAt(camera.userData.lookAt);
+        orbit.target.copy(camera.userData.lookAt);
+        orbit.enabled = false;
+      } else {
+        orbit.enabled = true;
+      }
+      if (camera.userData.needsResetLookAt) {
+        camera.userData.needsResetLookAt = false;
+        camera.lookAt(0, 0, 1);
+        fakeCam.lookAt(0, 0, 1);
+        orbit.target.set(0, 0, 1);
       }
 
       orbit.update();

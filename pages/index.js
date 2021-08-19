@@ -17,7 +17,7 @@ import {
 import { Now } from "../vfx-metaverse/lib/Now";
 import { LoginBall } from "../vfx-content/welcome-page/LoginBall";
 import { LoadingScreen } from "../vfx-content/welcome-page/LoadingScreen";
-import { Vector2, Vector3 } from "three";
+import { HoneyShip } from "../vfx-content/welcome-page/HoneyShip";
 
 // import { MathUtils } from "three";
 
@@ -149,27 +149,6 @@ function Content3D() {
 
       <LoginBall envMap={envMap}></LoginBall>
 
-      {/* <mesh
-        onClick={() => {
-          console.log("click IG");
-        }}
-        position={[3, 2, 0]}
-        userData={{
-          onClick: () => {
-            console.log("emit on fun");
-          },
-          hint: "Activate Card",
-        }}
-      >
-        <sphereBufferGeometry></sphereBufferGeometry>
-        <meshStandardMaterial
-          metalness={1}
-          roughness={0}
-          envMap={envMap}
-          color="#ff00ff"
-        ></meshStandardMaterial>
-      </mesh> */}
-
       <Suspense fallback={null}>
         <HoneyShip></HoneyShip>
       </Suspense>
@@ -178,79 +157,6 @@ function Content3D() {
 }
 
 // public/objects
-
-function HoneyShip() {
-  let { get } = useThree();
-  let gltf = useGLTF(`/objects/spaceship-05/spaceship-05.glb`);
-
-  let sizer = useRef(1);
-  useMemo(() => {
-    let honey = gltf.scene;
-
-    honey.traverse((it) => {
-      if (it?.material) {
-        it.userData.hint = "Zoom Zoom!";
-        it.userData.onClick = () => {
-          // honey.rotation.x =
-          /** @type require("animejs") */
-          const anime = require("animejs").default;
-          let lookAt = new Vector3();
-          anime({
-            targets: [{ value: 0 }],
-            value: 1,
-            update: (anim) => {
-              let progress = anim.animatables[0].target.value;
-              honey.position.z = progress * 250;
-
-              gltf.scene.getWorldPosition(lookAt);
-              get().camera.userData.lookAtTarget = lookAt;
-
-              gltf.scene.userData.rotationZ =
-                Math.sin(progress * Math.PI * 2.0) * 0.4;
-
-              sizer.current = 1 - progress;
-
-              if (sizer.current < 0.1) {
-                get().camera.userData.lookAtTarget = false;
-              }
-            },
-            complete: () => {
-              honey.traverse((it) => {
-                it.userData.onClick = () => {};
-                it.userData.hint = " ";
-              });
-            },
-            easging: `spring(1, 80, 10, 0)`,
-            duration: 20 * 1000,
-          });
-        };
-        // it.material.color = new Color("#00ffff");
-        // it.material.emissive = new Color("#0000ff");
-      }
-    });
-  }, [gltf]);
-
-  useFrame(({ clock, camera }) => {
-    gltf.scene.scale.setScalar(sizer.current);
-
-    gltf.scene.position.y = Math.sin(clock.getElapsedTime()) * 0.4;
-    // gltf.scene.lookAt(camera.position);
-    // gltf.scene.rotation.x +=
-    //   -0.1 + Math.sin(clock.getElapsedTime() * 1.3) * 0.05;
-
-    // gltf.scene.rotation.z += gltf.scene.userData.rotationZ || 0;
-  });
-
-  return (
-    <group
-      scale={2}
-      rotation={[0, Math.PI * 0.0, 0]}
-      position={[0.71, 3, -40.18]}
-    >
-      <primitive object={gltf.scene}></primitive>
-    </group>
-  );
-}
 
 function useShaderEnvLight({}) {
   let { get } = useThree();
@@ -318,6 +224,29 @@ function useShaderEnvLight({}) {
   }, [envMap]);
 
   return { envMap };
+}
+
+{
+  /* <mesh
+        onClick={() => {
+          console.log("click IG");
+        }}
+        position={[3, 2, 0]}
+        userData={{
+          onClick: () => {
+            console.log("emit on fun");
+          },
+          hint: "Activate Card",
+        }}
+      >
+        <sphereBufferGeometry></sphereBufferGeometry>
+        <meshStandardMaterial
+          metalness={1}
+          roughness={0}
+          envMap={envMap}
+          color="#ff00ff"
+        ></meshStandardMaterial>
+      </mesh> */
 }
 
 // const mat2 m = mat2( 0.80,  0.60, -0.60,  0.80 );

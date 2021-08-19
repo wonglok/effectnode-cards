@@ -258,6 +258,12 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
     }
   });
 
+  useEffect(() => {
+    return () => {
+      avatar.visible = false;
+    };
+  }, [avatar]);
+
   return (
     <group>
       <group ref={ref}>

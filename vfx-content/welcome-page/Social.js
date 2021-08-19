@@ -11,26 +11,26 @@ export function Social() {
     <group position={[0, 0, 0.5]}>
       <group position={[0.5, 1, 0]}>
         <group position={[0, 0.5, 0]}>
-          <Icon map={youtube}></Icon>
+          <Icon hint={`Youtube`} map={youtube}></Icon>
         </group>
         <group position={[0, 0.0, 0]}>
-          <Icon map={tiktok}></Icon>
+          <Icon hint={`TikTok`} map={tiktok}></Icon>
         </group>
       </group>
 
       <group position={[-0.5, 1, 0]}>
         <group position={[0, 0.5, 0]}>
-          <Icon map={web}></Icon>
+          <Icon hint={`Metaverse`} map={web}></Icon>
         </group>
         <group position={[0, 0.0, 0]}>
-          <Icon map={ig}></Icon>
+          <Icon hint={`Instagram`} map={ig}></Icon>
         </group>
       </group>
     </group>
   );
 }
 
-export function Icon({ map }) {
+export function Icon({ map, hint = "" }) {
   let ref = useRef();
   let i = 0;
   useFrame(() => {
@@ -53,7 +53,7 @@ export function Icon({ map }) {
 
   return (
     <group ref={ref}>
-      <mesh position={[0, 0, 0.11]}>
+      <mesh userData={{ hint: hint }} position={[0, 0, 0.11]}>
         {/*  */}
         {/*  */}
         <planeBufferGeometry args={[0.35, 0.35]}></planeBufferGeometry>
