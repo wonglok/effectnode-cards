@@ -141,7 +141,7 @@ function Content3D() {
           onClick: () => {
             console.log("emit on click");
           },
-          tooltip: "Login",
+          hint: "Login",
         }}
         onClick={() => {
           router.push("/login");
@@ -163,7 +163,7 @@ function Content3D() {
         position={[3, 2, 0]}
         userData={{
           website: "https://instagram.com/wonglok831",
-          tooltip: "Lok Lok Instagram",
+          hint: "Activate With Lok Lok Card",
         }}
       >
         <sphereBufferGeometry></sphereBufferGeometry>

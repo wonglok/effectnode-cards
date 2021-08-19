@@ -29,7 +29,7 @@ export const makeNow = () => {
     cursorType: "hide",
 
     //
-    tooltip: "",
+    hint: "",
     hoverData: false,
     isDown: false,
 

@@ -84,7 +84,7 @@ export class Collider {
         it.geometry &&
         (it?.userData?.isHoverable ||
           it?.userData?.isFloor ||
-          it?.userData?.tooltip ||
+          it?.userData?.hint ||
           it?.userData?.website)
       ) {
         source.push(it);

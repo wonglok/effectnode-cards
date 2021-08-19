@@ -115,7 +115,7 @@ export const Map3D = ({ object }) => {
       if (hit) {
         if (
           hit.object.userData.website ||
-          hit.object.userData.tooltip ||
+          hit.object.userData.hint ||
           hit.object.userData.router
         ) {
           notifyHoverType("hovering");
@@ -131,7 +131,11 @@ export const Map3D = ({ object }) => {
         if (lastScan) {
           lastScan.userData.enableBloom = false;
         }
-        if (hit.object.userData.website || hit.object.userData.tooltip) {
+        if (
+          hit.object.userData.website ||
+          hit.object.userData.hint ||
+          hit.object.userData.onClick
+        ) {
           hit.object.userData.enableBloom = true;
           lastScan = hit.object;
         }
@@ -145,15 +149,15 @@ export const Map3D = ({ object }) => {
         if (Now.hoverData !== hit.object.userData) {
           Now.hoverData = hit.object.userData || null;
         }
-        if (Now.tooltip !== hit.object.userData?.tooltip) {
-          Now.tooltip = hit.object.userData.tooltip;
+        if (Now.hint !== hit.object.userData?.hint) {
+          Now.hint = hit.object.userData.hint;
         }
       } else {
         if (Now.hoverData !== null) {
           Now.hoverData = null;
         }
-        if (Now.tooltip !== "") {
-          Now.tooltip = "";
+        if (Now.hint !== "") {
+          Now.hint = "";
         }
       }
 

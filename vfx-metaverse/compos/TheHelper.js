@@ -38,7 +38,7 @@ function TheCursor({ Now }) {
     }
   });
 
-  Now.makeKeyReactive("tooltip");
+  Now.makeKeyReactive("hint");
 
   return (
     <group>
@@ -52,7 +52,7 @@ function TheCursor({ Now }) {
             fontSize={0.024}
             font={`/font/Cronos-Pro-Light_12448.ttf`}
           >
-            {Now.tooltip ? `${Now.tooltip}\n` : ``}
+            {Now.hint ? `${Now.hint}\n` : ``}
             {/* {Now.hoverData?.website ? `${Now.hoverData?.website}\n` : ""} */}
             <meshStandardMaterial
               metalness={1.0}
