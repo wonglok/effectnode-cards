@@ -137,7 +137,8 @@ function Content3D() {
       <StarSky></StarSky>
 
       <LoginBall envMap={envMap}></LoginBall>
-      <mesh
+
+      {/* <mesh
         onClick={() => {
           console.log("click IG");
         }}
@@ -156,7 +157,7 @@ function Content3D() {
           envMap={envMap}
           color="#ff00ff"
         ></meshStandardMaterial>
-      </mesh>
+      </mesh> */}
     </group>
   );
 }

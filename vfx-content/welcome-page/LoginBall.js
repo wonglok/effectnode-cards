@@ -59,7 +59,7 @@ export function LoginBall() {
   }, []);
 
   return (
-    <group position={[-3, 2, 0]}>
+    <group position={[3, 2, 0]}>
       {User.status === "loading" && (
         <group>
           {/* <Text
@@ -93,7 +93,7 @@ export function LoginBall() {
 
       {User.status === "loggedIn" && (
         <group>
-          {/* <Text
+          <Text
             position={[0, 1, 0]}
             anchorX="center"
             anchorY="bottom"
@@ -102,8 +102,8 @@ export function LoginBall() {
             fontSize={0.5123}
             font={`/font/Cronos-Pro-Light_12448.ttf`}
           >
-            Logout
-          </Text> */}
+            Welcome Back!
+          </Text>
           <mesh
             // ref={ref}
 
