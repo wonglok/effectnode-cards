@@ -14,11 +14,11 @@ import {
   useComputeEnvMap,
   makeShallowStore,
 } from "../vfx-metaverse";
-
 import { Now } from "../vfx-metaverse/lib/Now";
 import { LoginBall } from "../vfx-content/welcome-page/LoginBall";
 import { LoadingScreen } from "../vfx-content/welcome-page/LoadingScreen";
-import { MathUtils } from "three";
+
+// import { MathUtils } from "three";
 
 let UI = makeShallowStore({
   //
@@ -188,7 +188,23 @@ function HoneyShip() {
     honey.traverse((it) => {
       if (it?.material) {
         it.userData.hint = "Travel to Ship";
-        it.userData.onClick = () => {};
+        it.userData.onClick = () => {
+          // honey.rotation.x =
+          /** @type require("animejs") */
+          const anime = require("animejs").default;
+
+          anime({
+            targets: [{ value: 0 }],
+            value: Math.PI * 2.0,
+            update: (anim) => {
+              console.log(anim.animatables[0].target.value);
+              gltf.scene.userData.rotationZ = anim.animatables[0].target.value;
+            },
+            complete: () => {},
+            easging: `spring(1, 80, 10, 0)`,
+            duration: 7000,
+          });
+        };
         // it.material.color = new Color("#00ffff");
         // it.material.emissive = new Color("#0000ff");
       }
@@ -202,6 +218,8 @@ function HoneyShip() {
 
     gltf.scene.rotation.x +=
       0.17 + Math.sin(clock.getElapsedTime() * 1.3) * 0.05;
+
+    gltf.scene.rotation.z += gltf.scene.userData.rotationZ || 0;
   });
 
   return (

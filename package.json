@@ -11,6 +11,7 @@
   "dependencies": {
     "@react-three/drei": "^7.3.1",
     "@react-three/fiber": "^7.0.6",
+    "animejs": "^3.2.1",
     "detect-gpu": "^3.1.11",
     "effectnode": "^1.5.3",
     "effectnode-3dworld": "^0.0.20",
