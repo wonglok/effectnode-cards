@@ -93,7 +93,6 @@ export function LoginBall() {
 
       {User.status === "loggedIn" && (
         <group>
-          {/*  */}
           {/* <Text
             position={[0, 1, 0]}
             anchorX="center"

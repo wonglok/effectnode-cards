@@ -50,6 +50,7 @@ function TheCursor({ Now }) {
             userData={{ enableBloom: true }}
             outlineWidth={0.001333}
             fontSize={0.024}
+            maxWidth={0.15}
             font={`/font/Cronos-Pro-Light_12448.ttf`}
           >
             {Now.hint ? `${Now.hint}\n` : ``}

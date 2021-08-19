@@ -146,7 +146,7 @@ function Content3D() {
           onClick: () => {
             console.log("emit on fun");
           },
-          hint: "Activate With Lok Lok Card",
+          hint: "Activate Card",
         }}
       >
         <sphereBufferGeometry></sphereBufferGeometry>
