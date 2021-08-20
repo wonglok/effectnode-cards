@@ -30,7 +30,7 @@ import { makeNow } from "../../vfx-metaverse/utils/make-now";
 //   return height * camera.aspect;
 // };
 
-export function MovieHUD({ envMap, collider }) {
+export function NPCHelper({ envMap, collider }) {
   let { get } = useThree();
 
   //

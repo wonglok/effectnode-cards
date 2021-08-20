@@ -17,7 +17,7 @@ import {
 import { useShaderEnvLight } from "../../vfx-content/welcome-page/useShaderEnvLight";
 import { Now } from "../../vfx-metaverse/lib/Now";
 import { SceneDecorator } from "../../vfx-metaverse/compos/SceneDecorator";
-import { MovieHUD } from "../../vfx-content/storymaker-page/MovieHUD";
+import { NPCHelper } from "../../vfx-content/storymaker-page/NPCHelper";
 import { AvatarSlots } from "../../vfx-content/storymaker-page/AvatarSlots";
 import { LoginGate } from "../../vfx-cms/common/LoginGate";
 export default function StoryPage() {
@@ -117,7 +117,7 @@ function Content3D() {
       {/* <LoginGate></LoginGate> */}
 
       {collider && (
-        <MovieHUD collider={collider} envMap={envMap} map={map}></MovieHUD>
+        <NPCHelper collider={collider} envMap={envMap} map={map}></NPCHelper>
       )}
 
       <UserContorls
