@@ -14,6 +14,7 @@ import {
   useComputeEnvMap,
   makeShallowStore,
 } from "../vfx-metaverse";
+
 import { Now } from "../vfx-metaverse/lib/Now";
 import { LoginBall } from "../vfx-content/welcome-page/LoginBall";
 import { LoadingScreen } from "../vfx-content/welcome-page/LoadingScreen";
