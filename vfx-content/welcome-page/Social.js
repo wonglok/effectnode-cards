@@ -2,30 +2,34 @@ import { useTexture } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useRef } from "react";
 
-export function Social() {
+export function Social({ visible }) {
   let web = useTexture(`/image/social-icons/web.png`);
   let ig = useTexture(`/image/social-icons/ig.png`);
   let youtube = useTexture(`/image/social-icons/youtube.png`);
   let tiktok = useTexture(`/image/social-icons/tiktok.png`);
   return (
-    <group position={[0, 0, 0.5]}>
-      <group position={[0.5, 1, 0]}>
-        <group position={[0, 0.5, 0]}>
-          <Icon hint={`Youtube`} map={youtube}></Icon>
-        </group>
-        <group position={[0, 0.0, 0]}>
-          <Icon hint={`TikTok`} map={tiktok}></Icon>
-        </group>
-      </group>
+    <group>
+      {visible && (
+        <group position={[0, 0, 0.5]}>
+          <group position={[0.5, 1, 0]}>
+            <group position={[0, 0.5, 0]}>
+              <Icon hint={`Youtube`} map={youtube}></Icon>
+            </group>
+            <group position={[0, 0.0, 0]}>
+              <Icon hint={`TikTok`} map={tiktok}></Icon>
+            </group>
+          </group>
 
-      <group position={[-0.5, 1, 0]}>
-        <group position={[0, 0.5, 0]}>
-          <Icon hint={`Metaverse`} map={web}></Icon>
+          <group position={[-0.5, 1, 0]}>
+            <group position={[0, 0.5, 0]}>
+              <Icon hint={`Metaverse`} map={web}></Icon>
+            </group>
+            <group position={[0, 0.0, 0]}>
+              <Icon hint={`Instagram`} map={ig}></Icon>
+            </group>
+          </group>
         </group>
-        <group position={[0, 0.0, 0]}>
-          <Icon hint={`Instagram`} map={ig}></Icon>
-        </group>
-      </group>
+      )}
     </group>
   );
 }

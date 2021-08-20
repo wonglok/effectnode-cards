@@ -31,34 +31,6 @@ export const Map3D = ({ object }) => {
           it.getWorldPosition(Now.startLookAt);
         }
       }
-
-      //
-      if (it?.userData?.castShadow) {
-        it.castShadow = true;
-        it.traverse((sub) => {
-          if (sub) {
-            sub.castShadow = true;
-          }
-        });
-      }
-
-      //
-      if (it?.userData?.receiveShadow) {
-        it.receiveShadow = true;
-        it.traverse((sub) => {
-          if (sub) {
-            sub.receiveShadow = true;
-          }
-        });
-      }
-
-      //
-      if (it instanceof PointLight && it.castShadow) {
-        it.shadow.mapSize.width = 512;
-        it.shadow.mapSize.height = 512;
-        it.shadow.camera.near = 0.1;
-        it.shadow.camera.far = 500;
-      }
     });
 
     return floor;
@@ -170,11 +142,7 @@ export const Map3D = ({ object }) => {
     };
   }, []);
 
-  return (
-    <group>
-      <primitive object={floor}></primitive>
-    </group>
-  );
+  return <group></group>;
 };
 
 //

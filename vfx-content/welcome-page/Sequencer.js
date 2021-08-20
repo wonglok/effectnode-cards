@@ -16,6 +16,21 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
   let [text, setBannerText] = useState("Welcome to Your Card!");
   let [showVFX, setVFX] = useState("hands");
 
+  // useEffect(() => {
+  //   return () => {
+  //     avatar.visible = false;
+  //   };
+  // }, []);
+
+  // useEffect(() => {
+  //   ref.current.add(avatar);
+  //   return () => {
+  //     if (ref.current) {
+  //       ref.current.remove(avatar);
+  //     }
+  //   };
+  // }, [avatar]);
+  //  avatarslot.000
   useEffect(() => {
     mixer.stopAllAction();
     let skip = false;
@@ -106,7 +121,6 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
 
         //
         setVFX("visit");
-        //
         setBannerText("You can also visit your friend's place with portals.");
       },
 
@@ -123,7 +137,6 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
 
         //
         setVFX("warmup");
-        //
         setBannerText(
           "Let's use WASD keys or \n Joystick on screen \n to move around."
         );
@@ -142,7 +155,7 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
         last = actions.shoot;
 
         //
-        setBannerText("Alert! Bubble Gun Fight!");
+        setBannerText("Stay Fun with Bubble Gun!");
         setVFX("gun");
       },
       //
@@ -236,16 +249,6 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
     };
   }, []);
 
-  // useEffect(() => {
-  //   ref.current.add(avatar);
-  //   return () => {
-  //     if (ref.current) {
-  //       ref.current.remove(avatar);
-  //     }
-  //   };
-  // }, [avatar]);
-
-  //
   let facingToCamera = new Vector3();
   useFrame((st, dt) => {
     facingToCamera.copy(st.camera.position);
@@ -257,12 +260,6 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
       banner.current.lookAt(facingToCamera);
     }
   });
-
-  useEffect(() => {
-    return () => {
-      avatar.visible = false;
-    };
-  }, [avatar]);
 
   return (
     <group>
@@ -311,12 +308,12 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
           avatar={avatar}
         ></HipsRing>
 
-        <group visible={showVFX === "social"}>
-          <Social avatar={avatar}></Social>
+        <group>
+          <Social visible={showVFX === "social"} avatar={avatar}></Social>
         </group>
 
-        <group visible={showVFX === "visit"}>
-          <Portal avatar={avatar}></Portal>
+        <group>
+          <Portal visible={showVFX === "visit"} avatar={avatar}></Portal>
         </group>
 
         <BubbleGun visible={showVFX === "gun"} avatar={avatar}></BubbleGun>
@@ -391,9 +388,11 @@ LeftLeg
 LeftFoot
 LeftToeBase
 LeftToe_End
+
 RightUpLeg
 RightLeg
 RightFoot
 RightToeBase
 RightToe_End
+
 */

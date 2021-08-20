@@ -8,16 +8,23 @@ export function StarSky() {
     vertexShader: /* glsl */ `
     // varying vec3 vPos;
     varying vec3 vUv3;
+    varying vec3 vWorldDirection;
+    vec3 transformDirection( in vec3 dir, in mat4 matrix ) {
+      return normalize( ( matrix * vec4( dir, 0.0 ) ).xyz );
+    }
 
     void main() {
       vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
       gl_Position = projectionMatrix * mvPosition;
       // vPos = position;
       vUv3 = uv.xyx;
+      vWorldDirection = transformDirection( position, modelMatrix );
+
     }
     `,
     fragmentShader: `
       precision highp float;
+      varying vec3 vWorldDirection;
 
       vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}
       vec4 taylorInvSqrt(vec4 r){return 1.79284291400159 - 0.85373472095314 * r;}
@@ -98,7 +105,7 @@ export function StarSky() {
       void main() {
         float speed = time / 3.5;
         vec3 pp;
-        pp = vUv3.xyx * 600.0 + speed * 2.0;
+        pp = vWorldDirection.xyz * 500.0 + speed * 2.0;
         // pp += vPos * 0.25 + speed;
         float noise = clamp(cnoise(speed + pp / 250.0 + 0.0 ), 0.0, 1.0);
 
@@ -109,9 +116,10 @@ export function StarSky() {
 
         gl_FragColor = backgroundColor;
 
-        float starNoise = (noise) * pow(cnoise(speed + pp * 2.0) * 0.5 + 0.5, 15.5) * 30.0;
-
-        gl_FragColor.rgb += vec3(pow(starNoise, 1.3)) * 1.5;
+        float starNoise1 = (noise) * pow(cnoise(speed + pp * 2.0) * 0.5 + 0.5, 15.5 + sin(time)) * 15.0;
+        float starNoise2 = (noise) * pow(cnoise(speed + pp * 1.3) * 0.5 + 0.5, 15.5 + sin(time)) * 15.0;
+        gl_FragColor.rgb += vec3(pow(starNoise1, 1.3) * vec3(10.0, 20.0, 255.0) / 255.0) * 1.0;
+        gl_FragColor.rgb += vec3(pow(starNoise2, 1.3) * vec3(30.0, 140.0, 255.0) / 255.0) * 1.0;
       }
       `,
   };

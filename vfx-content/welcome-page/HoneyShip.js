@@ -32,14 +32,21 @@ export function HoneyShip() {
 
           gltf.scene.getWorldPosition(v3);
 
-          counter *= 0.998;
+          counter *= 0.996;
           if (counter <= 0.1) {
             clicked = false;
             get().camera.userData.lookAt = false;
             get().camera.userData.needsResetLookAt = true;
             ref.current.position.z = 0;
-            ref.current.scale.setScalar(1);
+            ref.current.scale.setScalar(0.1);
             clearInterval(tt);
+
+            let iv2 = setInterval(() => {
+              ref.current.scale.multiplyScalar(1.05);
+              if (ref.current.scale.x >= 1) {
+                clearInterval(iv2);
+              }
+            }, 1 / 60);
           }
         }, 1 / 60);
       };

@@ -82,8 +82,8 @@ export function useComputeEnvMap(
       },
 
       vertexShader: `
-        varying vec3 vWorldDirection;
         varying vec3 vPos;
+        varying vec3 vWorldDirection;
         vec3 transformDirection( in vec3 dir, in mat4 matrix ) {
           return normalize( ( matrix * vec4( dir, 0.0 ) ).xyz );
         }

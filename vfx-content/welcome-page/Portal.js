@@ -2,7 +2,7 @@ import { useFrame } from "@react-three/fiber";
 import { useRef } from "react";
 import { BackSide } from "three";
 
-export function Portal({ avatar }) {
+export function Portal({ avatar, visible }) {
   let ref = useRef();
   let i = 0;
   useFrame(() => {
@@ -14,17 +14,22 @@ export function Portal({ avatar }) {
       ref.current.scale.setScalar(i);
       let mesh = ref.current.children[0];
       if (mesh) {
-        mesh.material.opacity = i * 0.7;
+        mesh.material.opacity = i * 0.8;
       }
     }
   });
 
   return (
-    <group ref={ref}>
-      <mesh position={[0, 1.15, 0]}>
+    <group visible={visible} ref={ref}>
+      <mesh
+        userData={{
+          enableBloom: true,
+        }}
+        position={[0, 1.15, 0]}
+      >
         <sphereBufferGeometry args={[1.15, 35, 35]}></sphereBufferGeometry>
         <meshStandardMaterial
-          color={"#ffffff"}
+          color={"#888"}
           // userData={{ enableBloom: true }}
           metalness={1}
           roughness={0.0}
