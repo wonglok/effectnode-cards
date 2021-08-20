@@ -49,34 +49,31 @@ export function NPCHelper({ envMap, collider }) {
       npc.onSimulate();
     });
 
-    return () => {
-      //
-      //
-      //
-    };
+    return () => {};
   }, [mini]);
 
   let wp = new Vector3();
   let dir = new Vector3();
   let dir2 = new Vector3();
   useFrame(({ camera }) => {
+    NPC.avatarSpeed = 0.35;
     NPC.goingTo.set(
       Number((Now.cursorPos.x * 1).toFixed(0) / 1),
       Number((Now.cursorPos.y * 1).toFixed(0) / 1),
       Number((Now.cursorPos.z * 1).toFixed(0) / 1)
     );
-    //
 
-    NPC.avatarSpeed = 0.7;
     let gp = group.current;
     let ava = gp.getObjectByName("avatar");
     if (gp && ava) {
-      //
       gp.position.set(
+        //
         //
         NPC.avatarAt.x,
         NPC.avatarAt.y,
         NPC.avatarAt.z
+        //
+        //
       );
 
       if (NPC.avatarMode === "standing") {
@@ -99,7 +96,7 @@ export function NPCHelper({ envMap, collider }) {
       {/*  */}
       {/*  */}
 
-      <group position={[0, -2.28, 0]}>
+      <group position={[0, -2.31 + 0.1, 0]}>
         <Suspense
           fallback={<Sphere position={[0, 1, 0]} args={[0.3, 23, 23]}></Sphere>}
         >
@@ -118,6 +115,7 @@ function DreamyHelper({ npc }) {
   );
 
   useMemo(() => {
+    avatar.scene.visible = false;
     avatar.scene.traverse((it) => {
       it.frustumCulled = false;
       it.castShadow = true;
@@ -128,8 +126,11 @@ function DreamyHelper({ npc }) {
   }, [avatar.scene]);
 
   let fbx = {
-    running: useFBX(`/rpm-actions-locomotion/running.fbx`),
-    standing: useFBX(`/rpm-actions-locomotion/standing.fbx`),
+    // running: useFBX(`/rpm-actions-locomotion/running.fbx`),
+    // standing: useFBX(`/rpm-actions-locomotion/standing.fbx`),
+    //
+    running: useFBX(`/rpm-actions-locomotion/swim-forward.fbx`),
+    standing: useFBX(`/rpm-actions-locomotion/swim-float.fbx`),
   };
   let actions = useMemo(() => {
     let obj = {};
@@ -143,6 +144,7 @@ function DreamyHelper({ npc }) {
     let last = false;
     npc.avatarMode = "running";
     npc.avatarMode = "standing";
+
     return npc.onEvent("avatarMode", () => {
       let current = actions[npc.avatarMode];
       if (last && last !== current) {
@@ -153,6 +155,10 @@ function DreamyHelper({ npc }) {
       current.reset();
       current.play();
       current.fadeIn(0.2);
+
+      setTimeout(() => {
+        avatar.scene.visible = true;
+      }, 100);
     });
   }, []);
 
@@ -163,7 +169,11 @@ function DreamyHelper({ npc }) {
   return (
     <group>
       <primitive name="avatar" object={avatar.scene}>
-        <pointLight castShadow={true} position={[0, 2, 2]}></pointLight>
+        <pointLight
+          castShadow={true}
+          intensity={5.0}
+          position={[0, 1.5, 2]}
+        ></pointLight>
       </primitive>
     </group>
   );

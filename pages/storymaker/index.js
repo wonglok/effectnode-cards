@@ -97,10 +97,29 @@ function Content3D() {
         }}
         object={map}
       ></Map3D>
-      <primitive object={map}></primitive>
-      <SceneDecorator object={map}></SceneDecorator>
 
-      {/* <group
+      {map && (
+        <group>
+          <primitive object={map}></primitive>
+
+          <SceneDecorator object={map}></SceneDecorator>
+
+          <UserContorls
+            higherCamera={-0.6}
+            avatarSpeed={0.9}
+            Now={Now}
+          ></UserContorls>
+
+          {collider && (
+            <NPCHelper
+              collider={collider}
+              envMap={envMap}
+              map={map}
+            ></NPCHelper>
+          )}
+          {map && <AvatarSlots envMap={envMap} map={map}></AvatarSlots>}
+
+          {/* <group
         position={[
           //
           map.getObjectByName("startLookAt").position.x,
@@ -113,22 +132,17 @@ function Content3D() {
 
       </group> */}
 
-      {map && <AvatarSlots envMap={envMap} map={map}></AvatarSlots>}
-      {/* <LoginGate></LoginGate> */}
+          {/* <LoginGate></LoginGate> */}
 
-      {collider && (
-        <NPCHelper collider={collider} envMap={envMap} map={map}></NPCHelper>
+          <TailCursor Now={Now} color={"#ffffff"}></TailCursor>
+
+          <TheHelper Now={Now}></TheHelper>
+
+          <SimpleBloomer></SimpleBloomer>
+
+          <StarSky></StarSky>
+        </group>
       )}
-
-      <UserContorls
-        higherCamera={-0.6}
-        avatarSpeed={0.9}
-        Now={Now}
-      ></UserContorls>
-      <TailCursor Now={Now} color={"#ffffff"}></TailCursor>
-      <TheHelper Now={Now}></TheHelper>
-      <SimpleBloomer></SimpleBloomer>
-      <StarSky></StarSky>
     </group>
   );
 }
