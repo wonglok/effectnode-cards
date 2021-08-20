@@ -82,7 +82,7 @@ export function MovieHUD({ envMap, collider }) {
       if (NPC.avatarMode === "standing") {
         ava.getWorldPosition(wp);
         dir.set(camera.position.x, wp.y, camera.position.z);
-        dir2.lerp(dir, 0.1);
+        dir2.lerp(dir, 0.0023);
         ava.lookAt(dir2);
       } else {
         ava.getWorldPosition(wp);
@@ -99,7 +99,7 @@ export function MovieHUD({ envMap, collider }) {
       {/*  */}
       {/*  */}
 
-      <group position={[0, -2.2, 0]}>
+      <group position={[0, -2.28, 0]}>
         <Suspense
           fallback={<Sphere position={[0, 1, 0]} args={[0.3, 23, 23]}></Sphere>}
         >
