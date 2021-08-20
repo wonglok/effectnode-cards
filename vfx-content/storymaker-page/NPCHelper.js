@@ -112,14 +112,21 @@ export function NPCHelper({ avatarGLTF, envMap, collider }) {
 
 function DreamyHelper({ avatarGLTF, npc }) {
   let avatar = useMemo(() => {
-    let scene = SkeletonUtils.clone(avatarGLTF.scene);
+    let scene = avatarGLTF.scene;
     scene.visible = false;
     scene.traverse((it) => {
       it.frustumCulled = false;
       it.castShadow = true;
     });
     return scene;
-  }, [avatarGLTF]);
+  }, [avatarGLTF, avatarGLTF.scene]);
+
+  useEffect(() => {
+    let last = avatar;
+    return () => {
+      last.visible = false;
+    };
+  }, []);
 
   let mixer = useMemo(() => {
     return new AnimationMixer(avatar);
@@ -128,7 +135,6 @@ function DreamyHelper({ avatarGLTF, npc }) {
   let fbx = {
     // running: useFBX(`/rpm-actions-locomotion/running.fbx`),
     // standing: useFBX(`/rpm-actions-locomotion/standing.fbx`),
-    //
     running: useFBX(`/rpm-actions-locomotion/swim-forward.fbx`),
     standing: useFBX(`/rpm-actions-locomotion/swim-float.fbx`),
   };
@@ -151,6 +157,9 @@ function DreamyHelper({ avatarGLTF, npc }) {
         last.fadeOut(0.2);
       }
       last = current;
+
+      if (npc.avatarMode) {
+      }
 
       current.reset();
       current.play();
