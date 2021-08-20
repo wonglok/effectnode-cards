@@ -7,7 +7,7 @@ export function StarSky() {
   let shaders = {
     vertexShader: /* glsl */ `
     // varying vec3 vPos;
-    varying vec3 vUv3;
+    // varying vec3 vUv3;
     varying vec3 vWorldDirection;
     vec3 transformDirection( in vec3 dir, in mat4 matrix ) {
       return normalize( ( matrix * vec4( dir, 0.0 ) ).xyz );
@@ -17,7 +17,7 @@ export function StarSky() {
       vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
       gl_Position = projectionMatrix * mvPosition;
       // vPos = position;
-      vUv3 = uv.xyx;
+      // vUv3 = uv.xyx;
       vWorldDirection = transformDirection( position, modelMatrix );
 
     }
@@ -100,7 +100,7 @@ export function StarSky() {
 
       // varying vec3 vPos;
       uniform float time;
-      varying vec3 vUv3;
+      // varying vec3 vUv3;
 
       void main() {
         float speed = time / 3.5;

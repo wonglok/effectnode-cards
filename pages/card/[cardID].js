@@ -11,3 +11,7 @@ export default function CardPage() {
 
 //
 //
+
+function CardContent() {
+  return <div></div>;
+}

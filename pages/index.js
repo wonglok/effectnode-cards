@@ -72,8 +72,14 @@ export default function Page() {
         style={{ width: "100%", height: "100%" }}
       >
         <Suspense fallback={<LoadingScreen></LoadingScreen>}>
-          {wait && <Content3D></Content3D>}
+          {wait && (
+            <group>
+              <Content3D></Content3D>
+              <Preload all></Preload>
+            </group>
+          )}
         </Suspense>
+        <StarSky></StarSky>
       </Canvas>
 
       <Overlays></Overlays>
@@ -146,7 +152,6 @@ function Content3D() {
       <TheHelper Now={Now}></TheHelper>
 
       <SimpleBloomer></SimpleBloomer>
-      <StarSky></StarSky>
 
       <LoginBall envMap={envMap}></LoginBall>
 
@@ -173,9 +178,7 @@ function Content3D() {
         ></meshStandardMaterial>
       </mesh>
 
-      <Suspense fallback={null}>
-        <HoneyShip></HoneyShip>
-      </Suspense>
+      <HoneyShip></HoneyShip>
     </group>
   );
 }

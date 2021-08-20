@@ -4,7 +4,7 @@ import { Canvas, createPortal } from "@react-three/fiber";
 import { getGPUTier } from "detect-gpu";
 import { Suspense } from "react";
 import { LoadingScreen } from "../../vfx-content/welcome-page/LoadingScreen";
-import { useGLTF } from "@react-three/drei";
+import { Preload, useGLTF } from "@react-three/drei";
 import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
 import {
   Map3D,
@@ -19,7 +19,7 @@ import { Now } from "../../vfx-metaverse/lib/Now";
 import { SceneDecorator } from "../../vfx-metaverse/compos/SceneDecorator";
 import { NPCHelper } from "../../vfx-content/storymaker-page/NPCHelper";
 import { AvatarSlots } from "../../vfx-content/storymaker-page/AvatarSlots";
-import { LoginGate } from "../../vfx-cms/common/LoginGate";
+// import { LoginGate } from "../../vfx-cms/common/LoginGate";
 export default function StoryPage() {
   //
 
@@ -63,8 +63,14 @@ export default function StoryPage() {
         style={{ width: "100%", height: "100%" }}
       >
         <Suspense fallback={<LoadingScreen></LoadingScreen>}>
-          {wait && <Content3D></Content3D>}
+          {wait && (
+            <group>
+              <Content3D></Content3D>
+              <Preload all></Preload>
+            </group>
+          )}
         </Suspense>
+        <StarSky></StarSky>
       </Canvas>
     </div>
   );
@@ -75,7 +81,11 @@ export default function StoryPage() {
 function Content3D() {
   let { envMap } = useShaderEnvLight({});
   let [collider, setCollider] = useState(false);
-  let gltf = useGLTF(`/map/camset/cam-set.glb`);
+  let mapGLTF = useGLTF(`/map/camset/cam-set.glb`);
+  let avaGLTF = useGLTF(
+    `https://d1a370nemizbjq.cloudfront.net/18bc89a8-de85-4a28-b3aa-d1ce4096059f.glb`
+  );
+
   let last = useRef();
   let map = useMemo(() => {
     if (last.current) {
@@ -84,10 +94,10 @@ function Content3D() {
         last.current.parent.remove(last.current);
       }
     }
-    let map = SkeletonUtils.clone(gltf.scene);
+    let map = SkeletonUtils.clone(mapGLTF.scene);
     last.current = map;
     return map;
-  }, [gltf]);
+  }, [mapGLTF]);
 
   return (
     <group>
@@ -112,12 +122,23 @@ function Content3D() {
 
           {collider && (
             <NPCHelper
+              avatarGLTF={avaGLTF}
               collider={collider}
               envMap={envMap}
               map={map}
             ></NPCHelper>
           )}
           {map && <AvatarSlots envMap={envMap} map={map}></AvatarSlots>}
+
+          {collider && (
+            <group>
+              <TailCursor Now={Now} color={"#ffffff"}></TailCursor>
+
+              <TheHelper Now={Now}></TheHelper>
+
+              <SimpleBloomer></SimpleBloomer>
+            </group>
+          )}
 
           {/* <group
         position={[
@@ -133,14 +154,6 @@ function Content3D() {
       </group> */}
 
           {/* <LoginGate></LoginGate> */}
-
-          <TailCursor Now={Now} color={"#ffffff"}></TailCursor>
-
-          <TheHelper Now={Now}></TheHelper>
-
-          <SimpleBloomer></SimpleBloomer>
-
-          <StarSky></StarSky>
         </group>
       )}
     </group>

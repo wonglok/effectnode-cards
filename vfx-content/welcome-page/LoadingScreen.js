@@ -1,29 +1,25 @@
 import { Text, PerspectiveCamera } from "@react-three/drei";
-import { createPortal, useThree } from "@react-three/fiber";
-import { StarSky } from "../../vfx-metaverse";
+import { useThree } from "@react-three/fiber";
 
 export function LoadingScreen() {
-  let { get } = useThree();
-
   return (
     <group>
-      {createPortal(
-        <Text
-          // rotation={[Math.PI * -0.25, 0, 0]}
-          position={[0, 0, 10]}
-          fontSize={0.3}
-          color="white"
-          outlineColor={"black"}
-          outlineWidth={0.01}
-          textAlign={"center"}
-        >
-          {`Loading...`}
-        </Text>,
-        get().camera
-      )}
-
-      {/* Optional */}
-      <StarSky></StarSky>
+      <Text
+        // rotation={[Math.PI * -0.25, 0, 0]}
+        position={[0, 0, -10]}
+        fontSize={0.3}
+        color="white"
+        outlineColor={"black"}
+        outlineWidth={0.01}
+        textAlign={"center"}
+      >
+        {`Loading Dreams...`}
+      </Text>
+      <PerspectiveCamera
+        makeDefault
+        position={[0, 0, 10]}
+        lookAt={[0, 0, -10]}
+      ></PerspectiveCamera>
     </group>
   );
 }
