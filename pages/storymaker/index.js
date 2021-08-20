@@ -1,6 +1,6 @@
 //
 import { useMemo, useRef, useState } from "react";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, createPortal } from "@react-three/fiber";
 import { getGPUTier } from "detect-gpu";
 import { Suspense } from "react";
 import { LoadingScreen } from "../../vfx-content/welcome-page/LoadingScreen";
@@ -14,11 +14,12 @@ import {
   TheHelper,
   UserContorls,
 } from "../../vfx-metaverse";
-import { WelcomeAvatar } from "../../vfx-content/welcome-page/WelcomeAvatar";
 import { useShaderEnvLight } from "../../vfx-content/welcome-page/useShaderEnvLight";
 import { Now } from "../../vfx-metaverse/lib/Now";
-import { AvatarSlots } from "../../vfx-metaverse/compos/AvatarSlots";
 import { SceneDecorator } from "../../vfx-metaverse/compos/SceneDecorator";
+import { MovieHUD } from "../../vfx-content/storymaker-page/MovieHUD";
+import { AvatarSlots } from "../../vfx-content/storymaker-page/AvatarSlots";
+import { LoginGate } from "../../vfx-cms/common/LoginGate";
 export default function StoryPage() {
   //
 
@@ -73,7 +74,7 @@ export default function StoryPage() {
 
 function Content3D() {
   let { envMap } = useShaderEnvLight({});
-
+  let [collider, setCollider] = useState(false);
   let gltf = useGLTF(`/map/camset/cam-set.glb`);
   let last = useRef();
   let map = useMemo(() => {
@@ -90,10 +91,16 @@ function Content3D() {
 
   return (
     <group>
-      <Map3D object={map}></Map3D>
+      <Map3D
+        onReadyCollider={({ collider }) => {
+          setCollider(collider);
+        }}
+        object={map}
+      ></Map3D>
       <primitive object={map}></primitive>
       <SceneDecorator object={map}></SceneDecorator>
-      <group
+
+      {/* <group
         position={[
           //
           map.getObjectByName("startLookAt").position.x,
@@ -101,9 +108,18 @@ function Content3D() {
           map.getObjectByName("startLookAt").position.z,
         ]}
       >
+
         <WelcomeAvatar envMap={envMap}></WelcomeAvatar>
-      </group>
-      {/*  */}
+
+      </group> */}
+
+      {collider && map && (
+        <LoginGate>
+          <MovieHUD collider={collider} envMap={envMap} map={map}></MovieHUD>
+          <AvatarSlots envMap={envMap} map={map}></AvatarSlots>
+        </LoginGate>
+      )}
+
       <UserContorls
         higherCamera={-0.6}
         avatarSpeed={0.9}
@@ -113,7 +129,6 @@ function Content3D() {
       <TheHelper Now={Now}></TheHelper>
       <SimpleBloomer></SimpleBloomer>
       <StarSky></StarSky>
-      {map && <AvatarSlots map={map}></AvatarSlots>}
     </group>
   );
 }

@@ -34,6 +34,10 @@ export function testAdminRights() {
   return getFirebase().database().ref(`/test-admin`).set(Math.random());
 }
 
+export function testUserRights() {
+  return getFirebase().database().ref(`/test-user`).set(Math.random());
+}
+
 export function getMe() {
   getFirebase();
   return new Promise((resolve) => {
