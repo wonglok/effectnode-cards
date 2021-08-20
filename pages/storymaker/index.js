@@ -113,11 +113,11 @@ function Content3D() {
 
       </group> */}
 
-      {collider && map && (
-        <LoginGate>
-          <MovieHUD collider={collider} envMap={envMap} map={map}></MovieHUD>
-          <AvatarSlots envMap={envMap} map={map}></AvatarSlots>
-        </LoginGate>
+      {map && <AvatarSlots envMap={envMap} map={map}></AvatarSlots>}
+      {/* <LoginGate></LoginGate> */}
+
+      {collider && (
+        <MovieHUD collider={collider} envMap={envMap} map={map}></MovieHUD>
       )}
 
       <UserContorls
