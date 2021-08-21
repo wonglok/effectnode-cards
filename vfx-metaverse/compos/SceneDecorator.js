@@ -4,6 +4,10 @@ import { PointLight } from "three";
 export function SceneDecorator({ object }) {
   useEffect(() => {
     object.traverse((it) => {
+      if (it.geometry) {
+        it.userData.isFloor = true;
+      }
+
       //
       if (it?.userData?.castShadow) {
         it.castShadow = true;

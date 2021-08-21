@@ -4,7 +4,7 @@ import { AnimationMixer } from "three";
 import { useFrame } from "@react-three/fiber";
 import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
 import { Sequencer } from "./Sequencer";
-import { ShakeCam } from "./ShakeCam";
+// import { ShakeCam } from "./ShakeCam";
 
 export function WelcomeAvatar({ envMap }) {
   let gltf = useGLTF(
@@ -86,7 +86,7 @@ export function WelcomeAvatar({ envMap }) {
         mixer={mixer}
         actions={actions}
       ></Sequencer>
-      <ShakeCam avatar={avatar}></ShakeCam>
+      {/* <ShakeCam avatar={avatar}></ShakeCam> */}
     </group>
   );
 }

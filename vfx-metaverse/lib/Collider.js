@@ -1,7 +1,7 @@
 import { Mesh, MeshBasicMaterial, Raycaster, Vector2 } from "three";
-import { MeshBVH } from "three-mesh-bvh";
 import { BufferGeometryUtils } from "three/examples/jsm/utils/BufferGeometryUtils";
 import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
+import { MeshBVH } from "three-mesh-bvh";
 
 export class Collider {
   constructor({ floor, scene }) {
@@ -17,6 +17,7 @@ export class Collider {
 
   makeCollider() {
     const { scene, floor } = this;
+
     const environment = SkeletonUtils.clone(floor);
 
     const geometries = [];
@@ -64,6 +65,7 @@ export class Collider {
       mergedGeometry,
       new MeshBasicMaterial({ color: 0xffffff })
     );
+    collider.userData.skipFloor = 1;
     collider.material.wireframe = true;
     collider.material.opacity = 0.5;
     collider.material.transparent = true;
@@ -77,31 +79,35 @@ export class Collider {
     const { raycaster, center, collider } = this;
 
     raycaster.setFromCamera(center, camera);
+
+    // let hit = collider.geometry.boundsTree.raycastFirst(
+    //   collider,
+    //   raycaster,
+    //   raycaster.ray
+    // );
+
     const result = [];
     const source = [];
+
     scene.traverse((it) => {
       if (
         it.geometry &&
+        it.userData &&
         (it?.userData?.isHoverable ||
           it?.userData?.isFloor ||
           it?.userData?.hint ||
-          it?.userData?.website)
+          it?.userData?.website) &&
+        typeof it.userData.skipFloor === "undefined"
       ) {
         source.push(it);
       }
     });
+
     raycaster.intersectObjects(source, false, result);
+    const hit = result[0];
 
-    collider.geometry.boundsTree.raycastFirst(
-      collider,
-      raycaster,
-      raycaster.ray
-    );
-
-    const first = result[0];
-
-    if (first) {
-      return first;
+    if (hit) {
+      return hit;
     } else {
       return false;
     }

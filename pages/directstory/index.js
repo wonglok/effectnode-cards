@@ -3,7 +3,7 @@ import { useMemo, useRef, useState } from "react";
 import { Canvas, createPortal } from "@react-three/fiber";
 import { getGPUTier } from "detect-gpu";
 import { Suspense } from "react";
-import { LoadingScreen } from "../vfx-content/welcome-page/LoadingScreen";
+import { LoadingScreen } from "../../vfx-content/welcome-page/LoadingScreen";
 import { Preload, useGLTF } from "@react-three/drei";
 import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
 import {
@@ -13,16 +13,13 @@ import {
   TailCursor,
   TheHelper,
   UserContorls,
-} from "../vfx-metaverse";
-import { useShaderEnvLight } from "../vfx-content/welcome-page/useShaderEnvLight";
-import { Now } from "../vfx-metaverse/lib/Now";
-import { SceneDecorator } from "../vfx-metaverse/compos/SceneDecorator";
-// import { NPCHelper } from "../vfx-content/storymaker-page/NPCHelper";
-// import { AvatarSlots } from "../vfx-content/storymaker-page/AvatarSlots";
-import { WelcomeAvatar } from "../vfx-content/welcome-page/WelcomeAvatar";
-import { HoneyShip } from "../vfx-content/welcome-page/HoneyShip";
-import { LoginBall } from "../vfx-content/welcome-page/LoginBall";
-// import { LoginGate } from "../vfx-cms/common/LoginGate";
+} from "../../vfx-metaverse";
+import { useShaderEnvLight } from "../../vfx-content/welcome-page/useShaderEnvLight";
+import { Now } from "../../vfx-metaverse/lib/Now";
+import { SceneDecorator } from "../../vfx-metaverse/compos/SceneDecorator";
+import { NPCHelper } from "../../vfx-content/storymaker-page/NPCHelper";
+import { AvatarSlots } from "../../vfx-content/storymaker-page/AvatarSlots";
+// import { LoginGate } from "../../vfx-cms/common/LoginGate";
 export default function StoryPage() {
   //
 
@@ -84,12 +81,8 @@ export default function StoryPage() {
 function Content3D() {
   let { envMap } = useShaderEnvLight({});
   let [collider, setCollider] = useState(false);
-  let mapGLTF = useGLTF(`/map/spaewalk/space-walk-v003.glb`);
-  let avaGLTF = useGLTF(
-    `https://d1a370nemizbjq.cloudfront.net/18bc89a8-de85-4a28-b3aa-d1ce4096059f.glb`
-  );
+  let mapGLTF = useGLTF(`/map/camset/cam-set.glb`, false, false);
 
-  let last = useRef();
   let map = useMemo(() => {
     let map = SkeletonUtils.clone(mapGLTF.scene);
     return map;
@@ -104,32 +97,6 @@ function Content3D() {
         object={map}
       ></Map3D>
 
-      <HoneyShip></HoneyShip>
-      <LoginBall envMap={envMap}></LoginBall>
-
-      <mesh
-        onClick={() => {
-          let router = require("next/router").default;
-          router.push(`/storymaker`);
-        }}
-        position={[3, 2, 23]}
-        userData={{
-          onClick: () => {
-            let router = require("next/router").default;
-            router.push(`/directstory`);
-          },
-          hint: "Let's Make Action Movie",
-        }}
-      >
-        <sphereBufferGeometry args={[0.3, 23, 23]}></sphereBufferGeometry>
-        <meshStandardMaterial
-          metalness={1}
-          roughness={0}
-          envMap={envMap}
-          color="#44ffff"
-        ></meshStandardMaterial>
-      </mesh>
-
       {map && (
         <group>
           <primitive object={map}></primitive>
@@ -141,16 +108,6 @@ function Content3D() {
             avatarSpeed={0.9}
             Now={Now}
           ></UserContorls>
-          <group
-            position={[
-              //
-              map.getObjectByName("welcomeAt").position.x,
-              0,
-              map.getObjectByName("welcomeAt").position.z,
-            ]}
-          >
-            <WelcomeAvatar envMap={envMap}></WelcomeAvatar>
-          </group>
 
           {collider && (
             <group>
@@ -161,6 +118,30 @@ function Content3D() {
               <SimpleBloomer></SimpleBloomer>
             </group>
           )}
+
+          {/* {collider && (
+            <NPCHelper
+              avatarGLTF={avaGLTF}
+              collider={collider}
+              envMap={envMap}
+              map={map}
+            ></NPCHelper>
+          )}
+           */}
+          {/* {map && <AvatarSlots envMap={envMap} map={map}></AvatarSlots>} */}
+
+          {/* <group
+        position={[
+          //
+          map.getObjectByName("startLookAt").position.x,
+          0,
+          map.getObjectByName("startLookAt").position.z,
+        ]}
+      >
+
+        <WelcomeAvatar envMap={envMap}></WelcomeAvatar>
+
+      </group> */}
 
           {/* <LoginGate></LoginGate> */}
         </group>

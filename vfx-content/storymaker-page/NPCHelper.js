@@ -7,7 +7,7 @@ import { Box, Sphere, Text, useFBX, useGLTF } from "@react-three/drei";
 import { createPortal, useFrame, useThree } from "@react-three/fiber";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { AnimationMixer, Object3D, Vector3 } from "three";
-import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
+// import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
 import { useMiniEngine } from "../../vfx-metaverse";
 import { MapNPC } from "../../vfx-metaverse/lib/MapNPC";
 import { Now } from "../../vfx-metaverse/lib/Now";
@@ -34,6 +34,7 @@ import { makeNow } from "../../vfx-metaverse/utils/make-now";
 export function NPCHelper({ avatarGLTF, envMap, collider }) {
   let { get } = useThree();
 
+  //
   //
   let NPC = useMemo(() => makeNow(), []);
   let group = useRef();
