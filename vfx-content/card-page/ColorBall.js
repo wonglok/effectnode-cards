@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Text } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
-import { Color, DoubleSide } from "three";
+import { BackSide, Color, DoubleSide } from "three";
 import { getFirebase, loginRedirectGoogle } from "../../vfx-firebase/firelib";
 import { makeShallowStore, useAutoEvent } from "../../vfx-metaverse";
 
@@ -40,7 +40,7 @@ export function ColorBall({ cardID, camera, envMap }) {
     Store.text = "Loading....";
     Store.bottomText = "";
     Store.onClick = "";
-    Store.color.set("#000");
+    Store.color.set("#bbb");
 
     return getFirebase()
       .auth()
@@ -133,9 +133,9 @@ function BallArea({ envMap }) {
         metalness={1}
         roughness={0}
         envMap={envMap}
-        side={DoubleSide}
+        side={BackSide}
       ></meshStandardMaterial>
-      <sphereBufferGeometry args={[1, 24, 24]}></sphereBufferGeometry>
+      <sphereBufferGeometry args={[2, 24, 24]}></sphereBufferGeometry>
     </mesh>
   );
 }

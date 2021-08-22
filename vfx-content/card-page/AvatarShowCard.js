@@ -47,29 +47,40 @@ export function AvatarShowCard({ envMap, children }) {
   let left = new Vector3();
   let right = new Vector3();
   let head = new Vector3();
+  let neck = new Vector3();
   let center = new Vector3();
 
   let eyeTarget = new Vector3();
   let lerpEye = new Vector3();
+
+  //
+
   useFrame(({ camera, clock, mouse, viewport }) => {
     let time = clock.getElapsedTime();
     // .getWorldPosition(leftEye);
     avatar.getObjectByName(`LeftHand`).getWorldPosition(left);
     avatar.getObjectByName(`RightHand`).getWorldPosition(right);
     avatar.getObjectByName(`Head`).getWorldPosition(head);
+    avatar.getObjectByName(`Neck`).getWorldPosition(neck);
 
     center.copy(left).add(right).multiplyScalar(0.5);
 
-    camera.position.z = 1.2;
-    camera.position.y = 1.55;
-    camera.lookAt(center);
+    camera.position.x = 0.1;
+    camera.position.z = 0.9;
+    camera.position.y = 1.7;
 
     if (leaves.current) {
       leaves.current.position.copy({
         x: center.x,
-        y: center.y + 0.05 + Math.sin(time) * 0.02,
-        z: center.z + 0.3,
+        y: center.y + Math.sin(time) * 0.02 + 0.1,
+        z: center.z + 0.2,
       });
+
+      camera.lookAt(
+        leaves.current.position.x,
+        leaves.current.position.y,
+        leaves.current.position.z
+      );
 
       eyeTarget.set(
         viewport.width * mouse.x * 0.05 + Math.cos(time) * 0.05,
@@ -80,37 +91,40 @@ export function AvatarShowCard({ envMap, children }) {
       lerpEye.lerp(eyeTarget, 0.1);
 
       leaves.current.lookAt(
-        camera.position.x + lerpEye.x * 0.05,
-        camera.position.y + lerpEye.y * 0.05,
+        camera.position.x + lerpEye.x * 0.23,
+        camera.position.y + lerpEye.y * 0.23,
         camera.position.z
       );
 
       avatar.getObjectByName(`Spine`).lookAt(
         //
-        camera.position.x - 0.3 + lerpEye.x * 0.05,
-        camera.position.y - 0.25 + lerpEye.y * 0.05,
+        camera.position.x - 0.3 + lerpEye.x * 0.5,
+        camera.position.y - 0.25 + lerpEye.y * 0.5,
         camera.position.z
       );
 
       avatar.getObjectByName(`Head`).lookAt(
         //
         camera.position.x + lerpEye.x,
-        camera.position.y - 0.2 + lerpEye.y,
+        camera.position.y - 0.1 + lerpEye.y,
         camera.position.z
       );
     }
   });
 
   return (
-    <group>
+    <group position={[0, 0, 0]}>
       <ActionMixer avatar={avatar}></ActionMixer>
       <directionalLight intensity={2} position={[2, 2, 2]}></directionalLight>
 
-      {createPortal(<primitive object={avatar}></primitive>, o3d)}
-      <primitive object={o3d}>
-        <pointLight intensity={2} position={[0, 2, 2]}></pointLight>
-        <pointLight intensity={2} position={[0, 0, -2]}></pointLight>
-      </primitive>
+      {createPortal(
+        <primitive object={avatar}>
+          <pointLight intensity={2} position={[0, 2, 2]}></pointLight>
+          <pointLight intensity={2} position={[0, 0, -2]}></pointLight>
+        </primitive>,
+        o3d
+      )}
+      <primitive object={o3d}></primitive>
 
       <group ref={leaves}>
         <group scale={1} position={[0, 0, 0.0]}>
