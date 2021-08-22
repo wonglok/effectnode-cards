@@ -35,28 +35,36 @@ export function ColorBall({ cardID, camera, envMap }) {
         );
     });
   };
-  useEffect(() => {
-    Store.text = "Loading....";
-    Store.color.set("#000");
-  }, []);
 
   useEffect(() => {
+    Store.text = "Loading....";
+    Store.bottomText = "";
+    Store.onClick = "";
+    Store.color.set("#000");
+
     return getFirebase()
       .auth()
       .onAuthStateChanged(async (user) => {
-        if (user.uid) {
+        if (user && user.uid) {
           Store.text = "Checking Card Validity";
           let isValid = await checkCardValidity();
 
           if (isValid) {
             Store.text = "Card is Valid";
+            Store.bottomText = "Click to Conintue...";
+            Store.onClick = "valid";
+            Store.latestColor.set("#fff");
           } else {
             Store.text = "Card is Invalid :( ";
+            Store.onClick = "invalid";
+            Store.bottomText = "Click to Get Help...";
+            Store.latestColor.set("#f00");
           }
         } else {
           Store.text = "Login to Activate Card";
           Store.bottomText = "Click to Conintue...";
           Store.onClick = "login";
+          Store.latestColor.set("#0ff");
         }
       });
   }, []);
@@ -68,6 +76,10 @@ export function ColorBall({ cardID, camera, envMap }) {
   let handleClick = () => {
     if (Store.onClick === "login") {
       loginRedirectGoogle();
+    } else if (Store.onClick === "valid") {
+      //
+    } else if (Store.onClick === "invalid") {
+      //
     }
   };
 

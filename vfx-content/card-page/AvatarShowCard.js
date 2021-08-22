@@ -60,15 +60,15 @@ export function AvatarShowCard({ envMap, children }) {
 
     center.copy(left).add(right).multiplyScalar(0.5);
 
-    camera.position.z = 0.9;
+    camera.position.z = 1.2;
     camera.position.y = 1.55;
     camera.lookAt(center);
 
     if (leaves.current) {
       leaves.current.position.copy({
         x: center.x,
-        y: center.y + Math.sin(time) * 0.02,
-        z: center.z,
+        y: center.y + 0.05 + Math.sin(time) * 0.02,
+        z: center.z + 0.3,
       });
 
       eyeTarget.set(
@@ -113,7 +113,7 @@ export function AvatarShowCard({ envMap, children }) {
       </primitive>
 
       <group ref={leaves}>
-        <group scale={0.65} position={[0, 0, 0.3]}>
+        <group scale={1} position={[0, 0, 0.0]}>
           {children}
         </group>
       </group>
