@@ -2,7 +2,7 @@ import { useThree } from "@react-three/fiber";
 import { useEffect } from "react";
 import { useComputeEnvMap } from "../../vfx-metaverse";
 
-export function useShaderEnvLight({}) {
+export function useShaderEnvLight() {
   let { get } = useThree();
 
   let envMap = useComputeEnvMap(

@@ -45,22 +45,22 @@ export function WelcomeAvatar({ envMap }) {
   }, []);
 
   let fbx = {
-    warmup: useFBX(`/rpm-actions/mma-warmup.fbx`),
-    // hiphop: useFBX(`/rpm-actions/dance-hiphop.fbx`),
+    warmup: useFBX(`/rpm/rpm-actions/mma-warmup.fbx`),
+    // hiphop: useFBX(`/rpm/rpm-actions/dance-hiphop.fbx`),
 
-    greetings: useFBX(`/rpm-actions/greetings.fbx`),
-    handForward: useFBX(`/rpm-actions/hand-forward.fbx`),
-    idle: useFBX(`/rpm-actions/mma-idle.fbx`),
-    gesturePointer: useFBX(`/rpm-actions/guesture-pointer.fbx`),
-    gesturePointer2: useFBX(`/rpm-actions/guesture-pointer-2.fbx`),
-    excited: useFBX(`/rpm-actions/excited.fbx`),
-    spin: useFBX(`/rpm-actions/spin-in-place.fbx`),
-    happyIdle: useFBX(`/rpm-actions/happy-idle.fbx`),
-    happyHand: useFBX(`/rpm-actions/happy-hand.fbx`),
-    sillyjoey: useFBX(`/rpm-actions/silly-dance.fbx`),
-    bow: useFBX(`/rpm-actions/bow-quick-formal.fbx`),
-    hi0: useFBX(`/rpm-actions/hi-wave-both-hands.fbx`),
-    shoot: useFBX(`/rpm-actions/gun-shoot.fbx`),
+    greetings: useFBX(`/rpm/rpm-actions/greetings.fbx`),
+    handForward: useFBX(`/rpm/rpm-actions/hand-forward.fbx`),
+    idle: useFBX(`/rpm/rpm-actions/mma-idle.fbx`),
+    gesturePointer: useFBX(`/rpm/rpm-actions/guesture-pointer.fbx`),
+    gesturePointer2: useFBX(`/rpm/rpm-actions/guesture-pointer-2.fbx`),
+    excited: useFBX(`/rpm/rpm-actions/excited.fbx`),
+    spin: useFBX(`/rpm/rpm-actions/spin-in-place.fbx`),
+    happyIdle: useFBX(`/rpm/rpm-actions/happy-idle.fbx`),
+    happyHand: useFBX(`/rpm/rpm-actions/happy-hand.fbx`),
+    sillyjoey: useFBX(`/rpm/rpm-actions/silly-dance.fbx`),
+    bow: useFBX(`/rpm/rpm-actions/bow-quick-formal.fbx`),
+    hi0: useFBX(`/rpm/rpm-actions/hi-wave-both-hands.fbx`),
+    shoot: useFBX(`/rpm/rpm-actions/gun-shoot.fbx`),
   };
 
   let actions = useMemo(() => {

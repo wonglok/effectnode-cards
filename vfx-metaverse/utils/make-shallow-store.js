@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
 import { getID } from "./get-id";
+
+export const ShallowStoreMethods = {
+  onEvent: () => {},
+  makeKeyReactive: () => {},
+  reloadKey: () => {},
+};
 export const makeShallowStore = (myObject = {}) => {
   let ___NameSpaceID = getID();
   let Utils = {

@@ -56,6 +56,47 @@ exports.createCard = functions.https.onRequest((request, response) => {
   //
 });
 
-//
-//
-//
+// exports.verifyCard = functions.https.onRequest((request, response) => {
+//   let cardID = request.body.cardID;
+//   let db = admin.database();
+
+//   let snap = db.ref(`card-private-info`).child(cardID).get();
+
+//   console.log(snap);
+
+//   //
+//   //
+//   //
+//   //
+//   //
+//   // ---
+//   //
+//   // ---
+//   //
+//   // ---
+//   //
+//   // ---
+//   //
+//   //
+//   //
+//   //
+//   //
+//   // functions.logger.info("Hello logs!", { structuredData: true });
+//   //
+//   // aa
+//   //
+//   // functions.logger.info("Hello logs!", { structuredData: true });
+//   // response.send("Hello from Firebase!");
+//   // //
+//   // let db = admin.database();
+//   // let cardID = request.body.cardID;
+//   // if (!cardID) {
+//   // } else {
+//   // }
+//   //
+//   //
+// });
+
+// //
+// //
+// //

@@ -6,7 +6,7 @@ import { firebaseConfig } from "./firebaseConfig";
 let initMap = new Map();
 
 export function getFirebase() {
-  if (!initMap.has("app")) {
+  if (!initMap.has("app") && firebase.apps.length === 0) {
     initMap.set("app", true);
     firebase.initializeApp(firebaseConfig);
     firebase.analytics();
@@ -61,10 +61,17 @@ export function logout() {
   return firebase.auth().signOut();
 }
 
+export function loginRedirectGoogle() {
+  getFirebase();
+  var provider = new firebase.auth.GoogleAuthProvider();
+
+  firebase.auth().signInWithRedirect(provider);
+}
+
 export function loginGoogle() {
   getFirebase();
+  var provider = new firebase.auth.GoogleAuthProvider();
   return new Promise((resolve, reject) => {
-    var provider = new firebase.auth.GoogleAuthProvider();
     // provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
     // firebase.auth().signInWithRedirect(provider);
     firebase

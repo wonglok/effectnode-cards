@@ -134,10 +134,10 @@ function DreamyHelper({ avatarGLTF, npc }) {
   }, [avatar]);
 
   let fbx = {
-    // running: useFBX(`/rpm-actions-locomotion/running.fbx`),
-    // standing: useFBX(`/rpm-actions-locomotion/standing.fbx`),
-    running: useFBX(`/rpm-actions-locomotion/swim-forward.fbx`),
-    standing: useFBX(`/rpm-actions-locomotion/swim-float.fbx`),
+    // running: useFBX(`/rpm/rpm-actions-locomotion/running.fbx`),
+    // standing: useFBX(`/rpm/rpm-actions-locomotion/standing.fbx`),
+    running: useFBX(`/rpm/rpm-actions-locomotion/swim-forward.fbx`),
+    standing: useFBX(`/rpm/rpm-actions-locomotion/swim-float.fbx`),
   };
   let actions = useMemo(() => {
     let obj = {};

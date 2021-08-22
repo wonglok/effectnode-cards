@@ -1,5 +1,8 @@
 import { getID } from "./utils/get-id";
-import { makeShallowStore } from "./utils/make-shallow-store";
+import {
+  makeShallowStore,
+  ShallowStoreMethods,
+} from "./utils/make-shallow-store";
 import { useMiniEngine } from "./utils/use-mini-engine";
 import { useAutoEvent, applyAutoEvent } from "./utils/use-auto-event";
 import { Collider } from "./lib/Collider";
@@ -23,6 +26,7 @@ import { AdaptivePixelRatio } from "./compos/AdaptivePixelRatio";
 //
 export {
   getID,
+  ShallowStoreMethods,
   makeShallowStore,
   useAutoEvent,
   applyAutoEvent,
