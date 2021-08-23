@@ -6,16 +6,16 @@ import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { AnimationAction, AnimationMixer, Object3D, Vector3 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
-import { CardContent3D } from "../../vfx-content/card-page/CardContent3D";
+import { CardContent3D } from "../../../../vfx-content/card-page/CardContent3D";
 // import {  } from "three";
-import { LoadingScreen } from "../../vfx-content/welcome-page/LoadingScreen";
-import { useShaderEnvLight } from "../../vfx-content/welcome-page/useShaderEnvLight";
+import { LoadingScreen } from "../../../../vfx-content/welcome-page/LoadingScreen";
+import { useShaderEnvLight } from "../../../../vfx-content/welcome-page/useShaderEnvLight";
 import {
   makeShallowStore,
   ShallowStoreMethods,
   StarSky,
   useAutoEvent,
-} from "../../vfx-metaverse";
+} from "../../../../vfx-metaverse";
 
 //
 //

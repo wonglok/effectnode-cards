@@ -40,7 +40,7 @@ export function ColorBall({ cardID, camera, envMap }) {
     Store.text = "Loading....";
     Store.bottomText = "";
     Store.onClick = "";
-    Store.color.set("#bbb");
+    Store.color.set("#ddd");
 
     return getFirebase()
       .auth()
@@ -106,8 +106,8 @@ export function ColorBall({ cardID, camera, envMap }) {
         <directionalLight args={[10, 10, 10]}></directionalLight>
 
         <BallArea envMap={envMap}></BallArea>
-        <TextArea></TextArea>
-        <AuthArea></AuthArea>
+        <CenterText></CenterText>
+        <Subtitle></Subtitle>
       </group>
     </group>
   );
@@ -140,7 +140,7 @@ function BallArea({ envMap }) {
   );
 }
 
-function TextArea() {
+function CenterText() {
   Store.makeKeyReactive("text");
   return (
     <group>
@@ -162,7 +162,7 @@ function TextArea() {
   );
 }
 
-function AuthArea() {
+function Subtitle() {
   Store.makeKeyReactive("bottomText");
   return (
     <group>

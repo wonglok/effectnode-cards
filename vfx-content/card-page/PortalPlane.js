@@ -18,7 +18,7 @@ export function PortalPlane({ children = () => <group></group>, ...props }) {
   const [myScene] = useState(() => new Scene());
 
   let boxGeo = useMemo(() => {
-    return new RoundedBoxGeometry(showWW, showHH, 0.2, 3, showHH / 5);
+    return new RoundedBoxGeometry(showWW, showHH, 0.15, 3, showHH / 5);
   }, [showWW, showHH]);
 
   useFrame(({ gl, camera: appCamera }) => {

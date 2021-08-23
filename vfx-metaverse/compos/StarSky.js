@@ -109,10 +109,11 @@ export function StarSky() {
         // pp += vPos * 0.25 + speed;
         float noise = clamp(cnoise(speed + pp / 250.0 + 0.0 ), 0.0, 1.0);
 
-        vec3 colorA = vec3(81.0, 135.0, 228.0) * 0.07 / 255.0;
-        vec3 colorB = vec3(0.0, 150.0, 136.0) * 0.07 / 255.0;
+        vec3 colorA = vec3(81.0, 135.0, 228.0) * 0.35 / 255.0;
+        vec3 colorB = vec3(0.0, 150.0, 136.0) * 0.6 / 255.0;
 
-        vec4 backgroundColor = vec4(mix(colorA, colorB, noise), 1.0);
+        vec3 colorC = mix(colorA, colorB, noise);
+        vec4 backgroundColor = vec4(colorC * colorC, 1.0);
 
         gl_FragColor = backgroundColor;
 
