@@ -56,7 +56,7 @@ export function useShaderEnvLight() {
     {
       // textureBG: { value: tex },
     },
-    64
+    32
   );
 
   useEffect(() => {
