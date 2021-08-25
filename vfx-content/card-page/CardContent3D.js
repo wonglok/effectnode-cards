@@ -71,8 +71,6 @@ export function CardContent3D({ cardID }) {
           </group>
         </AvatarShowCard>
       </Suspense>
-
-      {/*  */}
     </group>
   );
 }

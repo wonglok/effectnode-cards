@@ -2,11 +2,16 @@ import { Text, PerspectiveCamera } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
 
 export function LoadingScreen() {
+  let { camera } = useThree();
   return (
     <group>
       <Text
         // rotation={[Math.PI * -0.25, 0, 0]}
-        position={[0, 0, -10]}
+        position={[
+          camera.position.x,
+          camera.position.y,
+          camera.position.z + -10,
+        ]}
         fontSize={0.3}
         color="white"
         outlineColor={"black"}
@@ -15,11 +20,10 @@ export function LoadingScreen() {
       >
         {`Loading Dreams...`}
       </Text>
-      <PerspectiveCamera
-        makeDefault
+      {/* <PerspectiveCamera
         position={[0, 0, 10]}
         lookAt={[0, 0, -10]}
-      ></PerspectiveCamera>
+      ></PerspectiveCamera> */}
     </group>
   );
 }

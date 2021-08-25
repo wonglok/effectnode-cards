@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect } from "react";
 
 export const useAutoEvent = function (
   ev,
@@ -7,14 +7,14 @@ export const useAutoEvent = function (
   dom
 ) {
   useEffect(() => {
-    dom = dom || window
-    dom.addEventListener(ev, fnc, settings)
+    dom = dom || window;
+    dom.addEventListener(ev, fnc, settings);
     return () => {
-      dom = dom || window
-      dom.removeEventListener(ev, fnc)
-    }
-  }, [])
-}
+      dom = dom || window;
+      dom.removeEventListener(ev, fnc);
+    };
+  }, []);
+};
 
 export const applyAutoEvent = function (
   dom,
@@ -22,10 +22,10 @@ export const applyAutoEvent = function (
   fnc,
   settings = { passive: false }
 ) {
-  dom = dom || window
-  dom.addEventListener(ev, fnc, settings)
+  dom = dom || window;
+  dom.addEventListener(ev, fnc, settings);
   return () => {
-    dom = dom || window
-    dom.removeEventListener(ev, fnc)
-  }
-}
+    dom = dom || window;
+    dom.removeEventListener(ev, fnc);
+  };
+};

@@ -72,9 +72,6 @@ export function WelcomeAvatar({ envMap }) {
   }, []);
 
   useFrame((st, dt) => {
-    if (dt <= 1 / 60) {
-      dt = 1 / 60;
-    }
     mixer.update(dt);
   });
 

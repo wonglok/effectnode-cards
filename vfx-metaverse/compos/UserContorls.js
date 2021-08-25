@@ -325,14 +325,6 @@ export function UserContorls({
     <group>
       {/*  */}
       {/*  */}
-      <PerspectiveCamera
-        fov={45}
-        near={0.1}
-        far={10000}
-        position={[0, 20, 20]}
-        rotation-x={Math.PI * -0.25}
-        makeDefault
-      />
     </group>
   );
 }

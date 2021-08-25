@@ -2,7 +2,7 @@ import { Text } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import router from "next/dist/client/router";
 import React, { useEffect, useRef } from "react";
-import { MathUtils } from "three";
+import { MathUtils, Mesh, PlaneBufferGeometry } from "three";
 import { useAutoEvent } from "../utils/use-auto-event";
 // import { Tooltip } from "./Tooltip";
 
@@ -17,10 +17,10 @@ export function TheHelper({ Now }) {
 }
 
 function TheCursor({ Now }) {
+  let { get } = useThree();
   Now.makeKeyReactive("hint");
 
   let core = useRef();
-
   let mouse1 = useRef();
 
   useAutoEvent("set-tail-state", ({ detail: state }) => {
@@ -33,7 +33,12 @@ function TheCursor({ Now }) {
     }
   });
 
-  useFrame(({ camera }) => {
+  // let front = new Mesh(new PlaneBufferGeometry(200, 200, 2, 2));
+  // front.visible = false;
+  // front.position.z = -1;
+  // get().camera.add(front);
+
+  useFrame(({ camera, raycaster }) => {
     if (core.current) {
       core.current.position.copy(camera.position);
       core.current.rotation.copy(camera.rotation);
@@ -63,19 +68,20 @@ function TheCursor({ Now }) {
           </Text>
         </group>
 
-        <group scale={[1, 1, 1]} position={[0, 0, -1]}>
-          <group scale={0.001} rotation={[0, 0, Math.PI * 0.25]}>
-            <Floating Now={Now}>
-              {/*  */}
-              <mesh ref={mouse1} position={[0, -9 / 2, 0]}>
-                <coneBufferGeometry args={[4, 9, 3, 1]}></coneBufferGeometry>
-                <meshStandardMaterial
-                  //
-                  metalness={1.0}
-                  roughness={0.0}
-                ></meshStandardMaterial>
-              </mesh>
-            </Floating>
+        <group>
+          <group scale={[1, 1, 1]} position={[0, 0, -1]}>
+            <group scale={0.001} rotation={[0, 0, Math.PI * 0.25]}>
+              <Floating Now={Now}>
+                <mesh ref={mouse1} position={[0, -9 / 2, 0]}>
+                  <coneBufferGeometry args={[4, 9, 3, 1]}></coneBufferGeometry>
+                  <meshStandardMaterial
+                    //
+                    metalness={1.0}
+                    roughness={0.0}
+                  ></meshStandardMaterial>
+                </mesh>
+              </Floating>
+            </group>
           </group>
         </group>
       </group>
@@ -153,8 +159,6 @@ function ClickToOpen({ Now }) {
           isDown = false;
         }
       }
-
-      //
     },
     { passive: false },
     gl.domElement
@@ -167,7 +171,7 @@ function DomCursor() {
   useAutoEvent(
     "pointerdown",
     () => {
-      document.body.style.cursor = "none";
+      document.body.style.cursor = "grabbing";
     },
     { passive: false },
     document.body
@@ -175,14 +179,14 @@ function DomCursor() {
   useAutoEvent(
     "pointerup",
     () => {
-      document.body.style.cursor = "grabbing";
+      document.body.style.cursor = "grab";
     },
     { passive: false },
     document.body
   );
 
   useEffect(() => {
-    document.body.style.cursor = "grabbing";
+    document.body.style.cursor = "grab";
     return () => {
       document.body.style.cursor = "";
     };

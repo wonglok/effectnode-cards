@@ -11,8 +11,8 @@ export function HoneyShip() {
   let clicked = false;
   gltf.scene.traverse((it) => {
     if (it.geometry) {
-      it.material.roughness = 0.7;
-      it.material.metalness = 0.5;
+      it.material.roughness = 0.157;
+      it.material.metalness = 0.7;
 
       it.userData.onClick = () => {
         if (clicked) {
@@ -26,14 +26,14 @@ export function HoneyShip() {
 
         let tt = setInterval(() => {
           if (ref.current) {
-            ref.current.position.z = (1.0 - counter) * 500;
+            ref.current.position.z = (1.0 - counter) * 400;
             ref.current.scale.setScalar(counter);
           }
 
           gltf.scene.getWorldPosition(v3);
 
-          counter *= 0.996;
-          if (counter <= 0.1) {
+          counter *= 0.99;
+          if (counter <= 0.2) {
             clicked = false;
             get().camera.userData.lookAt = false;
             get().camera.userData.needsResetLookAt = true;

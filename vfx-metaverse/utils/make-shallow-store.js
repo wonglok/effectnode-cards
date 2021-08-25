@@ -6,15 +6,19 @@ export const ShallowStoreMethods = {
   makeKeyReactive: () => {},
   reloadKey: () => {},
 };
+
 export const makeShallowStore = (myObject = {}) => {
   let ___NameSpaceID = getID();
   let Utils = {
     exportJSON: () => {
       return JSON.parse(JSON.stringify(myObject));
     },
+
+    /*  */
     getNameSpcaeID: () => {
       return ___NameSpaceID;
     },
+
     /* */
     onEvent: (key, func) => {
       let evName = `${___NameSpaceID}`;
@@ -79,5 +83,10 @@ export const makeShallowStore = (myObject = {}) => {
     },
   });
 
+  let Type = {
+    ...myObject,
+    ...ShallowStoreMethods,
+  };
+  /** @type {Type} */
   return proxy;
 };

@@ -12,7 +12,7 @@ const Store = makeShallowStore({
   bottomText: "",
   loggedIn: false,
   color: new Color("#fff"),
-  latestColor: new Color("#000"),
+  sharpChangeColor: new Color("#0ff"),
 });
 export function ColorBall({ cardID, camera, envMap }) {
   let { get } = useThree();
@@ -40,12 +40,13 @@ export function ColorBall({ cardID, camera, envMap }) {
     Store.text = "Loading....";
     Store.bottomText = "";
     Store.onClick = "";
-    Store.color.set("#ddd");
 
     return getFirebase()
       .auth()
       .onAuthStateChanged(async (user) => {
         if (user && user.uid) {
+          //
+
           Store.text = "Checking Card Validity";
           let isValid = await checkCardValidity();
 
@@ -53,18 +54,18 @@ export function ColorBall({ cardID, camera, envMap }) {
             Store.text = "Card is Valid";
             Store.bottomText = "Click to Conintue...";
             Store.onClick = "valid";
-            Store.latestColor.set("#fff");
+            Store.sharpChangeColor.set("#fff");
           } else {
             Store.text = "Card is Invalid :( ";
             Store.onClick = "invalid";
             Store.bottomText = "Click to Get Help...";
-            Store.latestColor.set("#f00");
+            Store.sharpChangeColor.set("#f00");
           }
         } else {
           Store.text = "Login to Activate Card";
           Store.bottomText = "Click to Conintue...";
           Store.onClick = "login";
-          Store.latestColor.set("#0ff");
+          Store.sharpChangeColor.set("#0ff");
         }
       });
   }, []);
@@ -103,7 +104,7 @@ export function ColorBall({ cardID, camera, envMap }) {
   return (
     <group>
       <group position={[0, camera.position.y, camera.position.z - 5.6]}>
-        <directionalLight args={[10, 10, 10]}></directionalLight>
+        {/* <directionalLight args={[10, 10, 10]}></directionalLight> */}
 
         <BallArea envMap={envMap}></BallArea>
         <CenterText></CenterText>
@@ -121,7 +122,7 @@ function BallArea({ envMap }) {
 
     if (ball) {
       /** @type {Color} */
-      Store.color.lerpHSL(Store.latestColor, 0.1);
+      Store.color.lerpHSL(Store.sharpChangeColor, 0.1);
       ball.color = Store.color;
     }
   });

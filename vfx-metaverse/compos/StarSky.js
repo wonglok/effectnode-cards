@@ -137,8 +137,8 @@ export function StarSky() {
     time: { value: 0 },
   });
 
-  useFrame(() => {
-    uniforms.current.time.value += 1 / 60;
+  useFrame((st, dt) => {
+    uniforms.current.time.value += dt;
   });
 
   return (

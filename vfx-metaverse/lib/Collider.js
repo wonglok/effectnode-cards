@@ -6,7 +6,6 @@ import { MeshBVH } from "three-mesh-bvh";
 export class Collider {
   constructor({ floor, scene }) {
     this.floor = floor;
-    this.center = new Vector2(0, 0);
     this.raycaster = new Raycaster();
     this.scene = scene;
 
@@ -74,9 +73,32 @@ export class Collider {
     return collider;
   }
 
+  static queryHover({ scene }) {
+    const source = [];
+
+    scene.traverse((it) => {
+      if (
+        it.geometry &&
+        it.userData &&
+        (it?.userData?.isHoverable ||
+          it?.material?.userData?.isFloor ||
+          it?.userData?.isFloor ||
+          it?.userData?.hint ||
+          it?.userData?.website) &&
+        typeof it?.userData?.skipFloor === "undefined"
+      ) {
+        source.push(it);
+      }
+    });
+
+    return source;
+  }
+
   //
-  scanCenter({ camera, scene }) {
-    const { raycaster, center, collider } = this;
+  scanCenter({ camera, scene, center = new Vector2(0, 0) }) {
+    // this.center = new Vector2(0, 0);
+
+    const { raycaster, collider } = this;
 
     raycaster.setFromCamera(center, camera);
 
@@ -87,21 +109,8 @@ export class Collider {
     // );
 
     const result = [];
-    const source = [];
 
-    scene.traverse((it) => {
-      if (
-        it.geometry &&
-        it.userData &&
-        (it?.userData?.isHoverable ||
-          it?.userData?.isFloor ||
-          it?.userData?.hint ||
-          it?.userData?.website) &&
-        typeof it.userData.skipFloor === "undefined"
-      ) {
-        source.push(it);
-      }
-    });
+    let source = Collider.queryHover({ scene });
 
     raycaster.intersectObjects(source, false, result);
     const hit = result[0];

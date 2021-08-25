@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Text } from "@react-three/drei";
-import { DoubleSide, Vector3 } from "three";
-import { useFrame } from "@react-three/fiber";
+import { DirectionalLight, DoubleSide, Object3D, Vector3 } from "three";
+import { createPortal, useFrame } from "@react-three/fiber";
 import { HelloSign } from "./HelloSign";
 import { Portal } from "./Portal";
 import { Social } from "./Social";
@@ -261,10 +261,15 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
     }
   });
 
+  let o3d = new Object3D();
   return (
     <group>
       <group ref={ref}>
-        <primitive object={avatar}></primitive>
+        {createPortal(<primitive object={avatar}></primitive>, o3d)}
+
+        <primitive object={o3d}>
+          <pointLight position={[0, 0, 10]} intensity={20}></pointLight>
+        </primitive>
         <Text
           ref={banner}
           position={[0, 2, 0.5]}
@@ -276,8 +281,8 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
           font={`/font/Cronos-Pro-Light_12448.ttf`}
           frustumCulled={false}
           color={"white"}
-          outlineColor={"#555555"}
-          outlineWidth={0.001}
+          outlineColor={"black"}
+          outlineWidth={0.003}
           userData={{ enableBloom: true }}
         >
           {text}
@@ -289,8 +294,6 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
             opacity={1}
           />
         </Text>
-
-        <pointLight position={[0, 0, 10]} intensity={25}></pointLight>
 
         <HelloSign visible={showVFX === "hi"} avatar={avatar}></HelloSign>
 
