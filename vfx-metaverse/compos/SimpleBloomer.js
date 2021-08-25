@@ -47,7 +47,7 @@ export class BloomLayer {
     });
 
     let efComposer = new EffectComposer(get().gl);
-    efComposer.setPixelRatio(0.5);
+    efComposer.setPixelRatio(1);
 
     let renderPass = new RenderPass(get().scene, get().camera);
     mini.onResize(() => {
@@ -352,6 +352,8 @@ export class Compositor {
       if (gl) {
         quadMat.uniforms.bloomDiffuse.value = bloomTex;
         quadMat.uniforms.tDiffuse.value = baseTex;
+        quadMat.uniforms.resolution.value.x = 1 / gl.domElement.clientWidth;
+        quadMat.uniforms.resolution.value.y = 1 / gl.domElement.clientHeight;
         fsQuad.render(gl);
       }
     };
