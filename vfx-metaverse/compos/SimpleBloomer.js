@@ -22,6 +22,7 @@ import { FullScreenQuad } from "three/examples/jsm/postprocessing/Pass";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass";
+import { FXAAfrag } from "./FXAAfrag";
 
 export const ENTIRE_SCENE = 0;
 export const BLOOM_SCENE = 1;
@@ -46,7 +47,7 @@ export class BloomLayer {
     });
 
     let efComposer = new EffectComposer(get().gl);
-    efComposer.setPixelRatio(1);
+    efComposer.setPixelRatio(0.5);
 
     let renderPass = new RenderPass(get().scene, get().camera);
     mini.onResize(() => {
@@ -128,7 +129,8 @@ export class BloomLayer {
       // });
     };
 
-    let enableDarkenMap = new Map();
+    BloomLayer.darkenMap = BloomLayer.darkenMap || new Map();
+    let enableDarkenMap = BloomLayer.darkenMap;
 
     let darken = (it) => {
       // if (!it.text) {
@@ -287,7 +289,10 @@ export class Compositor {
       //
       uniforms: {
         bloomDiffuse: { value: null },
-        baseDiffuse: { value: null },
+        tDiffuse: { value: null },
+        resolution: {
+          value: new Vector2(1 / window.innerWidth, 1 / window.innerHeight),
+        },
       },
 
       //
@@ -300,16 +305,39 @@ export class Compositor {
       `,
 
       fragmentShader: `
-        uniform sampler2D baseDiffuse;
+        uniform sampler2D tDiffuse;
         uniform sampler2D bloomDiffuse;
 
+        ${FXAAfrag}
         varying vec2 vUv;
           void main (void) {
-            vec4 baseDiffuseColor = texture2D(baseDiffuse, vUv);
+
+            gl_FragColor = FxaaPixelShader(
+              vUv,
+              vec4(0.0),
+              tDiffuse,
+              tDiffuse,
+              tDiffuse,
+              resolution,
+              vec4(0.0),
+              vec4(0.0),
+              vec4(0.0),
+              0.75,
+              0.166,
+              0.0833,
+              0.0,
+              0.0,
+              0.0,
+              vec4(0.0)
+            );
+
+            // TODO avoid querying texture twice for same texel
+            gl_FragColor.a = texture2D(tDiffuse, vUv).a;
+
+            // vec4 tDiffuseColor = texture2D(tDiffuse, vUv);
+            // gl_FragColor = vec4(tDiffuseColor.rgb,  tDiffuseColor.a);
+
             vec4 bloomDiffuseColor = texture2D(bloomDiffuse, vUv);
-
-            gl_FragColor = vec4(baseDiffuseColor.rgb,  baseDiffuseColor.a);
-
             gl_FragColor.r += 0.5 * pow(bloomDiffuseColor.r, 0.9);
             gl_FragColor.g += 0.5 * pow(bloomDiffuseColor.g, 0.9);
             gl_FragColor.b += 0.5 * pow(bloomDiffuseColor.b, 0.9);
@@ -323,7 +351,7 @@ export class Compositor {
       let { gl } = mini.now;
       if (gl) {
         quadMat.uniforms.bloomDiffuse.value = bloomTex;
-        quadMat.uniforms.baseDiffuse.value = baseTex;
+        quadMat.uniforms.tDiffuse.value = baseTex;
         fsQuad.render(gl);
       }
     };
