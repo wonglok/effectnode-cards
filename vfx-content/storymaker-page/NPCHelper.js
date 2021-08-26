@@ -35,7 +35,6 @@ export function NPCHelper({ avatarGLTF, envMap, collider }) {
   let { get } = useThree();
 
   //
-  //
   let NPC = useMemo(() => makeNow(), []);
   let group = useRef();
   let { mini } = useMiniEngine();
@@ -94,8 +93,6 @@ export function NPCHelper({ avatarGLTF, envMap, collider }) {
 
   return (
     <group ref={group}>
-      {/*  */}
-      {/*  */}
       {/*  */}
 
       <group position={[0, -2.31 + 0.1, 0]}>
@@ -179,11 +176,11 @@ function DreamyHelper({ avatarGLTF, npc }) {
   return (
     <group>
       <primitive name="avatar" object={avatar}>
-        <pointLight
+        {/* <pointLight
           castShadow={true}
           intensity={6.5}
           position={[0, 1.75, 1.75]}
-        ></pointLight>
+        ></pointLight> */}
       </primitive>
     </group>
   );

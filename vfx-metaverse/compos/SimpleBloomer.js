@@ -85,61 +85,15 @@ export class BloomLayer {
     darkLayer.disableAll();
     darkLayer.enable(DARK_SCENE);
 
-    let onBeforeCompileForStdMat = (globalDarkening) => (shader) => {
-      shader.uniforms.globalDarkening = globalDarkening;
-      let atBegin = `
-        uniform bool globalDarkening;
-      `;
-      let atEnd = `
-        if (globalDarkening) {
-          gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
-        }
-      `;
-
-      shader.fragmentShader = `${atBegin.trim()}\n${shader.fragmentShader}`;
-      shader.fragmentShader = shader.fragmentShader.replace(
-        `#include <dithering_fragment>`,
-        `#include <dithering_fragment>\n${atEnd.trim()}`
-      );
-    };
-
     // let uniqueMaterialMap = new Map();
-    let setup = () => {
-      // let { scene } = get();
-      // scene.traverse((it) => {
-      //   if (
-      //     it.material &&
-      //     (it.material instanceof MeshStandardMaterial ||
-      //       it.material instanceof MeshPhongMaterial ||
-      //       it.material instanceof MeshBasicMaterial ||
-      //       it.material instanceof MeshLambertMaterial ||
-      //       it.material instanceof MeshMatcapMaterial ||
-      //       it.material instanceof MeshPhysicalMaterial ||
-      //       it.material instanceof MeshToonMaterial)
-      //   ) {
-      //     if (typeof it.text === "undefined") {
-      //       if (!uniqueMaterialMap.has(it.uuid + it.material.uuid)) {
-      //         if (it.material?.clone) {
-      //           // it.material = it.material.clone();
-      //           uniqueMaterialMap.set(it.uuid + it.material.uuid, true);
-      //         }
-      //       }
-      //     }
-      //   }
-      // });
+    // let full = onBeforeCompileForStdMat.toString();
+
+    let getSig = (uuid) => {
+      return window.location.href + uuid;
     };
-
-    BloomLayer.darkenMap = BloomLayer.darkenMap || new Map();
-    let enableDarkenMap = BloomLayer.darkenMap;
-
-    let darken = (it) => {
-      // if (!it.text) {
-      //   it.material = darkMat
-      //   darkMat.needsUpdate = true
-      // }
-      // darkMat.needsUpdate = true;
-
-      if (!enableDarkenMap.has(it.uuid)) {
+    let setup = () => {
+      let { scene } = get();
+      scene.traverse((it) => {
         if (
           it.material &&
           (it.material instanceof MeshStandardMaterial ||
@@ -150,46 +104,78 @@ export class BloomLayer {
             it.material instanceof MeshPhysicalMaterial ||
             it.material instanceof MeshToonMaterial)
         ) {
-          let str = it.material.onBeforeCompile.toString();
-          if (str !== onBeforeCompileForStdMat.toString()) {
-            let globalDarkening = { value: false };
-            it.userData.globalDarkening = globalDarkening;
+          if (getSig(it.uuid) !== it.____lastSig) {
+            let hh = (shader) => {
+              let globalDarkening = { value: true };
+              let bloomAPI = {
+                shine: () => {
+                  globalDarkening.value = false;
+                },
+                dim: () => {
+                  globalDarkening.value = true;
+                },
+              };
 
-            enableDarkenMap.set(it.uuid, globalDarkening);
+              shader.uniforms.globalDarkening = globalDarkening;
+              let atBegin = `
+                  uniform bool globalDarkening;
+                `;
+              let atEnd = `
+                  if (globalDarkening) {
+                    gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+                  }
+                `;
+              shader.fragmentShader = `${atBegin.trim()}\n${
+                shader.fragmentShader
+              }`;
+              shader.fragmentShader = shader.fragmentShader.replace(
+                `#include <dithering_fragment>`,
+                `#include <dithering_fragment>\n${atEnd.trim()}`
+              );
 
-            it.material.onBeforeCompile =
-              onBeforeCompileForStdMat(globalDarkening);
+              it.userData.bloomAPI = bloomAPI;
+            };
+
+            it.____lastSig = getSig(it.uuid);
+            it.material.onBeforeCompile = hh;
+            it.material.customProgramCacheKey = () => {
+              return getSig(it.uuid);
+            };
             it.material.needsUpdate = true;
           }
         }
-      }
-
-      if (enableDarkenMap.has(it.uuid)) {
-        enableDarkenMap.get(it.uuid).value = true;
-      }
+      });
     };
+
+    // BloomLayer.darkenMap = BloomLayer.darkenMap || ;
+    // let enableDarkenMap = new Map();
 
     let setBloomSceneMat = () => {
       let { scene } = get();
-      scene.traverse((it) => {
-        if (it?.userData?.discard) {
-          it.visible = false;
-        }
 
-        if (it.material) {
-          if (it?.userData?.disableBloom) {
-            darken(it);
-          } else if (it?.userData?.enableDarken) {
-            darken(it);
-          } else if (
-            it?.userData?.enableBloom ||
-            it?.material?.userData?.enableBloom
-          ) {
-          } else if (darkLayer.test(it.layers) || !bloomLayer.test(it.layers)) {
-            darken(it);
-          } else {
+      //
+      scene.traverse((it) => {
+        if (it?.userData?.enableBloom || it?.material?.userData?.enableBloom) {
+          if (it?.userData?.bloomAPI?.shine) {
+            it.userData.bloomAPI.shine();
+          }
+        } else {
+          if (it?.userData?.bloomAPI?.dim) {
+            it.userData.bloomAPI.dim();
+            it.userData.bloomAPI.needsShine = true;
           }
         }
+
+        // if (it.userData.disableBloom) {
+        //   if (it?.userData?.bloomAPI?.dim) {
+        //     it.userData.bloomAPI.dim();
+        //   }
+        // }
+        // if (it.userData.enableDarken) {
+        //   if (it?.userData?.bloomAPI?.dim) {
+        //     it.userData.bloomAPI.dim();
+        //   }
+        // }
       });
     };
 
@@ -208,8 +194,12 @@ export class BloomLayer {
       let { scene } = get();
 
       scene.traverse((it) => {
-        if (enableDarkenMap.has(it.uuid)) {
-          enableDarkenMap.get(it.uuid).value = false;
+        if (
+          it?.userData?.bloomAPI?.shine &&
+          it?.userData?.bloomAPI?.needsShine
+        ) {
+          it.userData.bloomAPI.needsShine = false;
+          it.userData.bloomAPI.shine();
         }
 
         if (it?.userData?.discard) {
@@ -251,9 +241,7 @@ export class BaseLayer {
       encoding: sRGBEncoding,
       generateMipmaps: false,
     });
-    mini.onClean(() => {
-      this.rtt.dispose();
-    });
+
     mini.onResize(() => {
       resBase.copy({
         x: get().gl.domElement.width,
@@ -383,6 +371,10 @@ export function SimpleBloomer() {
         });
       };
     });
+
+    return () => {
+      mini.clean();
+    };
   }, []);
 
   // invalidate orignal loop
