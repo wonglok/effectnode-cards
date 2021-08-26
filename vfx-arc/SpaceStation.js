@@ -27,9 +27,13 @@ import { Color } from "three";
 
 export default function Page() {
   return (
-    <Suspense fallback={<LoadingScreen></LoadingScreen>}>
-      <Content3D></Content3D>
-    </Suspense>
+    <group>
+      <StarSky></StarSky>
+
+      <Suspense fallback={<LoadingScreen></LoadingScreen>}>
+        <Content3D></Content3D>
+      </Suspense>
+    </group>
   );
 }
 

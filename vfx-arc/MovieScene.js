@@ -4,7 +4,7 @@ import { Canvas, createPortal, useThree } from "@react-three/fiber";
 import { getGPUTier } from "detect-gpu";
 import { Suspense } from "react";
 import { LoadingScreen } from "../vfx-content/welcome-page/LoadingScreen";
-import { Preload, useGLTF } from "@react-three/drei";
+import { Preload, Stars, useGLTF } from "@react-three/drei";
 import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
 import {
   Map3D,
@@ -27,9 +27,12 @@ import { Color } from "three";
 
 export default function Page() {
   return (
-    <Suspense fallback={<LoadingScreen></LoadingScreen>}>
-      <Content3D></Content3D>
-    </Suspense>
+    <group>
+      <StarSky></StarSky>
+      <Suspense fallback={<LoadingScreen></LoadingScreen>}>
+        <Content3D></Content3D>
+      </Suspense>
+    </group>
   );
 }
 

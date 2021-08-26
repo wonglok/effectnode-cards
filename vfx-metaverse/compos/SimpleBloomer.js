@@ -40,32 +40,37 @@ export class BloomLayer {
   constructor({ mini }) {
     let { get } = mini.now;
 
-    let resBloom = new Vector2();
-    resBloom.copy({
-      x: get().gl.domElement.width,
-      y: get().gl.domElement.height,
+    let resBase = new Vector2();
+
+    resBase.copy({
+      x: get().gl.domElement.clientWidth,
+      y: get().gl.domElement.clientHeight,
     });
+    resBase.multiplyScalar(0.75);
 
     let efComposer = new EffectComposer(get().gl);
-    efComposer.setPixelRatio(1);
 
     let renderPass = new RenderPass(get().scene, get().camera);
     mini.onResize(() => {
-      resBloom.copy({
-        x: get().gl.domElement.width,
-        y: get().gl.domElement.height,
+      resBase.copy({
+        x: get().gl.domElement.clientWidth,
+        y: get().gl.domElement.clientHeight,
       });
-      renderPass.setSize(resBloom.x, resBloom.y);
+      resBase.multiplyScalar(0.75);
+
+      renderPass.setSize(resBase.x, resBase.y);
     });
     efComposer.addPass(renderPass);
 
-    let unrealPass = new UnrealBloomPass(resBloom, 1.0, 0.8, 0.2);
+    let unrealPass = new UnrealBloomPass(resBase, 1.0, 0.8, 0.2);
     mini.onResize(() => {
-      resBloom.copy({
-        x: get().gl.domElement.width,
-        y: get().gl.domElement.height,
+      resBase.copy({
+        x: get().gl.domElement.clientWidth,
+        y: get().gl.domElement.clientHeight,
       });
-      unrealPass.setSize(resBloom.x, resBloom.y);
+      resBase.multiplyScalar(0.75);
+
+      unrealPass.setSize(resBase.x, resBase.y);
     });
 
     efComposer.addPass(unrealPass);
@@ -194,11 +199,7 @@ export class BloomLayer {
       let { scene } = get();
 
       scene.traverse((it) => {
-        if (
-          it?.userData?.bloomAPI?.shine &&
-          it?.userData?.bloomAPI?.needsShine
-        ) {
-          it.userData.bloomAPI.needsShine = false;
+        if (it?.userData?.bloomAPI?.shine) {
           it.userData.bloomAPI.shine();
         }
 
@@ -231,11 +232,16 @@ export class BloomLayer {
 
 export class BaseLayer {
   constructor({ mini }) {
-    let { size, gl, get } = mini.now;
+    let { get } = mini.now;
 
     let resBase = new Vector2();
 
-    resBase.copy({ x: size.width, y: size.height });
+    let dpr = get().gl.getPixelRatio();
+    resBase.copy({
+      x: get().gl.domElement.clientWidth,
+      y: get().gl.domElement.clientHeight,
+    });
+    resBase.multiplyScalar(dpr);
 
     this.rtt = new WebGLRenderTarget(resBase.width, resBase.height, {
       encoding: sRGBEncoding,
@@ -244,9 +250,10 @@ export class BaseLayer {
 
     mini.onResize(() => {
       resBase.copy({
-        x: get().gl.domElement.width,
-        y: get().gl.domElement.height,
+        x: get().gl.domElement.clientWidth,
+        y: get().gl.domElement.clientHeight,
       });
+      resBase.multiplyScalar(dpr);
 
       this.rtt = new WebGLRenderTarget(resBase.width, resBase.height, {
         encoding: sRGBEncoding,
