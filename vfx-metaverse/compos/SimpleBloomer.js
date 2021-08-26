@@ -94,13 +94,19 @@ export class BloomLayer {
     // let full = onBeforeCompileForStdMat.toString();
 
     let getSig = (uuid) => {
-      return window.location.href; // + uuid;
+      return "done"; // + uuid;
     };
     let setup = () => {
       let { scene } = get();
+      let darken = new MeshBasicMaterial({
+        color: 0x000000,
+        transparent: false,
+        opacity: 0,
+      });
       scene.traverse((it) => {
         if (
           it.material &&
+          it.userData.____lastSig !== getSig(it.uuid) &&
           (it.material instanceof MeshStandardMaterial ||
             it.material instanceof MeshPhongMaterial ||
             it.material instanceof MeshBasicMaterial ||
@@ -112,45 +118,58 @@ export class BloomLayer {
           // let loc = window.location.href;
           // it[loc] = it[loc] || {};
 
-          if (it.userData.____lastSig !== getSig(it.uuid)) {
-            let hh = (shader) => {
-              let globalDarkening = { value: true };
-              let bloomAPI = {
-                shine: () => {
-                  globalDarkening.value = false;
-                },
-                dim: () => {
-                  globalDarkening.value = true;
-                },
-              };
+          // let hh = (shader) => {
+          //   let globalDarkening = { value: true };
+          //   let bloomAPI = {
+          //     shine: () => {
+          //       globalDarkening.value = false;
+          //     },
+          //     dim: () => {
+          //       globalDarkening.value = true;
+          //     },
+          //   };
 
-              shader.uniforms.globalDarkening = globalDarkening;
-              let atBegin = `
-                  uniform bool globalDarkening;
-                `;
-              let atEnd = `
-                  if (globalDarkening) {
-                    gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
-                  }
-                `;
-              shader.fragmentShader = `${atBegin.trim()}\n${
-                shader.fragmentShader
-              }`;
-              shader.fragmentShader = shader.fragmentShader.replace(
-                `#include <dithering_fragment>`,
-                `#include <dithering_fragment>\n${atEnd.trim()}`
-              );
+          //   shader.uniforms.globalDarkening = globalDarkening;
+          //   let atBegin = `
+          //       uniform bool globalDarkening;
+          //     `;
+          //   let atEnd = `
+          //       if (globalDarkening) {
+          //         gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+          //       }
+          //     `;
+          //   shader.fragmentShader = `${atBegin.trim()}\n${
+          //     shader.fragmentShader
+          //   }`;
+          //   shader.fragmentShader = shader.fragmentShader.replace(
+          //     `#include <dithering_fragment>`,
+          //     `#include <dithering_fragment>\n${atEnd.trim()}`
+          //   );
 
-              it.userData.bloomAPI = bloomAPI;
-            };
+          //   it.userData.bloomAPI = bloomAPI;
+          // };
 
-            it.userData.____lastSig = getSig(it.uuid);
-            it.material.onBeforeCompile = hh;
-            it.material.customProgramCacheKey = () => {
-              return getSig(it.uuid);
-            };
-            it.material.needsUpdate = true;
-          }
+          let orig = it.material;
+          let bloomAPI = {
+            shine: () => {
+              it.material = orig;
+              it.material.needsUpdate = true;
+              // globalDarkening.value = false;
+            },
+            dim: () => {
+              it.material = darken;
+              // globalDarkening.value = true;
+            },
+          };
+
+          it.userData.bloomAPI = bloomAPI;
+
+          it.userData.____lastSig = getSig(it.uuid);
+          // it.material.onBeforeCompile = hh;
+          // it.material.customProgramCacheKey = () => {
+          //   return getSig(it.uuid);
+          // };
+          // it.material.needsUpdate = true;
         }
       });
     };
@@ -306,34 +325,34 @@ export class Compositor {
         uniform sampler2D tDiffuse;
         uniform sampler2D bloomDiffuse;
 
-        ${FXAAfrag}
+        ${/* FXAAfrag */ ""}
         varying vec2 vUv;
           void main (void) {
 
-            gl_FragColor = FxaaPixelShader(
-              vUv,
-              vec4(0.0),
-              tDiffuse,
-              tDiffuse,
-              tDiffuse,
-              resolution,
-              vec4(0.0),
-              vec4(0.0),
-              vec4(0.0),
-              0.75,
-              0.166,
-              0.0833,
-              0.0,
-              0.0,
-              0.0,
-              vec4(0.0)
-            );
+            // gl_FragColor = FxaaPixelShader(
+            //   vUv,
+            //   vec4(0.0),
+            //   tDiffuse,
+            //   tDiffuse,
+            //   tDiffuse,
+            //   resolution,
+            //   vec4(0.0),
+            //   vec4(0.0),
+            //   vec4(0.0),
+            //   0.75,
+            //   0.166,
+            //   0.0833,
+            //   0.0,
+            //   0.0,
+            //   0.0,
+            //   vec4(0.0)
+            // );
 
-            // TODO avoid querying texture twice for same texel
-            gl_FragColor.a = texture2D(tDiffuse, vUv).a;
+            // // TODO avoid querying texture twice for same texel
+            // gl_FragColor.a = texture2D(tDiffuse, vUv).a;
 
-            // vec4 tDiffuseColor = texture2D(tDiffuse, vUv);
-            // gl_FragColor = vec4(tDiffuseColor.rgb,  tDiffuseColor.a);
+            vec4 tDiffuseColor = texture2D(tDiffuse, vUv);
+            gl_FragColor = vec4(tDiffuseColor.rgb,  tDiffuseColor.a);
 
             vec4 bloomDiffuseColor = texture2D(bloomDiffuse, vUv);
             gl_FragColor.r += 0.5 * pow(bloomDiffuseColor.r, 0.9);

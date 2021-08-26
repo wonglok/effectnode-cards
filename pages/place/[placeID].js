@@ -1,5 +1,5 @@
 //
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 import { SimpleBloomer } from "../../vfx-metaverse";
 import { sRGBEncoding } from "three";
 import { useEffect, useState } from "react";
@@ -52,6 +52,7 @@ let Pages = {
 };
 
 function PageRouter({ placeID }) {
+  let { scene } = useThree();
   let [outlet, setCompos] = useState(<group></group>);
 
   useEffect(() => {
@@ -61,7 +62,11 @@ function PageRouter({ placeID }) {
     }
 
     return () => {
-      //
+      scene.traverse((it) => {
+        if (it?.userData?.bloomAPI) {
+          it.userData.bloomAPI.shine();
+        }
+      });
     };
   }, [placeID]);
 

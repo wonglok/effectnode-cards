@@ -4,7 +4,7 @@ import { Canvas, createPortal, useThree } from "@react-three/fiber";
 import { getGPUTier } from "detect-gpu";
 import { Suspense } from "react";
 import { LoadingScreen } from "../vfx-content/welcome-page/LoadingScreen";
-import { Preload, Stars, useGLTF } from "@react-three/drei";
+import { Preload, Stars, useFBX, useGLTF } from "@react-three/drei";
 import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
 import {
   Map3D,

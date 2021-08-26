@@ -171,7 +171,7 @@ function DomCursor() {
   useAutoEvent(
     "pointerdown",
     () => {
-      document.body.style.cursor = "grabbing";
+      document.body.style.cursor = "none";
     },
     { passive: false },
     document.body
