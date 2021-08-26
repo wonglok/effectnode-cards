@@ -94,7 +94,7 @@ export class BloomLayer {
     // let full = onBeforeCompileForStdMat.toString();
 
     let getSig = (uuid) => {
-      return window.location.href + uuid;
+      return window.location.href; // + uuid;
     };
     let setup = () => {
       let { scene } = get();
@@ -112,7 +112,7 @@ export class BloomLayer {
           // let loc = window.location.href;
           // it[loc] = it[loc] || {};
 
-          if (getSig(it.uuid) !== it.userData.____lastSig) {
+          if (it.userData.____lastSig !== getSig(it.uuid)) {
             let hh = (shader) => {
               let globalDarkening = { value: true };
               let bloomAPI = {
