@@ -7,10 +7,12 @@ export function LoadingScreen() {
   let { camera, scene } = useThree();
 
   useEffect(() => {
+    camera.position.set(0, 0, 10);
     camera.lookAt(0, 0, -10);
     let orig = scene.background;
     scene.background = new Color("black");
     return () => {
+      camera.position.set(0, 0, 10);
       camera.lookAt(0, 0, -10);
       scene.background = orig;
     };
