@@ -11,6 +11,22 @@ export function getFirebase() {
     firebase.initializeApp(firebaseConfig);
     firebase.analytics();
   }
+
+  if (!initMap.has("setup-listen-login")) {
+    initMap.set("setup-listen-login", true);
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/firebase.User
+        initMap.set("user", user);
+        // ...
+      } else {
+        // User is signed out
+        // ...
+        initMap.delete("user");
+      }
+    });
+  }
   return firebase;
 }
 
@@ -61,11 +77,18 @@ export function logout() {
   return firebase.auth().signOut();
 }
 
+// export function loginRedirectGoogle() {
+//   setup();
+//   var provider = new firebase.auth.GoogleAuthProvider();
+
+//   firebase.auth().signInWithRedirect(provider);
+// }
+
 export function loginRedirectGoogle() {
   getFirebase();
   var provider = new firebase.auth.GoogleAuthProvider();
 
-  firebase.auth().signInWithRedirect(provider);
+  return firebase.auth().signInWithRedirect(provider);
 }
 
 export function loginGoogle() {
@@ -106,3 +129,23 @@ export function loginGoogle() {
       });
   });
 }
+
+export const onReady = () => {
+  getFirebase();
+  return new Promise((resolve) => {
+    let tt = setInterval(() => {
+      if (initMap.has("user")) {
+        clearInterval(tt);
+        resolve({
+          firebase,
+          user: initMap.get("user"),
+          fire: firebase,
+          db: firebase.database(),
+          logout: () => {
+            return firebase.auth().signOut();
+          },
+        });
+      }
+    });
+  });
+};
