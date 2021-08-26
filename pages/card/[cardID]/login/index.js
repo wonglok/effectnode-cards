@@ -72,7 +72,7 @@ export default function System({ cardID }) {
       ],
       //
       credentialHelper:
-        window.innerWidth <= 1024
+        "ontouchstart" in window
           ? firebaseui.auth.CredentialHelper.NONE
           : firebaseui.auth.CredentialHelper.GOOGLE_YOLO,
 
@@ -89,6 +89,7 @@ export default function System({ cardID }) {
         },
       },
     });
+    ui.disableAutoSignIn();
 
     return () => {};
   }, []);

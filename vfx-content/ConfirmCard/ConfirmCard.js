@@ -22,12 +22,48 @@ export function ConfirmCard({ cardID }) {
 
   useEffect(() => {
     //
-    Card.sharpChangeColor.set(`#fff`);
-    Card.centerText = "Testing...";
+    Card.sharpChangeColor.set(`#222`);
+    Card.centerText = "Loading...";
+    Card.bottomText = "";
 
-    //
-    Card.bottomText = cardID;
+    onReady().then(({ user }) => {
+      Card.sharpChangeColor.set(`#fff`);
+      Card.centerText = `Welcome to \n our metaverse! \n\n${
+        user.displayName || "Dear User"
+      }`;
+      Card.bottomText = "Click to Activate Card";
+    });
   }, []);
+
+  let running = false;
+  let onRun = () => {
+    if (running) {
+      running = true;
+      return;
+    }
+
+    onReady().then(({ user }) => {
+      fetch(`/api/card/${cardID}/activation`, {
+        method: "POST",
+        body: JSON.stringify({
+          cardID,
+          uid: user.uid,
+          email: user.email || null,
+          displayName: user.displayName,
+        }),
+      })
+        .then((v) => {
+          return v.json();
+        })
+        .then((res) => {
+          if (res.err) {
+            console.log(res.err);
+          } else {
+            router.push(`/card-room/${cardID}`);
+          }
+        });
+    });
+  };
 
   //
   return (
@@ -38,9 +74,7 @@ export function ConfirmCard({ cardID }) {
             <AvatarShowCard avatarURL={avatarURL} envMap={envMap}>
               <FloatingCard scale={0.1} position={[0, 0, 0]}>
                 <PortalPlane
-                  onClick={() => {
-                    // window.location.assign(`/game`);
-                  }}
+                  onClick={onRun}
                   attachToCard={() => {
                     return (
                       <group>

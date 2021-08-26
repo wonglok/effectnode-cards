@@ -67,6 +67,8 @@ async function handler(req, res) {
         return;
       }
 
+      console.log(cardID);
+
       let db = admin.database();
       let snap = db.ref(`card-private-info`).child(cardID).get();
       let val = (await snap).val();

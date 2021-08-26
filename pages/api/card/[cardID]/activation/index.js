@@ -9,7 +9,7 @@ const admin = require("firebase-admin");
 // we have to replace newline characters with literal newlines
 
 if (process.env.NODE_ENV === "development") {
-  var serviceAccount = require("../../../../firebase.private.json");
+  var serviceAccount = require("../../../../../../serviceprivatekey/3dworld.firebase.private.json");
   // See https://firebase.google.com/docs/reference/admin/node/admin.credential.html#cert
   if (!admin.apps.length) {
     admin.initializeApp({
@@ -34,6 +34,7 @@ if (process.env.NODE_ENV === "development") {
 
 // Initializing the cors middleware
 const cors = Cors({
+  preflightContinue: true,
   methods: ["GET", "HEAD", "OPTION"],
 });
 
@@ -55,27 +56,63 @@ async function handler(req, res) {
   // Run the middleware
   await runMiddleware(req, res, cors);
 
-  let db = admin.database();
+  if (req.query && req.query !== null && req.query.cardID) {
+    try {
+      let cardID = req.query.cardID;
+      if (!cardID) {
+        res.status(404).json({
+          cardID: false,
+        });
+        return;
+      }
 
-  let cardID = req.query.cardID;
+      let db = admin.database();
+      let ref = db.ref(`card-activation-info`).child(cardID);
 
-  try {
-    if (!cardID) {
-      throw new Error("no card ID");
+      let data = (await ref.get()).val();
+
+      if (data === null) {
+        let data = JSON.parse(req.body);
+
+        ref.set({
+          cardID: data.cardID,
+          uid: data.uid,
+          email: data.email || null,
+          displayName: data.displayName || "User",
+        });
+
+        res.json({
+          cardID: data.cardID,
+          uid: data.uid,
+          email: data.email || null,
+          displayName: data.displayName || "User",
+        });
+      } else {
+        let body = JSON.parse(req.body);
+        if (data.cardID === body.cardID && data.uid === body.uid) {
+          res.json({
+            cardID: data.cardID,
+            uid: data.uid,
+            email: data.email || null,
+            displayName: data.displayName || "User",
+          });
+        } else {
+          res.status(403).json({
+            err: "card already activated",
+          });
+          console.log("card already activated");
+        }
+      }
+    } catch (e) {
+      console.log("error during activation", e);
+      res.status(506).json({
+        cardID: req.query.cardID,
+        valid: false,
+      });
     }
-
-    let snap = db.ref(`card-private-info`).child(cardID).get();
-    let val = (await snap).val();
-
-    res.json({
-      cardID: req.query.cardID,
-      valid: val.cardID === cardID,
-    });
-  } catch (e) {
-    console.log("error", e);
-    res.status(404).json({
-      cardID: req.query.cardID,
-      valid: false,
+  } else {
+    res.status(506).json({
+      err: "no card id found",
     });
   }
 }

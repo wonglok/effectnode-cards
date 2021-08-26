@@ -108,6 +108,10 @@ function StoryPage({ cardID }) {
         </Suspense>
         <StarSky></StarSky>
       </Canvas>
+
+      <div className=" w-full absolute bottom-0 left-0 text-center p-3 text-gray-300 text-xs">
+        CardID: {cardID}
+      </div>
     </div>
   );
 }
