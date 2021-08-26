@@ -20,6 +20,7 @@ import { SceneDecorator } from "../vfx-metaverse/compos/SceneDecorator";
 import { NPCHelper } from "../vfx-content/storymaker-page/NPCHelper";
 import { AvatarSlots } from "../vfx-content/storymaker-page/AvatarSlots";
 import { Color } from "three";
+
 // import { WelcomeAvatar } from "../vfx-content/welcome-page/WelcomeAvatar";
 // import { HoneyShip } from "../vfx-content/welcome-page/HoneyShip";
 // import { LoginBall } from "../vfx-content/welcome-page/LoginBall";

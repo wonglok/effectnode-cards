@@ -109,7 +109,10 @@ export class BloomLayer {
             it.material instanceof MeshPhysicalMaterial ||
             it.material instanceof MeshToonMaterial)
         ) {
-          if (getSig(it.uuid) !== it.____lastSig) {
+          // let loc = window.location.href;
+          // it[loc] = it[loc] || {};
+
+          if (getSig(it.uuid) !== it.userData.____lastSig) {
             let hh = (shader) => {
               let globalDarkening = { value: true };
               let bloomAPI = {
@@ -141,7 +144,7 @@ export class BloomLayer {
               it.userData.bloomAPI = bloomAPI;
             };
 
-            it.____lastSig = getSig(it.uuid);
+            it.userData.____lastSig = getSig(it.uuid);
             it.material.onBeforeCompile = hh;
             it.material.customProgramCacheKey = () => {
               return getSig(it.uuid);
@@ -167,20 +170,15 @@ export class BloomLayer {
         } else {
           if (it?.userData?.bloomAPI?.dim) {
             it.userData.bloomAPI.dim();
-            it.userData.bloomAPI.needsShine = true;
           }
         }
 
-        // if (it.userData.disableBloom) {
-        //   if (it?.userData?.bloomAPI?.dim) {
-        //     it.userData.bloomAPI.dim();
-        //   }
-        // }
-        // if (it.userData.enableDarken) {
-        //   if (it?.userData?.bloomAPI?.dim) {
-        //     it.userData.bloomAPI.dim();
-        //   }
-        // }
+        if (it?.userData?.discard) {
+          it.visible = false;
+        }
+        if (it?.userData?.disableBloom) {
+          it.visible = false;
+        }
       });
     };
 

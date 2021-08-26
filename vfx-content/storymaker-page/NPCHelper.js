@@ -99,7 +99,11 @@ export function NPCHelper({ avatarGLTF, envMap, collider }) {
         {/* <Suspense
           fallback={<Sphere position={[0, 1, 0]} args={[0.3, 23, 23]}></Sphere>}
         > */}
-        <DreamyHelper avatarGLTF={avatarGLTF} npc={NPC}></DreamyHelper>
+        <DreamyHelper
+          avatarGLTF={avatarGLTF}
+          envMap={envMap}
+          npc={NPC}
+        ></DreamyHelper>
         {/* </Suspense> */}
       </group>
 
@@ -108,13 +112,16 @@ export function NPCHelper({ avatarGLTF, envMap, collider }) {
   );
 }
 
-function DreamyHelper({ avatarGLTF, npc }) {
+function DreamyHelper({ avatarGLTF, envMap, npc }) {
   let avatar = useMemo(() => {
     let scene = avatarGLTF.scene;
     scene.visible = false;
     scene.traverse((it) => {
       it.frustumCulled = false;
       it.castShadow = true;
+      if (it.envMap) {
+        it.material.envMap = envMap;
+      }
     });
     return scene;
   }, [avatarGLTF, avatarGLTF.scene]);
@@ -176,11 +183,11 @@ function DreamyHelper({ avatarGLTF, npc }) {
   return (
     <group>
       <primitive name="avatar" object={avatar}>
-        {/* <pointLight
+        <pointLight
           castShadow={true}
-          intensity={6.5}
-          position={[0, 1.75, 1.75]}
-        ></pointLight> */}
+          intensity={3}
+          position={[0, 1.75, 2]}
+        ></pointLight>
       </primitive>
     </group>
   );

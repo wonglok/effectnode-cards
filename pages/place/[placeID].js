@@ -60,7 +60,6 @@ function PageRouter({ placeID }) {
       setCompos(<MyPage></MyPage>);
     }
 
-    //
     return () => {
       //
     };
