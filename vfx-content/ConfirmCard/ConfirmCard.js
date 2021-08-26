@@ -9,7 +9,7 @@ import { BallArea } from "../Card/BallArea";
 import { Card } from "../CardOOBE/Card";
 import { HeroText } from "../Card/HeroText";
 import { Subtitle } from "../Card/SubTitle";
-import { getFirebase, onReady } from "../../pages-code/AppFirebase/AppFirebase";
+import { getFirebase, onReady } from "../../vfx-firebase/firelib";
 import router from "next/router";
 import { LoadingScreen } from "../LoadingScreen/LoadingScreen";
 //

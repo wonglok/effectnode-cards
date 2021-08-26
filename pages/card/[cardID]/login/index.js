@@ -8,10 +8,7 @@
 import router from "next/router";
 import { useEffect, useRef } from "react";
 import "firebaseui/dist/firebaseui.css";
-import {
-  getFirebase,
-  getUI,
-} from "../../../../pages-code/AppFirebase/AppFirebase";
+import { getFirebase, getUI } from "../../../../vfx-firebase/firelib";
 // import { Card } from "../../../../vfx-content/CardOOBE/Card";
 
 export async function getServerSideProps(context) {
@@ -56,7 +53,7 @@ export default function System({ cardID }) {
 
     /** @type {firebaseui.auth.AuthUI} */
     let ui = getUI();
-    // ui.disableAutoSignIn();
+    ui.disableAutoSignIn();
 
     ui.start(loginRef.current, {
       signInOptions: [

@@ -6,14 +6,21 @@ import { useEffect, useRef, useState } from "react";
 //   // saveProfileData,
 // } from "../../../../pages-code/Game3D/GameState";
 import router from "next/router";
-import { removeCacheURL } from "../../../../pages-code/Game3D/Avatar";
-import { getID } from "../../../../pages-code/ENCloudSDK/ENUtils";
-import {
-  setup,
-  onReady,
-  firebase,
-} from "../../../../pages-code/AppFirebase/AppFirebase";
-import { Card } from "../../../../vfx-content/CardOOBE/Card";
+import { setup, onReady, firebase } from "../../../../vfx-firebase/firelib";
+// import { Card } from "../../../../vfx-content/CardOOBE/Card";
+import localforage from "localforage";
+import { getID } from "../../../../vfx-metaverse";
+
+var OfflineCacheStore = false;
+
+export const removeCacheURL = (url) => {
+  OfflineCacheStore =
+    OfflineCacheStore ||
+    localforage.createInstance({
+      name: "offline-data-cache",
+    });
+  OfflineCacheStore.removeItem(url);
+};
 
 function AvatarChooser({
   onReady = (v) => {
@@ -69,10 +76,6 @@ function AvatarChooser({
 
 function AvatarLayer({ cardID }) {
   let [isLoading, setLoading] = useState(false);
-  useEffect(() => {
-    setup();
-  }, []);
-
   //
   // let goLogin = () => {
   //   onReady().then(({ firebase }) => {
