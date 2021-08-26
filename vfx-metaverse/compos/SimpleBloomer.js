@@ -272,6 +272,7 @@ export class BaseLayer {
 
 export class Compositor {
   constructor({ mini }) {
+    let { gl } = mini.now;
     //
     let quadMat = new ShaderMaterial({
       //
@@ -279,7 +280,10 @@ export class Compositor {
         bloomDiffuse: { value: null },
         tDiffuse: { value: null },
         resolution: {
-          value: new Vector2(1 / window.innerWidth, 1 / window.innerHeight),
+          value: new Vector2(
+            1 / gl.domElement.clientWidth,
+            1 / gl.domElement.clientHeight
+          ),
         },
       },
 
@@ -293,6 +297,7 @@ export class Compositor {
       `,
 
       fragmentShader: `
+        precision highp float;
         uniform sampler2D tDiffuse;
         uniform sampler2D bloomDiffuse;
 

@@ -33,7 +33,7 @@ export default function StoryPage({ placeID }) {
     <div className="full">
       <Canvas
         concurrent
-        dpr={[1, 2]}
+        dpr={[1, 3]}
         onCreated={({ gl }) => {
           gl.outputEncoding = sRGBEncoding;
         }}

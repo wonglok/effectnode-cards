@@ -282,7 +282,7 @@ export function Sequencer({ avatar, mixer, actions, envMap }) {
           frustumCulled={false}
           color={"white"}
           outlineColor={"black"}
-          outlineWidth={0.003}
+          outlineWidth={0.005}
           userData={{ enableBloom: true }}
         >
           {text}
