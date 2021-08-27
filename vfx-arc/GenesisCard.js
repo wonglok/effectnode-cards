@@ -22,6 +22,8 @@ import { NPCHelper } from "../vfx-content/storymaker-page/NPCHelper";
 // import { WelcomeAvatar } from "../vfx-content/welcome-page/WelcomeAvatar";
 import { Color, Object3D, TextureFilter } from "three";
 import { getFirebase } from "../vfx-firebase/firelib";
+import { AvatarPortal } from "../vfx-content/AvatarPortal/AvatarPortal";
+import { LoginGateR3F } from "../vfx-content/LoginGateR3F/LoginGateR3F";
 // import { HoneyShip } from "../vfx-content/welcome-page/HoneyShip";
 // import { LoginBall } from "../vfx-content/welcome-page/LoginBall";
 // import { LoginGate } from "../vfx-cms/common/LoginGate";
@@ -64,8 +66,8 @@ export function Content3D() {
   // );
 
   let map = useMemo(() => {
-    let map = mapGLTF.scene;
-    // let map = SkeletonUtils.clonew(mapGLTF.scene);
+    // let map = mapGLTF.scene;
+    let map = SkeletonUtils.clone(mapGLTF.scene);
     return map;
   }, [mapGLTF]);
 
@@ -74,29 +76,11 @@ export function Content3D() {
     <group>
       <UseBG></UseBG>
 
-      <mesh
-        onClick={() => {
-          let router = require("next/router").default;
-          router.push(`/card/${router.query.cardID}/outfit`);
-        }}
-        position={[-6.7, 1, 9.3]}
-        userData={{
-          onClick: () => {
-            let router = require("next/router").default;
-            router.push(`/card/${router.query.cardID}/outfit`);
-          },
-          hint: "Avatar Outfit",
-        }}
-      >
-        {/*  */}
-        <sphereBufferGeometry args={[0.3, 23, 23]}></sphereBufferGeometry>
-        <meshStandardMaterial
-          metalness={1}
-          roughness={0.0}
-          envMap={envMap}
-          color="#ffff44"
-        ></meshStandardMaterial>
-      </mesh>
+      <LoginGateR3F>
+        <group position={[-6.7, 1, 9.3]}>
+          <AvatarPortal></AvatarPortal>
+        </group>
+      </LoginGateR3F>
 
       {/* <SimpleBloomer></SimpleBloomer> */}
 

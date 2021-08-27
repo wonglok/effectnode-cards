@@ -63,16 +63,6 @@ function PageRouter({ cardID }) {
   );
 
   useEffect(async () => {
-    // MyCyberRoom
-
-    // let activateRef = getFirebase()
-    //   .database()
-    //   .ref(`/card-activation-info`)
-    //   .child(cardID);
-    // if (activateRef) {
-    //   ret
-    // }
-
     let activationInfo = getFirebase()
       .database()
       .ref(`/card-activation-info`)
