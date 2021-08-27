@@ -326,34 +326,34 @@ export class Compositor {
         uniform sampler2D tDiffuse;
         uniform sampler2D bloomDiffuse;
 
-        ${/* FXAAfrag */ ""}
+        ${/* FXAAfrag */ FXAAfrag}
         varying vec2 vUv;
           void main (void) {
 
-            // gl_FragColor = FxaaPixelShader(
-            //   vUv,
-            //   vec4(0.0),
-            //   tDiffuse,
-            //   tDiffuse,
-            //   tDiffuse,
-            //   resolution,
-            //   vec4(0.0),
-            //   vec4(0.0),
-            //   vec4(0.0),
-            //   0.75,
-            //   0.166,
-            //   0.0833,
-            //   0.0,
-            //   0.0,
-            //   0.0,
-            //   vec4(0.0)
-            // );
+            gl_FragColor = FxaaPixelShader(
+              vUv,
+              vec4(0.0),
+              tDiffuse,
+              tDiffuse,
+              tDiffuse,
+              resolution,
+              vec4(0.0),
+              vec4(0.0),
+              vec4(0.0),
+              0.75,
+              0.166,
+              0.0833,
+              0.0,
+              0.0,
+              0.0,
+              vec4(0.0)
+            );
 
-            // // TODO avoid querying texture twice for same texel
-            // gl_FragColor.a = texture2D(tDiffuse, vUv).a;
+            // TODO avoid querying texture twice for same texel
+            gl_FragColor.a = texture2D(tDiffuse, vUv).a;
 
-            vec4 tDiffuseColor = texture2D(tDiffuse, vUv);
-            gl_FragColor = vec4(tDiffuseColor.rgb,  tDiffuseColor.a);
+            // vec4 tDiffuseColor = texture2D(tDiffuse, vUv);
+            // gl_FragColor = vec4(tDiffuseColor.rgb,  tDiffuseColor.a);
 
             vec4 bloomDiffuseColor = texture2D(bloomDiffuse, vUv);
             gl_FragColor.r += 0.5 * pow(bloomDiffuseColor.r, 0.9);
@@ -378,7 +378,7 @@ export class Compositor {
   }
 }
 
-export function SimpleBloomer() {
+export function SimpleBloomer({ placeID }) {
   let { mini } = useMiniEngine();
 
   let task = useRef(() => {});
@@ -405,7 +405,7 @@ export function SimpleBloomer() {
     return () => {
       mini.clean();
     };
-  }, []);
+  }, [placeID]);
 
   // invalidate orignal loop
   useFrame(() => {
