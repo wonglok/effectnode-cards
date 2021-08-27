@@ -62,11 +62,11 @@ export class Collider {
 
     const collider = new Mesh(
       mergedGeometry,
-      new MeshBasicMaterial({ color: 0xffffff })
+      new MeshBasicMaterial({ color: 0xff0000 })
     );
     collider.userData.skipFloor = 1;
     collider.material.wireframe = true;
-    collider.material.opacity = 0.5;
+    collider.material.opacity = 1;
     collider.material.transparent = true;
     collider.updateMatrixWorld();
 

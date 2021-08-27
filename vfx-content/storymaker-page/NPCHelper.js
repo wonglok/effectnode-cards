@@ -55,7 +55,8 @@ export function NPCHelper({ isSwim = false, avatarGLTF, envMap, collider }) {
   let dir2 = new Vector3();
   let forward = new Vector3();
   useFrame(({ camera }) => {
-    NPC.avatarSpeed = 0.35;
+    NPC.avatarSpeed = isSwim ? 0.35 : 0.45;
+
     forward
       .copy({
         x: 0,
@@ -191,6 +192,9 @@ function DreamyHelper({ isSwim, avatarGLTF, envMap, npc }) {
   }, [avatar]);
 
   useFrame((st, dt) => {
+    if (dt <= 1 / 90) {
+      dt = 1 / 90;
+    }
     mixer.update(dt);
   });
 
@@ -199,7 +203,7 @@ function DreamyHelper({ isSwim, avatarGLTF, envMap, npc }) {
       <primitive name="avatar" object={avatar}>
         <pointLight
           castShadow={true}
-          intensity={3}
+          intensity={1}
           position={[0, 1.75, 2]}
         ></pointLight>
       </primitive>

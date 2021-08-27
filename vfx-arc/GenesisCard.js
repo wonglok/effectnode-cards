@@ -18,8 +18,8 @@ import { useShaderEnvLight } from "../vfx-content/welcome-page/useShaderEnvLight
 import { Now } from "../vfx-metaverse/lib/Now";
 import { SceneDecorator } from "../vfx-metaverse/compos/SceneDecorator";
 import { NPCHelper } from "../vfx-content/storymaker-page/NPCHelper";
-import { AvatarSlots } from "../vfx-content/storymaker-page/AvatarSlots";
-import { WelcomeAvatar } from "../vfx-content/welcome-page/WelcomeAvatar";
+// import { AvatarSlots } from "../vfx-content/storymaker-page/AvatarSlots";
+// import { WelcomeAvatar } from "../vfx-content/welcome-page/WelcomeAvatar";
 import { Color, Object3D, TextureFilter } from "three";
 // import { HoneyShip } from "../vfx-content/welcome-page/HoneyShip";
 // import { LoginBall } from "../vfx-content/welcome-page/LoginBall";
@@ -54,7 +54,7 @@ function UseBG() {
 export function Content3D() {
   let { envMap } = useShaderEnvLight({});
   let [collider, setCollider] = useState(false);
-  let mapGLTF = useGLTF(`/map/spaewalk/space-walk-v003.glb`);
+  let mapGLTF = useGLTF(`/map/GenesisCard/GenesisCard.glb`);
   // let avaGLTF1 = useGLTF(
   //   `https://d1a370nemizbjq.cloudfront.net/18bc89a8-de85-4a28-b3aa-d1ce4096059f.glb`
   // );
@@ -64,7 +64,7 @@ export function Content3D() {
 
   let map = useMemo(() => {
     let map = mapGLTF.scene;
-    // let map = SkeletonUtils.clone(mapGLTF.scene);
+    // let map = SkeletonUtils.clonew(mapGLTF.scene);
     return map;
   }, [mapGLTF]);
 
@@ -84,6 +84,8 @@ export function Content3D() {
 
       {createPortal(<primitive object={map}></primitive>, o3d)}
       <primitive object={o3d}></primitive>
+
+      {/* {collider && <primitive object={collider}></primitive>} */}
 
       {map && (
         <group>
@@ -142,17 +144,6 @@ export function Content3D() {
             </group>
           )} */}
           {/* {map && <AvatarSlots envMap={envMap} map={map}></AvatarSlots>} */}
-
-          <group
-            position={[
-              //
-              map.getObjectByName("welcomeAt").position.x,
-              0,
-              map.getObjectByName("welcomeAt").position.z,
-            ]}
-          >
-            <WelcomeAvatar envMap={envMap}></WelcomeAvatar>
-          </group>
 
           {collider && (
             <group>
