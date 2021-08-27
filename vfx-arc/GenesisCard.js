@@ -58,9 +58,11 @@ export function Content3D() {
   let { envMap } = useShaderEnvLight({});
   let [collider, setCollider] = useState(false);
   let mapGLTF = useGLTF(`/map/GenesisCard/GenesisCard.glb`);
+
   // let avaGLTF1 = useGLTF(
   //   `https://d1a370nemizbjq.cloudfront.net/18bc89a8-de85-4a28-b3aa-d1ce4096059f.glb`
   // );
+
   // let avaGLTF2 = useGLTF(
   //   `https://d1a370nemizbjq.cloudfront.net/08cf5815-ab1d-4b6f-ab5e-5ec1858ec885.glb`
   // );
@@ -74,17 +76,29 @@ export function Content3D() {
   let o3d = new Object3D();
   return (
     <group>
+      {createPortal(<primitive object={map}></primitive>, o3d)}
+      <primitive object={o3d}></primitive>
+      {/* {collider && <primitive object={collider}></primitive>} */}
+
       <UseBG></UseBG>
 
       <LoginGateR3F>
         <group position={[-6.7, 1, 9.3]}>
           <AvatarPortal></AvatarPortal>
         </group>
+
+        {collider && (
+          <MySelf
+            isSwim={true}
+            enableLight={true}
+            collider={collider}
+            envMap={envMap}
+            map={map}
+            offset={[0, 0, 1]}
+          ></MySelf>
+        )}
       </LoginGateR3F>
 
-      {/* <SimpleBloomer></SimpleBloomer> */}
-
-      {/*  */}
       <Map3D
         onReadyCollider={({ collider }) => {
           setCollider(collider);
@@ -92,57 +106,29 @@ export function Content3D() {
         object={map}
       ></Map3D>
 
-      {createPortal(<primitive object={map}></primitive>, o3d)}
-      <primitive object={o3d}></primitive>
+      <UserContorls
+        higherCamera={-0.6}
+        avatarSpeed={0.9}
+        Now={Now}
+      ></UserContorls>
 
-      {/* {collider && <primitive object={collider}></primitive>} */}
+      <TailCursor Now={Now} color={"#ffffff"}></TailCursor>
 
-      {map && (
-        <group>
-          <SceneDecorator object={map}></SceneDecorator>
+      <TheHelper Now={Now}></TheHelper>
 
-          <UserContorls
-            higherCamera={-0.6}
-            avatarSpeed={0.9}
-            Now={Now}
-          ></UserContorls>
-
-          <MySelf
-            isSwim={true}
-            enableLight={true}
-            collider={collider}
-            envMap={envMap}
-            map={map}
-          ></MySelf>
-
-          {/*
-          {collider && (
-            <group position={[-1, 0, 0]}>
-              <NPCHelper
-                isSwim={false}
-                avatarGLTF={avaGLTF1}
-                collider={collider}
-                envMap={envMap}
-                map={map}
-              ></NPCHelper>
-            </group>
-          )} */}
-          {/* {map && <AvatarSlots envMap={envMap} map={map}></AvatarSlots>} */}
-
-          {collider && (
-            <group>
-              <TailCursor Now={Now} color={"#ffffff"}></TailCursor>
-
-              <TheHelper Now={Now}></TheHelper>
-            </group>
-          )}
-        </group>
-      )}
+      <SceneDecorator object={map}></SceneDecorator>
     </group>
   );
 }
 
-function MySelf({ envMap, map, collider, isSwim = true, enableLight = true }) {
+function MySelf({
+  offset,
+  envMap,
+  map,
+  collider,
+  isSwim = true,
+  enableLight = true,
+}) {
   let [url, setURL] = useState(false);
 
   useEffect(() => {
@@ -170,6 +156,7 @@ function MySelf({ envMap, map, collider, isSwim = true, enableLight = true }) {
         <Suspense fallback={null}>
           <MyNPC
             url={url}
+            offset={offset}
             enableLight={enableLight}
             isSwim={isSwim}
             collider={collider}
@@ -182,23 +169,22 @@ function MySelf({ envMap, map, collider, isSwim = true, enableLight = true }) {
   );
 }
 
-function MyNPC({ url, enableLight, isSwim, envMap, map, collider }) {
+function MyNPC({ url, offset, enableLight, isSwim, envMap, map, collider }) {
   let avaGLTF = useGLTF(url);
 
   return (
     <group>
       {collider && (
-        <group position={[0, 0, 0]}>
-          <NPCHelper
-            enableLight={enableLight}
-            isSwim={isSwim}
-            avatarGLTF={avaGLTF}
-            collider={collider}
-            envMap={envMap}
-            map={map}
-            lighting={false}
-          ></NPCHelper>
-        </group>
+        <NPCHelper
+          offset={offset}
+          enableLight={enableLight}
+          isSwim={isSwim}
+          avatarGLTF={avaGLTF}
+          collider={collider}
+          envMap={envMap}
+          map={map}
+          lighting={false}
+        ></NPCHelper>
       )}
     </group>
   );

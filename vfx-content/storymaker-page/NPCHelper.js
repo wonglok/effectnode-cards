@@ -37,10 +37,13 @@ export function NPCHelper({
   avatarGLTF,
   envMap,
   collider,
+  offset = [0, 0, 0],
 }) {
   let NPC = useMemo(() => makeNow(), []);
   let group = useRef();
   let { mini } = useMiniEngine();
+
+  let offsetV3 = new Vector3().fromArray(offset);
 
   useEffect(() => {
     let npc = new MapNPC({
@@ -73,11 +76,13 @@ export function NPCHelper({
       .multiplyScalar(-5.6);
 
     Now.followerPt.copy(Now.avatarAt).add(forward);
-    NPC.goingTo.set(
-      Number((Now.followerPt.x * 1).toFixed(0) / 1),
-      Number((Now.followerPt.y * 1).toFixed(0) / 1),
-      Number((Now.followerPt.z * 1).toFixed(0) / 1)
-    );
+    NPC.goingTo
+      .set(
+        Number((Now.followerPt.x * 1).toFixed(0) / 1),
+        Number((Now.followerPt.y * 1).toFixed(0) / 1),
+        Number((Now.followerPt.z * 1).toFixed(0) / 1)
+      )
+      .add(offsetV3);
 
     // NPC.goingTo.set(
     //   Number((Now.cursorPos.x * 1).toFixed(0) / 1),

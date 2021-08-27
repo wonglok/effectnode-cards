@@ -5,7 +5,7 @@ export function SceneDecorator({ object }) {
   useEffect(() => {
     object.traverse((it) => {
       if (it.geometry) {
-        it.userData.isFloor = true;
+        it.userData.isHoverable = true;
       }
 
       //
@@ -18,7 +18,6 @@ export function SceneDecorator({ object }) {
         });
       }
 
-      //
       if (it?.userData?.receiveShadow) {
         it.receiveShadow = true;
         it.traverse((sub) => {
