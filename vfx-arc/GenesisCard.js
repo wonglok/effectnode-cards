@@ -20,6 +20,7 @@ import { Color, Object3D } from "three";
 import { getFirebase } from "../vfx-firebase/firelib";
 import { AvatarPortal } from "../vfx-content/AvatarPortal/AvatarPortal";
 import { LoginGateR3F } from "../vfx-content/LoginGateR3F/LoginGateR3F";
+import { LoginBall } from "../vfx-content/welcome-page/LoginBall";
 
 // import { AvatarSlots } from "../vfx-content/storymaker-page/AvatarSlots";
 // import { WelcomeAvatar } from "../vfx-content/welcome-page/WelcomeAvatar";
@@ -78,6 +79,10 @@ export function Content3D() {
       <LoginGateR3F>
         <group position={[-6.7, 1, 9.3]}>
           <AvatarPortal></AvatarPortal>
+        </group>
+
+        <group rotation={[0, Math.PI * 0.5, 0]} position={[-6.7, 1, 2 + 9.3]}>
+          <LoginBall></LoginBall>
         </group>
 
         {collider && (

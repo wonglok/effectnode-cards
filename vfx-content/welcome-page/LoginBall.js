@@ -60,7 +60,7 @@ export function LoginBall() {
   }, []);
 
   return (
-    <group position={[3, 2, 0]}>
+    <group position={[0, 0, 0]}>
       {User.status === "loading" && (
         <group>
           {/* <Text
@@ -69,7 +69,7 @@ export function LoginBall() {
             anchorY="bottom"
             userData={{ enableBloom: true }}
             outlineWidth={0.001333}
-            fontSize={0.5123}
+            fontSize={0.35123}
             font={`/font/Cronos-Pro-Light_12448.ttf`}
           >
             Loading...
@@ -81,7 +81,7 @@ export function LoginBall() {
             }}
           >
             <torusBufferGeometry
-              args={[0.8, 0.1, 100, 25]}
+              args={[0.3, 0.1, 100, 25]}
             ></torusBufferGeometry>
             <meshStandardMaterial
               metalness={1}
@@ -95,13 +95,13 @@ export function LoginBall() {
       {User.status === "loggedIn" && (
         <group>
           <Text
-            position={[0, 1, 0]}
+            position={[0, 0.7, 0]}
             textAlign="center"
             anchorX="center"
             anchorY="bottom"
             userData={{ enableBloom: true }}
             outlineWidth={0.001333}
-            fontSize={0.5123}
+            fontSize={0.35123}
             font={`/font/Cronos-Pro-Light_12448.ttf`}
           >
             {`Welcome Back!\n${User.displayName || ""}`}
@@ -115,7 +115,7 @@ export function LoginBall() {
             }}
             onClick={onClickLogout}
           >
-            <sphereBufferGeometry args={[0.8, 18, 18]}></sphereBufferGeometry>
+            <sphereBufferGeometry args={[0.3, 18, 18]}></sphereBufferGeometry>
             <meshStandardMaterial
               metalness={1}
               roughness={0}
@@ -128,12 +128,12 @@ export function LoginBall() {
       {User.status === "loggedOut" && (
         <group>
           {/* <Text
-            position={[0, 1, 0]}
+            position={[0, 0.7, 0]}
             anchorX="center"
             anchorY="bottom"
             userData={{ enableBloom: true }}
             outlineWidth={0.001333}
-            fontSize={0.5123}
+            fontSize={0.35123}
             font={`/font/Cronos-Pro-Light_12448.ttf`}
           >
             Login
@@ -146,7 +146,7 @@ export function LoginBall() {
             }}
             onClick={onClickLogin}
           >
-            <sphereBufferGeometry args={[0.8, 18, 18]}></sphereBufferGeometry>
+            <sphereBufferGeometry args={[0.3, 18, 18]}></sphereBufferGeometry>
             <meshStandardMaterial
               metalness={1}
               roughness={0}
