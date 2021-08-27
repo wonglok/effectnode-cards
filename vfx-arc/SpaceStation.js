@@ -20,7 +20,7 @@ import { SceneDecorator } from "../vfx-metaverse/compos/SceneDecorator";
 import { NPCHelper } from "../vfx-content/storymaker-page/NPCHelper";
 import { AvatarSlots } from "../vfx-content/storymaker-page/AvatarSlots";
 import { WelcomeAvatar } from "../vfx-content/welcome-page/WelcomeAvatar";
-import { Color } from "three";
+import { Color, Object3D } from "three";
 // import { HoneyShip } from "../vfx-content/welcome-page/HoneyShip";
 // import { LoginBall } from "../vfx-content/welcome-page/LoginBall";
 // import { LoginGate } from "../vfx-cms/common/LoginGate";
@@ -57,19 +57,13 @@ export function Content3D() {
     `https://d1a370nemizbjq.cloudfront.net/18bc89a8-de85-4a28-b3aa-d1ce4096059f.glb`
   );
 
-  let last = useRef();
   let map = useMemo(() => {
-    if (last.current) {
-      last.current.visible = false;
-      if (last.current?.parent) {
-        last.current.parent.remove(last.current);
-      }
-    }
-    let map = SkeletonUtils.clone(mapGLTF.scene);
-    last.current = map;
+    let map = mapGLTF.scene;
+    // let map = SkeletonUtils.clone(mapGLTF.scene);
     return map;
   }, [mapGLTF]);
 
+  let o3d = new Object3D();
   return (
     <group>
       <UseBG></UseBG>
@@ -82,6 +76,9 @@ export function Content3D() {
         }}
         object={map}
       ></Map3D>
+
+      {createPortal(<primitive object={map}></primitive>, o3d)}
+      <primitive object={o3d}></primitive>
 
       {map && (
         <group>
@@ -102,13 +99,11 @@ export function Content3D() {
             <sphereBufferGeometry args={[0.3, 23, 23]}></sphereBufferGeometry>
             <meshStandardMaterial
               metalness={1}
-              roughness={0}
+              roughness={0.3}
               envMap={envMap}
               color="#44ffff"
             ></meshStandardMaterial>
           </mesh>
-
-          <primitive object={map}></primitive>
 
           <SceneDecorator object={map}></SceneDecorator>
 

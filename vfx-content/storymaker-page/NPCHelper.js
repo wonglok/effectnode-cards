@@ -59,9 +59,9 @@ export function NPCHelper({ avatarGLTF, envMap, collider }) {
   useFrame(({ camera }) => {
     NPC.avatarSpeed = 0.35;
     NPC.goingTo.set(
-      Number((Now.cursorPos.x * 1).toFixed(0) / 1),
-      Number((Now.cursorPos.y * 1).toFixed(0) / 1),
-      Number((Now.cursorPos.z * 1).toFixed(0) / 1)
+      Number((Now.goingTo.x * 1).toFixed(0) / 1),
+      Number((Now.goingTo.y * 1).toFixed(0) / 1),
+      Number((Now.goingTo.z * 1 - 10).toFixed(0) / 1)
     );
 
     let gp = group.current;
@@ -69,12 +69,9 @@ export function NPCHelper({ avatarGLTF, envMap, collider }) {
     if (gp && ava) {
       gp.position.set(
         //
-        //
         NPC.avatarAt.x,
         NPC.avatarAt.y,
         NPC.avatarAt.z
-        //
-        //
       );
 
       if (NPC.avatarMode === "standing") {
