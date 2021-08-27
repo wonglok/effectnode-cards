@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import {
   Color,
+  DoubleSide,
   Layers,
   MeshBasicMaterial,
   MeshLambertMaterial,
@@ -102,6 +103,7 @@ export class BloomLayer {
         color: 0x000000,
         transparent: false,
         opacity: 0,
+        side: DoubleSide,
       });
       scene.traverse((it) => {
         if (
@@ -153,7 +155,6 @@ export class BloomLayer {
           let bloomAPI = {
             shine: () => {
               it.material = orig;
-              it.material.needsUpdate = true;
               // globalDarkening.value = false;
             },
             dim: () => {
