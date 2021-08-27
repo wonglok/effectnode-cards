@@ -14,6 +14,7 @@ export const makeNow = () => {
     avatarHead: new Vector3(),
     avatarRot: new Vector3(),
     avatarFaceLook: new Vector3(),
+    followerPt: new Vector3(),
     avatarLoading: true,
     avatarMode: "standing",
     avatarSpeed: 1.0,

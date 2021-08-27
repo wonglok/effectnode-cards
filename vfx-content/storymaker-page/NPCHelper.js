@@ -31,7 +31,7 @@ import { makeNow } from "../../vfx-metaverse/utils/make-now";
 //   return height * camera.aspect;
 // };
 
-export function NPCHelper({ avatarGLTF, envMap, collider }) {
+export function NPCHelper({ isSwim = false, avatarGLTF, envMap, collider }) {
   let NPC = useMemo(() => makeNow(), []);
   let group = useRef();
   let { mini } = useMiniEngine();
@@ -53,12 +53,23 @@ export function NPCHelper({ avatarGLTF, envMap, collider }) {
   let wp = new Vector3();
   let dir = new Vector3();
   let dir2 = new Vector3();
+  let forward = new Vector3();
   useFrame(({ camera }) => {
     NPC.avatarSpeed = 0.35;
+    forward
+      .copy({
+        x: 0,
+        y: 0,
+        z: 1,
+      })
+      .applyEuler(camera.rotation)
+      .multiplyScalar(-10);
+
+    Now.followerPt.copy(Now.avatarAt).add(forward);
     NPC.goingTo.set(
-      Number((Now.goingTo.x * 1).toFixed(0) / 1),
-      Number((Now.goingTo.y * 1).toFixed(0) / 1),
-      Number((Now.goingTo.z * 1 - 10).toFixed(0) / 1)
+      Number((Now.followerPt.x * 1).toFixed(0) / 1),
+      Number((Now.followerPt.y * 1).toFixed(0) / 1),
+      Number((Now.followerPt.z * 1).toFixed(0) / 1)
     );
 
     let gp = group.current;
@@ -89,11 +100,12 @@ export function NPCHelper({ avatarGLTF, envMap, collider }) {
     <group ref={group}>
       {/*  */}
 
-      <group position={[0, -2.31 + 0.1, 0]}>
+      <group position={[0, -2.31 + (isSwim ? 0.1 : 0.0), 0]}>
         {/* <Suspense
           fallback={<Sphere position={[0, 1, 0]} args={[0.3, 23, 23]}></Sphere>}
         > */}
         <DreamyHelper
+          isSwim={isSwim}
           avatarGLTF={avatarGLTF}
           envMap={envMap}
           npc={NPC}
@@ -106,7 +118,7 @@ export function NPCHelper({ avatarGLTF, envMap, collider }) {
   );
 }
 
-function DreamyHelper({ avatarGLTF, envMap, npc }) {
+function DreamyHelper({ isSwim, avatarGLTF, envMap, npc }) {
   let avatar = useMemo(() => {
     let scene = avatarGLTF.scene;
     scene.visible = false;
@@ -131,12 +143,20 @@ function DreamyHelper({ avatarGLTF, envMap, npc }) {
     return new AnimationMixer(avatar);
   }, [avatar]);
 
-  let fbx = {
-    // running: useFBX(`/rpm/rpm-actions-locomotion/running.fbx`),
-    // standing: useFBX(`/rpm/rpm-actions-locomotion/standing.fbx`),
-    running: useFBX(`/rpm/rpm-actions-locomotion/swim-forward.fbx`),
-    standing: useFBX(`/rpm/rpm-actions-locomotion/swim-float.fbx`),
-  };
+  let fbx = isSwim
+    ? {
+        // running: useFBX(`/rpm/rpm-actions-locomotion/running.fbx`),
+        // standing: useFBX(`/rpm/rpm-actions-locomotion/standing.fbx`),
+        running: useFBX(`/rpm/rpm-actions-locomotion/swim-forward.fbx`),
+        standing: useFBX(`/rpm/rpm-actions-locomotion/swim-float.fbx`),
+      }
+    : {
+        running: useFBX(`/rpm/rpm-actions-locomotion/running.fbx`),
+        standing: useFBX(`/rpm/rpm-actions-locomotion/standing.fbx`),
+        // running: useFBX(`/rpm/rpm-actions-locomotion/swim-forward.fbx`),
+        // standing: useFBX(`/rpm/rpm-actions-locomotion/swim-float.fbx`),
+      };
+
   let actions = useMemo(() => {
     let obj = {};
     for (let kn in fbx) {
