@@ -59,14 +59,6 @@ export function Content3D() {
   let [collider, setCollider] = useState(false);
   let mapGLTF = useGLTF(`/map/GenesisCard/GenesisCard.glb`);
 
-  // let avaGLTF1 = useGLTF(
-  //   `https://d1a370nemizbjq.cloudfront.net/18bc89a8-de85-4a28-b3aa-d1ce4096059f.glb`
-  // );
-
-  // let avaGLTF2 = useGLTF(
-  //   `https://d1a370nemizbjq.cloudfront.net/08cf5815-ab1d-4b6f-ab5e-5ec1858ec885.glb`
-  // );
-
   let map = useMemo(() => {
     // let map = mapGLTF.scene;
     let map = SkeletonUtils.clone(mapGLTF.scene);
@@ -94,7 +86,7 @@ export function Content3D() {
             collider={collider}
             envMap={envMap}
             map={map}
-            offset={[0, 0, 1]}
+            distance={6.5}
           ></MySelf>
         )}
       </LoginGateR3F>
@@ -122,7 +114,7 @@ export function Content3D() {
 }
 
 function MySelf({
-  offset,
+  distance,
   envMap,
   map,
   collider,
@@ -156,7 +148,7 @@ function MySelf({
         <Suspense fallback={null}>
           <MyNPC
             url={url}
-            offset={offset}
+            distance={distance}
             enableLight={enableLight}
             isSwim={isSwim}
             collider={collider}
@@ -169,14 +161,14 @@ function MySelf({
   );
 }
 
-function MyNPC({ url, offset, enableLight, isSwim, envMap, map, collider }) {
+function MyNPC({ url, distance, enableLight, isSwim, envMap, map, collider }) {
   let avaGLTF = useGLTF(url);
 
   return (
     <group>
       {collider && (
         <NPCHelper
-          offset={offset}
+          distance={distance}
           enableLight={enableLight}
           isSwim={isSwim}
           avatarGLTF={avaGLTF}

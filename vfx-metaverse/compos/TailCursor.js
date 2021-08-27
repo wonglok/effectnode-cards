@@ -51,7 +51,7 @@ export function TailCursor({ Now }) {
       mounter: get().scene,
       color: new Color("#ffffff"),
     });
-  }, []);
+  }, [Now]);
 
   return null;
 }

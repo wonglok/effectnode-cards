@@ -37,13 +37,11 @@ export function NPCHelper({
   avatarGLTF,
   envMap,
   collider,
-  offset = [0, 0, 0],
+  distance = 1,
 }) {
   let NPC = useMemo(() => makeNow(), []);
   let group = useRef();
   let { mini } = useMiniEngine();
-
-  let offsetV3 = new Vector3().fromArray(offset);
 
   useEffect(() => {
     let npc = new MapNPC({
@@ -73,16 +71,14 @@ export function NPCHelper({
         z: 1,
       })
       .applyEuler(camera.rotation)
-      .multiplyScalar(-5.6);
+      .multiplyScalar(-1 * distance);
 
     Now.followerPt.copy(Now.avatarAt).add(forward);
-    NPC.goingTo
-      .set(
-        Number((Now.followerPt.x * 1).toFixed(0) / 1),
-        Number((Now.followerPt.y * 1).toFixed(0) / 1),
-        Number((Now.followerPt.z * 1).toFixed(0) / 1)
-      )
-      .add(offsetV3);
+    NPC.goingTo.set(
+      Number((Now.followerPt.x * 1).toFixed(0) / 1),
+      Number((Now.followerPt.y * 1).toFixed(0) / 1),
+      Number((Now.followerPt.z * 1).toFixed(0) / 1)
+    );
 
     // NPC.goingTo.set(
     //   Number((Now.cursorPos.x * 1).toFixed(0) / 1),
@@ -119,9 +115,6 @@ export function NPCHelper({
       {/*  */}
 
       <group position={[0, -2.31 + (isSwim ? 0.1 : 0.0), 0]}>
-        {/* <Suspense
-          fallback={<Sphere position={[0, 1, 0]} args={[0.3, 23, 23]}></Sphere>}
-        > */}
         <DreamyHelper
           isSwim={isSwim}
           enableLight={enableLight}
@@ -129,7 +122,6 @@ export function NPCHelper({
           envMap={envMap}
           npc={NPC}
         ></DreamyHelper>
-        {/* </Suspense> */}
       </group>
 
       {/*  */}

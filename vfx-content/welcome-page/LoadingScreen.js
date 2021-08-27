@@ -1,10 +1,11 @@
-import { Text, PerspectiveCamera } from "@react-three/drei";
+import { Text, PerspectiveCamera, useProgress } from "@react-three/drei";
 import { createPortal, useFrame, useThree } from "@react-three/fiber";
 import { useEffect } from "react";
 import { Color } from "three";
 
 export function LoadingScreen() {
   let { camera, scene } = useThree();
+  let { progress } = useProgress();
 
   useEffect(() => {
     camera.position.set(0, 0, 10);
@@ -35,7 +36,7 @@ export function LoadingScreen() {
         textAlign={"center"}
         lookAt={camera.position.toArray()}
       >
-        {`Loading...`}
+        {`Loading... ${progress}%`}
       </Text>
     </group>
   );
