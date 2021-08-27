@@ -8,7 +8,7 @@ export function LoadingScreen() {
       <Text
         // rotation={[Math.PI * -0.25, 0, 0]}
         position={[0, get().camera.position.y, -10]}
-        fontSize={0.3}
+        fontSize={0.5}
         color="white"
         outlineColor={"black"}
         outlineWidth={0.01}

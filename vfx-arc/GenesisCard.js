@@ -123,6 +123,7 @@ export function Content3D() {
 
           <MySelf
             isSwim={true}
+            enableLight={true}
             collider={collider}
             envMap={envMap}
             map={map}
@@ -155,7 +156,7 @@ export function Content3D() {
   );
 }
 
-function MySelf({ envMap, map, collider }) {
+function MySelf({ envMap, map, collider, isSwim = true, enableLight = true }) {
   let [url, setURL] = useState(false);
 
   useEffect(() => {
@@ -175,7 +176,7 @@ function MySelf({ envMap, map, collider }) {
           }
         }
       });
-  });
+  }, []);
 
   return (
     <group>
@@ -183,7 +184,8 @@ function MySelf({ envMap, map, collider }) {
         <Suspense fallback={null}>
           <MyNPC
             url={url}
-            isSwim={false}
+            enableLight={enableLight}
+            isSwim={isSwim}
             collider={collider}
             envMap={envMap}
             map={map}
@@ -194,7 +196,7 @@ function MySelf({ envMap, map, collider }) {
   );
 }
 
-function MyNPC({ url, isSwim, envMap, map, collider }) {
+function MyNPC({ url, enableLight, isSwim, envMap, map, collider }) {
   let avaGLTF = useGLTF(url);
 
   return (
@@ -202,6 +204,7 @@ function MyNPC({ url, isSwim, envMap, map, collider }) {
       {collider && (
         <group position={[0, 0, 0]}>
           <NPCHelper
+            enableLight={enableLight}
             isSwim={isSwim}
             avatarGLTF={avaGLTF}
             collider={collider}

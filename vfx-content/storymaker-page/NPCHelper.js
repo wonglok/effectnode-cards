@@ -32,7 +32,7 @@ import { makeNow } from "../../vfx-metaverse/utils/make-now";
 // };
 
 export function NPCHelper({
-  lighting = true,
+  enableLight = true,
   isSwim = false,
   avatarGLTF,
   envMap,
@@ -79,6 +79,12 @@ export function NPCHelper({
       Number((Now.followerPt.z * 1).toFixed(0) / 1)
     );
 
+    // NPC.goingTo.set(
+    //   Number((Now.cursorPos.x * 1).toFixed(0) / 1),
+    //   Number((Now.cursorPos.y * 1).toFixed(0) / 1),
+    //   Number((Now.cursorPos.z * 1).toFixed(0) / 1)
+    // );
+
     let gp = group.current;
     let ava = gp.getObjectByName("avatar");
     if (gp && ava) {
@@ -113,7 +119,7 @@ export function NPCHelper({
         > */}
         <DreamyHelper
           isSwim={isSwim}
-          lighting={lighting}
+          enableLight={enableLight}
           avatarGLTF={avatarGLTF}
           envMap={envMap}
           npc={NPC}
@@ -126,7 +132,7 @@ export function NPCHelper({
   );
 }
 
-function DreamyHelper({ isSwim, lighting, avatarGLTF, envMap, npc }) {
+function DreamyHelper({ isSwim, enableLight, avatarGLTF, envMap, npc }) {
   let avatar = useMemo(() => {
     let scene = avatarGLTF.scene;
     scene.visible = false;
@@ -208,7 +214,7 @@ function DreamyHelper({ isSwim, lighting, avatarGLTF, envMap, npc }) {
   return (
     <group>
       <primitive name="avatar" object={avatar}>
-        {lighting && (
+        {enableLight && (
           <pointLight
             castShadow={true}
             intensity={1}
