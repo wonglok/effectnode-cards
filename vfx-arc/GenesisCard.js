@@ -71,18 +71,16 @@ export function Content3D() {
       {createPortal(<primitive object={map}></primitive>, o3d)}
       <primitive object={o3d}></primitive>
       {/* {collider && <primitive object={collider}></primitive>} */}
-
       <directionalLight intensity={2} position={[0, 3, 3]}></directionalLight>
-
       <UseBG></UseBG>
+
+      <group rotation={[0, Math.PI * 0.5, 0]} position={[-6.7, 1, 2 + 9.3]}>
+        <LoginBall></LoginBall>
+      </group>
 
       <LoginGateR3F>
         <group position={[-6.7, 1, 9.3]}>
           <AvatarPortal></AvatarPortal>
-        </group>
-
-        <group rotation={[0, Math.PI * 0.5, 0]} position={[-6.7, 1, 2 + 9.3]}>
-          <LoginBall></LoginBall>
         </group>
 
         {collider && (
@@ -96,7 +94,6 @@ export function Content3D() {
           ></MySelf>
         )}
       </LoginGateR3F>
-
       {map && (
         <group>
           <Map3D
