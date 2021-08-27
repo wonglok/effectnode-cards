@@ -32,9 +32,6 @@ import { makeNow } from "../../vfx-metaverse/utils/make-now";
 // };
 
 export function NPCHelper({ avatarGLTF, envMap, collider }) {
-  let { get } = useThree();
-
-  //
   let NPC = useMemo(() => makeNow(), []);
   let group = useRef();
   let { mini } = useMiniEngine();
