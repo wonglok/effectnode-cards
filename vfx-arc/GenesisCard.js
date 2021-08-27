@@ -21,6 +21,7 @@ import { getFirebase } from "../vfx-firebase/firelib";
 import { AvatarPortal } from "../vfx-content/AvatarPortal/AvatarPortal";
 import { LoginGateR3F } from "../vfx-content/LoginGateR3F/LoginGateR3F";
 import { LoginBall } from "../vfx-content/welcome-page/LoginBall";
+import { MySelf } from "../vfx-content/MySelf/MySelf";
 
 // import { AvatarSlots } from "../vfx-content/storymaker-page/AvatarSlots";
 // import { WelcomeAvatar } from "../vfx-content/welcome-page/WelcomeAvatar";
@@ -94,6 +95,7 @@ export function Content3D() {
           ></MySelf>
         )}
       </LoginGateR3F>
+
       {map && (
         <group>
           <Map3D
@@ -117,75 +119,6 @@ export function Content3D() {
             </group>
           )}
         </group>
-      )}
-    </group>
-  );
-}
-
-function MySelf({
-  distance,
-  envMap,
-  map,
-  collider,
-  isSwim = true,
-  enableLight = true,
-}) {
-  let [url, setURL] = useState(false);
-
-  useEffect(() => {
-    return getFirebase()
-      .auth()
-      .onAuthStateChanged(async (user) => {
-        if (user && user.uid) {
-          let snap = await getFirebase()
-            .database()
-            .ref(`/profiles/${user.uid}`)
-            .get();
-          let val = snap.val();
-
-          if (val && val.avatarURL) {
-            setURL(val.avatarURL);
-          } else {
-          }
-        }
-      });
-  }, []);
-
-  return (
-    <group>
-      {url && (
-        <Suspense fallback={null}>
-          <MyNPC
-            url={url}
-            distance={distance}
-            enableLight={enableLight}
-            isSwim={isSwim}
-            collider={collider}
-            envMap={envMap}
-            map={map}
-          ></MyNPC>
-        </Suspense>
-      )}
-    </group>
-  );
-}
-
-function MyNPC({ url, distance, enableLight, isSwim, envMap, map, collider }) {
-  let avaGLTF = useGLTF(url);
-
-  return (
-    <group>
-      {collider && (
-        <NPCHelper
-          distance={distance}
-          enableLight={enableLight}
-          isSwim={isSwim}
-          avatarGLTF={avaGLTF}
-          collider={collider}
-          envMap={envMap}
-          map={map}
-          lighting={false}
-        ></NPCHelper>
       )}
     </group>
   );

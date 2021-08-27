@@ -18,9 +18,10 @@ import { useShaderEnvLight } from "../vfx-content/welcome-page/useShaderEnvLight
 import { Now } from "../vfx-metaverse/lib/Now";
 import { SceneDecorator } from "../vfx-metaverse/compos/SceneDecorator";
 import { NPCHelper } from "../vfx-content/storymaker-page/NPCHelper";
-import { AvatarSlots } from "../vfx-content/storymaker-page/AvatarSlots";
+// import { AvatarSlots } from "../vfx-content/storymaker-page/AvatarSlots";
 import { WelcomeAvatar } from "../vfx-content/welcome-page/WelcomeAvatar";
 import { Color, Object3D, TextureFilter } from "three";
+import { AvatarNPC } from "../vfx-content/AvatarNPC/AvatarNPC";
 // import { HoneyShip } from "../vfx-content/welcome-page/HoneyShip";
 // import { LoginBall } from "../vfx-content/welcome-page/LoginBall";
 // import { LoginGate } from "../vfx-cms/common/LoginGate";
@@ -58,9 +59,6 @@ export function Content3D() {
   // let avaGLTF1 = useGLTF(
   //   `https://d1a370nemizbjq.cloudfront.net/18bc89a8-de85-4a28-b3aa-d1ce4096059f.glb`
   // );
-  let avaGLTF2 = useGLTF(
-    `https://d1a370nemizbjq.cloudfront.net/08cf5815-ab1d-4b6f-ab5e-5ec1858ec885.glb`
-  );
 
   let map = useMemo(() => {
     let map = mapGLTF.scene;
@@ -118,17 +116,6 @@ export function Content3D() {
             Now={Now}
           ></UserContorls>
 
-          {collider && (
-            <group position={[0, 0, 0]}>
-              <NPCHelper
-                isSwim={true}
-                avatarGLTF={avaGLTF2}
-                collider={collider}
-                envMap={envMap}
-                map={map}
-              ></NPCHelper>
-            </group>
-          )}
           {/*
           {collider && (
             <group position={[-1, 0, 0]}>
@@ -143,6 +130,7 @@ export function Content3D() {
           )} */}
           {/* {map && <AvatarSlots envMap={envMap} map={map}></AvatarSlots>} */}
 
+          <AvatarNPC collider={collider} envMap={envMap} map={map}></AvatarNPC>
           <group
             position={[
               //
@@ -161,6 +149,41 @@ export function Content3D() {
               <TheHelper Now={Now}></TheHelper>
             </group>
           )}
+        </group>
+      )}
+    </group>
+  );
+}
+
+function Avatar({ collider, envMap, map }) {
+  return (
+    <Suspense fallback={null}>
+      <AvatarInside
+        collider={collider}
+        envMap={envMap}
+        map={map}
+      ></AvatarInside>
+    </Suspense>
+  );
+}
+
+function AvatarInside({ collider, envMap, map }) {
+  let avaGLTF2 = useGLTF(
+    `https://d1a370nemizbjq.cloudfront.net/08cf5815-ab1d-4b6f-ab5e-5ec1858ec885.glb`
+  );
+
+  return (
+    <group>
+      {collider && (
+        <group position={[0, 0, 0]}>
+          <NPCHelper
+            isSwim={true}
+            avatarGLTF={avaGLTF2}
+            collider={collider}
+            envMap={envMap}
+            map={map}
+            distance={6}
+          ></NPCHelper>
         </group>
       )}
     </group>

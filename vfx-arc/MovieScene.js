@@ -20,6 +20,7 @@ import { SceneDecorator } from "../vfx-metaverse/compos/SceneDecorator";
 import { NPCHelper } from "../vfx-content/storymaker-page/NPCHelper";
 import { AvatarSlots } from "../vfx-content/storymaker-page/AvatarSlots";
 import { Color } from "three";
+import { AvatarNPC } from "../vfx-content/AvatarNPC/AvatarNPC";
 
 // import { WelcomeAvatar } from "../vfx-content/welcome-page/WelcomeAvatar";
 // import { HoneyShip } from "../vfx-content/welcome-page/HoneyShip";
@@ -53,9 +54,9 @@ export function Content3D() {
   let { envMap } = useShaderEnvLight({});
   let [collider, setCollider] = useState(false);
   let mapGLTF = useGLTF(`/map/camset/cam-set.glb`);
-  let avaGLTF = useGLTF(
-    `https://d1a370nemizbjq.cloudfront.net/18bc89a8-de85-4a28-b3aa-d1ce4096059f.glb`
-  );
+  // let avaGLTF = useGLTF(
+  //   `https://d1a370nemizbjq.cloudfront.net/18bc89a8-de85-4a28-b3aa-d1ce4096059f.glb`
+  // );
 
   let last = useRef();
   let map = useMemo(() => {
@@ -117,14 +118,24 @@ export function Content3D() {
             Now={Now}
           ></UserContorls>
 
-          {collider && (
+          {/* {collider && (
             <NPCHelper
               avatarGLTF={avaGLTF}
               collider={collider}
               envMap={envMap}
               map={map}
             ></NPCHelper>
+          )} */}
+
+          {collider && (
+            <AvatarNPC
+              url={`https://d1a370nemizbjq.cloudfront.net/18bc89a8-de85-4a28-b3aa-d1ce4096059f.glb`}
+              collider={collider}
+              envMap={envMap}
+              map={map}
+            ></AvatarNPC>
           )}
+
           {map && <AvatarSlots envMap={envMap} map={map}></AvatarSlots>}
 
           {collider && (

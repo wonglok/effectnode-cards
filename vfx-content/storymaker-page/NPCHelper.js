@@ -37,7 +37,7 @@ export function NPCHelper({
   avatarGLTF,
   envMap,
   collider,
-  distance = 1,
+  distance = 6,
 }) {
   let NPC = useMemo(() => makeNow(), []);
   let group = useRef();

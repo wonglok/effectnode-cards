@@ -36,7 +36,7 @@ export function LoadingScreen() {
         textAlign={"center"}
         lookAt={camera.position.toArray()}
       >
-        {`Loading... ${progress}%`}
+        {`Loading... ${progress >= 1 ? progress.toFixed(1) + "%" : ""}`}
       </Text>
     </group>
   );
