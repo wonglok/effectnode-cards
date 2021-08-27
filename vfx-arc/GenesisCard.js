@@ -73,6 +73,31 @@ export function Content3D() {
   return (
     <group>
       <UseBG></UseBG>
+
+      <mesh
+        onClick={() => {
+          let router = require("next/router").default;
+          router.push(`/card/${router.query.cardID}/outfit`);
+        }}
+        position={[-6.7, 1, 9.3]}
+        userData={{
+          onClick: () => {
+            let router = require("next/router").default;
+            router.push(`/card/${router.query.cardID}/outfit`);
+          },
+          hint: "Avatar Outfit",
+        }}
+      >
+        {/*  */}
+        <sphereBufferGeometry args={[0.3, 23, 23]}></sphereBufferGeometry>
+        <meshStandardMaterial
+          metalness={1}
+          roughness={0.0}
+          envMap={envMap}
+          color="#ffff44"
+        ></meshStandardMaterial>
+      </mesh>
+
       {/* <SimpleBloomer></SimpleBloomer> */}
 
       {/*  */}
@@ -90,29 +115,6 @@ export function Content3D() {
 
       {map && (
         <group>
-          <mesh
-            onClick={() => {
-              let router = require("next/router").default;
-              router.push(`/place/movie`);
-            }}
-            position={[3, 2, 23]}
-            userData={{
-              onClick: () => {
-                let router = require("next/router").default;
-                router.push(`/place/movie`);
-              },
-              hint: "Let's Go Movie",
-            }}
-          >
-            <sphereBufferGeometry args={[0.3, 23, 23]}></sphereBufferGeometry>
-            <meshStandardMaterial
-              metalness={1}
-              roughness={0.3}
-              envMap={envMap}
-              color="#44ffff"
-            ></meshStandardMaterial>
-          </mesh>
-
           <SceneDecorator object={map}></SceneDecorator>
 
           <UserContorls

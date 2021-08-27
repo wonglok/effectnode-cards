@@ -83,6 +83,13 @@ export const Map3D = ({ object, onReadyCollider = () => {} }) => {
       if (hit) {
         Now.cursorPos.copy(hit.point);
         Now.cursorNormal.copy(hit.face.normal);
+
+        // console.log(
+        //   `[${hit.point
+        //     .toArray()
+        //     .map((e) => e.toFixed(1))
+        //     .join(", ")}]`
+        // );
       }
 
       // hit
