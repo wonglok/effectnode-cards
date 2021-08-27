@@ -70,7 +70,7 @@ export function NPCHelper({
         z: 1,
       })
       .applyEuler(camera.rotation)
-      .multiplyScalar(-10);
+      .multiplyScalar(-5.6);
 
     Now.followerPt.copy(Now.avatarAt).add(forward);
     NPC.goingTo.set(
