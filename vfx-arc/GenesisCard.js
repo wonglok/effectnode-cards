@@ -21,6 +21,7 @@ import { NPCHelper } from "../vfx-content/storymaker-page/NPCHelper";
 // import { AvatarSlots } from "../vfx-content/storymaker-page/AvatarSlots";
 // import { WelcomeAvatar } from "../vfx-content/welcome-page/WelcomeAvatar";
 import { Color, Object3D, TextureFilter } from "three";
+import { getFirebase } from "../vfx-firebase/firelib";
 // import { HoneyShip } from "../vfx-content/welcome-page/HoneyShip";
 // import { LoginBall } from "../vfx-content/welcome-page/LoginBall";
 // import { LoginGate } from "../vfx-cms/common/LoginGate";
@@ -58,9 +59,9 @@ export function Content3D() {
   // let avaGLTF1 = useGLTF(
   //   `https://d1a370nemizbjq.cloudfront.net/18bc89a8-de85-4a28-b3aa-d1ce4096059f.glb`
   // );
-  let avaGLTF2 = useGLTF(
-    `https://d1a370nemizbjq.cloudfront.net/08cf5815-ab1d-4b6f-ab5e-5ec1858ec885.glb`
-  );
+  // let avaGLTF2 = useGLTF(
+  //   `https://d1a370nemizbjq.cloudfront.net/08cf5815-ab1d-4b6f-ab5e-5ec1858ec885.glb`
+  // );
 
   let map = useMemo(() => {
     let map = mapGLTF.scene;
@@ -120,18 +121,13 @@ export function Content3D() {
             Now={Now}
           ></UserContorls>
 
-          {collider && (
-            <group position={[0, 0, 0]}>
-              <NPCHelper
-                isSwim={true}
-                avatarGLTF={avaGLTF2}
-                collider={collider}
-                envMap={envMap}
-                map={map}
-                lighting={false}
-              ></NPCHelper>
-            </group>
-          )}
+          <MySelf
+            isSwim={false}
+            collider={collider}
+            envMap={envMap}
+            map={map}
+          ></MySelf>
+
           {/*
           {collider && (
             <group position={[-1, 0, 0]}>
@@ -153,6 +149,64 @@ export function Content3D() {
               <TheHelper Now={Now}></TheHelper>
             </group>
           )}
+        </group>
+      )}
+    </group>
+  );
+}
+
+function MySelf({ envMap, map, collider }) {
+  let [url, setURL] = useState(false);
+
+  useEffect(() => {
+    return getFirebase()
+      .auth()
+      .onAuthStateChanged(async (user) => {
+        if (user && user.uid) {
+          let snap = await getFirebase()
+            .database()
+            .ref(`/profiles/${user.uid}`)
+            .get();
+          let val = snap.val();
+
+          if (val && val.avatarURL) {
+            setURL(val.avatarURL);
+          } else {
+          }
+        }
+      });
+  });
+
+  return (
+    <group>
+      {url && (
+        <MyNPC
+          url={url}
+          isSwim={false}
+          collider={collider}
+          envMap={envMap}
+          map={map}
+        ></MyNPC>
+      )}
+    </group>
+  );
+}
+
+function MyNPC({ url, isSwim, envMap, map, collider }) {
+  let avaGLTF = useGLTF(url);
+
+  return (
+    <group>
+      {collider && (
+        <group position={[0, 0, 0]}>
+          <NPCHelper
+            isSwim={isSwim}
+            avatarGLTF={avaGLTF}
+            collider={collider}
+            envMap={envMap}
+            map={map}
+            lighting={false}
+          ></NPCHelper>
         </group>
       )}
     </group>

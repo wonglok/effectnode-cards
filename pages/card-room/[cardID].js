@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { getFirebase } from "../../vfx-firebase/firelib";
 import { Text } from "@react-three/drei";
-
+import router from "next/router";
 // import { NPCHelper } from "../../vfx-content/storymaker-page/NPCHelper";
 // import { AvatarSlots } from "../../vfx-content/storymaker-page/AvatarSlots";
 // import { LoginGate } from "../../vfx-cms/common/LoginGate";
@@ -73,8 +73,18 @@ function PageRouter({ cardID }) {
     //   ret
     // }
 
+    let activationInfo = getFirebase()
+      .database()
+      .ref(`/card-activation-info`)
+      .child(cardID);
     let metaRef = getFirebase().database().ref(`/card-meta-info`).child(cardID);
     let metaData = (await metaRef.get()).val();
+    let activationData = (await activationInfo.get()).val();
+
+    if (activationData === null) {
+      router.push(`/card/${cardID}`);
+      return;
+    }
 
     let roomType = metaData.type || "GenesisCard";
 
