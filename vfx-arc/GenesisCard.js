@@ -122,7 +122,7 @@ export function Content3D() {
           ></UserContorls>
 
           <MySelf
-            isSwim={false}
+            isSwim={true}
             collider={collider}
             envMap={envMap}
             map={map}
@@ -180,13 +180,15 @@ function MySelf({ envMap, map, collider }) {
   return (
     <group>
       {url && (
-        <MyNPC
-          url={url}
-          isSwim={false}
-          collider={collider}
-          envMap={envMap}
-          map={map}
-        ></MyNPC>
+        <Suspense fallback={null}>
+          <MyNPC
+            url={url}
+            isSwim={false}
+            collider={collider}
+            envMap={envMap}
+            map={map}
+          ></MyNPC>
+        </Suspense>
       )}
     </group>
   );
