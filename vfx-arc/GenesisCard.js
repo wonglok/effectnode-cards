@@ -1,14 +1,12 @@
 //
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Canvas, createPortal, useThree } from "@react-three/fiber";
-import { getGPUTier } from "detect-gpu";
+import { useEffect, useMemo, useState } from "react";
+import { createPortal, useThree } from "@react-three/fiber";
 import { Suspense } from "react";
 import { LoadingScreen } from "../vfx-content/welcome-page/LoadingScreen";
-import { Preload, useGLTF } from "@react-three/drei";
+import { useGLTF } from "@react-three/drei";
 import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
 import {
   Map3D,
-  SimpleBloomer,
   StarSky,
   TailCursor,
   TheHelper,
@@ -18,12 +16,13 @@ import { useShaderEnvLight } from "../vfx-content/welcome-page/useShaderEnvLight
 import { Now } from "../vfx-metaverse/lib/Now";
 import { SceneDecorator } from "../vfx-metaverse/compos/SceneDecorator";
 import { NPCHelper } from "../vfx-content/storymaker-page/NPCHelper";
-// import { AvatarSlots } from "../vfx-content/storymaker-page/AvatarSlots";
-// import { WelcomeAvatar } from "../vfx-content/welcome-page/WelcomeAvatar";
-import { Color, Object3D, TextureFilter } from "three";
+import { Color, Object3D } from "three";
 import { getFirebase } from "../vfx-firebase/firelib";
 import { AvatarPortal } from "../vfx-content/AvatarPortal/AvatarPortal";
 import { LoginGateR3F } from "../vfx-content/LoginGateR3F/LoginGateR3F";
+
+// import { AvatarSlots } from "../vfx-content/storymaker-page/AvatarSlots";
+// import { WelcomeAvatar } from "../vfx-content/welcome-page/WelcomeAvatar";
 // import { HoneyShip } from "../vfx-content/welcome-page/HoneyShip";
 // import { LoginBall } from "../vfx-content/welcome-page/LoginBall";
 // import { LoginGate } from "../vfx-cms/common/LoginGate";
@@ -72,6 +71,8 @@ export function Content3D() {
       <primitive object={o3d}></primitive>
       {/* {collider && <primitive object={collider}></primitive>} */}
 
+      <directionalLight intensity={2} position={[0, 3, 3]}></directionalLight>
+
       <UseBG></UseBG>
 
       <LoginGateR3F>
@@ -91,24 +92,30 @@ export function Content3D() {
         )}
       </LoginGateR3F>
 
-      <Map3D
-        onReadyCollider={({ collider }) => {
-          setCollider(collider);
-        }}
-        object={map}
-      ></Map3D>
+      {map && (
+        <group>
+          <Map3D
+            onReadyCollider={({ collider }) => {
+              setCollider(collider);
+            }}
+            object={map}
+          ></Map3D>
 
-      <UserContorls
-        higherCamera={-0.6}
-        avatarSpeed={0.9}
-        Now={Now}
-      ></UserContorls>
+          {collider && (
+            <group>
+              <UserContorls
+                higherCamera={-0.7}
+                avatarSpeed={0.9}
+                Now={Now}
+              ></UserContorls>
 
-      <TailCursor Now={Now} color={"#ffffff"}></TailCursor>
-
-      <TheHelper Now={Now}></TheHelper>
-
-      <SceneDecorator object={map}></SceneDecorator>
+              <SceneDecorator object={map}></SceneDecorator>
+              <TailCursor Now={Now} color={"#ffffff"}></TailCursor>
+              <TheHelper Now={Now}></TheHelper>
+            </group>
+          )}
+        </group>
+      )}
     </group>
   );
 }
