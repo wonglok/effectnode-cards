@@ -31,7 +31,13 @@ import { makeNow } from "../../vfx-metaverse/utils/make-now";
 //   return height * camera.aspect;
 // };
 
-export function NPCHelper({ isSwim = false, avatarGLTF, envMap, collider }) {
+export function NPCHelper({
+  lighting = true,
+  isSwim = false,
+  avatarGLTF,
+  envMap,
+  collider,
+}) {
   let NPC = useMemo(() => makeNow(), []);
   let group = useRef();
   let { mini } = useMiniEngine();
@@ -107,6 +113,7 @@ export function NPCHelper({ isSwim = false, avatarGLTF, envMap, collider }) {
         > */}
         <DreamyHelper
           isSwim={isSwim}
+          lighting={lighting}
           avatarGLTF={avatarGLTF}
           envMap={envMap}
           npc={NPC}
@@ -119,7 +126,7 @@ export function NPCHelper({ isSwim = false, avatarGLTF, envMap, collider }) {
   );
 }
 
-function DreamyHelper({ isSwim, avatarGLTF, envMap, npc }) {
+function DreamyHelper({ isSwim, lighting, avatarGLTF, envMap, npc }) {
   let avatar = useMemo(() => {
     let scene = avatarGLTF.scene;
     scene.visible = false;
@@ -201,11 +208,13 @@ function DreamyHelper({ isSwim, avatarGLTF, envMap, npc }) {
   return (
     <group>
       <primitive name="avatar" object={avatar}>
-        <pointLight
-          castShadow={true}
-          intensity={1}
-          position={[0, 1.75, 2]}
-        ></pointLight>
+        {lighting && (
+          <pointLight
+            castShadow={true}
+            intensity={1}
+            position={[0, 1.75, 2]}
+          ></pointLight>
+        )}
       </primitive>
     </group>
   );

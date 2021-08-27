@@ -128,6 +128,7 @@ export function Content3D() {
                 collider={collider}
                 envMap={envMap}
                 map={map}
+                lighting={false}
               ></NPCHelper>
             </group>
           )}
