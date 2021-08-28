@@ -15,19 +15,12 @@ import {
 import { useShaderEnvLight } from "../vfx-content/welcome-page/useShaderEnvLight";
 import { Now } from "../vfx-metaverse/lib/Now";
 import { SceneDecorator } from "../vfx-metaverse/compos/SceneDecorator";
-import { NPCHelper } from "../vfx-content/storymaker-page/NPCHelper";
 import { Color, Object3D } from "three";
-import { getFirebase } from "../vfx-firebase/firelib";
 import { AvatarPortal } from "../vfx-content/AvatarPortal/AvatarPortal";
 import { LoginGateR3F } from "../vfx-content/LoginGateR3F/LoginGateR3F";
 import { LoginBall } from "../vfx-content/welcome-page/LoginBall";
 import { MySelf } from "../vfx-content/MySelf/MySelf";
-
-// import { AvatarSlots } from "../vfx-content/storymaker-page/AvatarSlots";
-// import { WelcomeAvatar } from "../vfx-content/welcome-page/WelcomeAvatar";
-// import { HoneyShip } from "../vfx-content/welcome-page/HoneyShip";
-// import { LoginBall } from "../vfx-content/welcome-page/LoginBall";
-// import { LoginGate } from "../vfx-cms/common/LoginGate";
+import { StoryPortal } from "../vfx-content/StoryPortal/StoryPortal";
 
 export default function Page() {
   return (
@@ -82,6 +75,11 @@ export function Content3D() {
       <LoginGateR3F>
         <group position={[-6.7, 1, 9.3]}>
           <AvatarPortal></AvatarPortal>
+        </group>
+
+        <group rotation={[0, Math.PI * 0.5, 0]} position={[-6.7, 1, 1 + 9.3]}>
+          {/*  */}
+          <StoryPortal></StoryPortal>
         </group>
 
         {collider && (

@@ -2,14 +2,37 @@
   "rules": {
     ".read": false,
     ".write": false,
+    "profiles": {
+      "$owner_id": {
+        ".read": "true",
+        ".write": "auth != null && $owner_id === auth.uid || auth != null && root.child('admin').hasChild(auth.uid)"
+      }
+    },
+    "rooms": {
+      "$roomID": {
+        "$owner_id": {
+          ".read": "true",
+          ".write": "auth != null && $owner_id === auth.uid || auth != null && root.child('admin').hasChild(auth.uid)"
+        }
+      }
+    },
+    "online": {
+      "$roomID": {
+        ".read": "true",
+        "$owner_id": {
+          ".read": "true",
+          ".write": "auth != null && $owner_id === auth.uid || auth != null && root.child('admin').hasChild(auth.uid)"
+        }
+      }
+    },
     "usernames": {
       "$username": {
         ".write": "!data.exists() && auth!= null && newData.val() == auth.uid"
       }
     },
-    "places": {
+    "slug": {
       ".read": true,
-      "$placeID": {
+      "$slugID": {
         ".write": "(!data.exists() || data.child('author').val() == auth.uid) && (newData.child('author').val() == auth.uid || !newData.exists())"
       }
     },
@@ -19,11 +42,42 @@
         ".write": "root.child('admins/'+auth.uid).exists()"
       }
     },
-    "cards": {
-      ".read": true,
+    "card-private-info": {
+      ".read": false,
+      ".write": false
+    },
+    //
+    "card-public-meta": {
       "$cardID": {
+        ".read": "root.child('admins/'+auth.uid).exists()",
         ".write": "root.child('admins/'+auth.uid).exists()"
       }
+    },
+    "card-activation-info": {
+      "$cardID": {
+        ".read": true,
+        ".write": "root.child('admins/'+auth.uid).exists()"
+      }
+    },
+    "card-stroy-info": {
+      "$cardID": {
+        ".read": true,
+        ".write": "root.child('card-activation-info').child($cardID).child('uid').exists() && auth != null && root.child('card-activation-info').child($cardID).child('uid').val() == auth.uid"
+      }
+    },
+    "card-meta-info": {
+      "$cardID": {
+        ".read": true,
+        ".write": "root.child('admins/'+auth.uid).exists()"
+      }
+    },
+    "test-admin": {
+      ".read": "root.child('admins/'+auth.uid).exists()",
+      ".write": "root.child('admins/'+auth.uid).exists()"
+    },
+    "test-user": {
+      ".read": "auth !== null && auth.provider === 'google'",
+      ".write": "auth !== null && auth.provider === 'google'"
     },
     "profile": {
       "$owner_user_id": {

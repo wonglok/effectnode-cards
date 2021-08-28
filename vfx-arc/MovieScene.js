@@ -27,6 +27,8 @@ import { AvatarNPC } from "../vfx-content/AvatarNPC/AvatarNPC";
 // import { LoginBall } from "../vfx-content/welcome-page/LoginBall";
 // import { LoginGate } from "../vfx-cms/common/LoginGate";
 
+//
+
 export default function Page() {
   return (
     <group>
