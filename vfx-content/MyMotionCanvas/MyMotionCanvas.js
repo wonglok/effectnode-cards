@@ -15,12 +15,12 @@ import { Actions } from "../Actions/Actions";
 export function MyMotionCanvas() {
   return (
     <div className="h-full w-full relative flex flex-col lg:flex-row">
-      <div className=" order-2 h-52  lg:h-full overflow-scroll lg:w-2/12">
+      <div className=" order-2 h-52  lg:h-full overflow-scroll lg:w-3/12">
         <RigList></RigList>
         {/*  */}
       </div>
       <Canvas
-        className="  lg:order-3 lg:w-10/12"
+        className="  lg:order-3 lg:w-9/12"
         concurrent
         onCreated={(st) => {
           st.gl.physicallyCorrectLights = true;
