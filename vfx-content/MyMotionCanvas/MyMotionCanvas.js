@@ -1,25 +1,45 @@
 import { Text, useFBX, useGLTF } from "@react-three/drei";
 import { Canvas, createPortal, useFrame, useThree } from "@react-three/fiber";
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import {
+  ErrorBoundary,
+  Suspense,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { AnimationMixer, BackSide, Object3D, Vector3 } from "three";
 import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
+import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { getFirebase } from "../../vfx-firebase/firelib";
 
+import { makeShallowStore } from "../../vfx-utils/make-shallow-store";
+
 import { useEnvLight } from "../../vfx-content/Use/useEnvLight.js";
-export function MyAvatarsCanvas() {
+import { Actions } from "../Actions/Actions";
+import { getID } from "../../vfx-metaverse";
+
+export function MyMotionCanvas() {
   return (
-    <Canvas
-      concurrent
-      onCreated={(st) => {
-        st.gl.physicallyCorrectLights = true;
-      }}
-      dpr={[1, 3]}
-    >
-      <Suspense fallback={<LoadingAvatar></LoadingAvatar>}>
-        <Content></Content>
-      </Suspense>
-    </Canvas>
+    <div className="h-full w-full relative flex flex-col lg:flex-row">
+      <div className=" order-2 h-52  lg:h-full overflow-scroll lg:w-2/12">
+        <RigList></RigList>
+        {/*  */}
+      </div>
+      <Canvas
+        className="  lg:order-3 lg:w-10/12"
+        concurrent
+        onCreated={(st) => {
+          st.gl.physicallyCorrectLights = true;
+        }}
+        dpr={[1, 3]}
+      >
+        <Suspense fallback={<LoadingAvatar></LoadingAvatar>}>
+          <Content></Content>
+        </Suspense>
+      </Canvas>
+    </div>
   );
 }
 
@@ -123,7 +143,10 @@ function AvatarItem({ url }) {
     <group>
       {createPortal(<primitive object={avatar}></primitive>, o3d)}
       <primitive object={o3d}></primitive>
-      <Rig avatar={avatar}></Rig>
+
+      <Suspense fallback={null}>
+        <Rig avatar={avatar}></Rig>
+      </Suspense>
       <Decorate avatar={avatar}></Decorate>
 
       <MyCamera></MyCamera>
@@ -146,28 +169,70 @@ function Decorate({ avatar }) {
 
   return null;
 }
+export let RigStore = makeShallowStore({
+  actions: Actions,
+  act: 0,
+  action: false,
+});
+
+function RigList() {
+  return (
+    <div className="p-3">
+      {RigStore.actions.map((e, i) => {
+        return (
+          <div
+            className="px-3 mb-3 cursor-pointer"
+            key={e.id}
+            onClick={() => {
+              RigStore.act = i;
+            }}
+            onMouseEnter={() => {}}
+          >
+            {e.name}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function Rig({ avatar }) {
-  let mixer = useMemo(() => {
-    return new AnimationMixer();
-  }, []);
-  let fbx = {
-    // waiting: useFBX(`/rpm/rpm-pose/standing-waiting.fbx`),
-    idle: useFBX(`/rpm/rpm-actions-locomotion/standing-foot.fbx`),
-  };
-  let actions = {};
-  for (let kn in fbx) {
-    actions[kn] = mixer.clipAction(fbx[kn].animations[0], avatar);
-  }
-  useFrame((st, dt) => {
-    mixer.update(dt);
-  });
+  RigStore.makeKeyReactive("act");
+
+  // let mixer = useMemo(() => {
+  //   return new AnimationMixer();
+  // }, [RigStore.act]);
+
+  // useFrame((st, dt) => {
+  //   mixer.update(dt);
+  // });
+  let { get } = useThree();
+  let last = useRef(false);
   useEffect(() => {
-    actions.idle.play();
+    let tt = 0;
+    let now = RigStore.actions[RigStore.act];
+    if (now && now.url) {
+      new FBXLoader().load(now.url, (fbx) => {
+        if (last.current) {
+          last.current.stopAllAction();
+        }
+
+        let mixer = new AnimationMixer();
+        last.current = mixer;
+        let action = mixer.clipAction(fbx.animations[0], avatar);
+        action.play();
+        let rAF = () => {
+          tt = requestAnimationFrame(rAF);
+          mixer.update(1 / 60);
+        };
+        tt = requestAnimationFrame(rAF);
+      });
+    }
 
     return () => {
-      mixer.stopAllAction();
+      cancelAnimationFrame(tt);
     };
-  }, []);
+  }, [get, RigStore.act]);
 
   return <group></group>;
 }
@@ -179,39 +244,47 @@ function MyCamera() {
     camera.far = 5000;
     camera.fov = 35;
     camera.updateProjectionMatrix();
-    camera.position.z = 1;
+    camera.position.z = 13;
 
     let orbit = new OrbitControls(camera, gl.domElement);
     orbit.minDistance = 0.4;
     orbit.maxDistance = 5.5;
+    orbit.rotateSpeed = 0.3;
     orbit.enableDamping = true;
     orbit.dampingFactor = 0.1;
     orbit.zoomSpeed = 0.3;
+    orbit.enableZoom = true;
+    orbit.enablePan = false;
+    orbit.enableRotate = true;
 
     orbit.update();
     return orbit;
-  }, []);
+  }, [camera]);
 
   let lookAt = new Vector3(0, 0, 0);
   let lookAtlerp = new Vector3(0, 0, 0);
-  let headPos = new Vector3();
+  let lookAtInfluence = new Object3D();
+  let lookAtInfluenceNow = new Object3D();
+  let corePos = new Vector3();
   useFrame(({ get }) => {
     let { camera, scene, mouse } = get();
 
     let avatar = scene.getObjectByName("avatar");
     if (avatar) {
-      let coreTarget = avatar.getObjectByName("Head");
+      let coreTarget = avatar.getObjectByName("Spine2");
       if (coreTarget) {
-        coreTarget.getWorldPosition(headPos);
-        orbit.target.lerp(headPos, 0.1);
+        coreTarget.getWorldPosition(corePos);
+        orbit.target.lerp(corePos, 0.1);
 
         camera.position.y = orbit.target.y;
         camera.position.y += 0.1;
         orbit.update();
 
-        lookAt.set(mouse.x * 15, mouse.y * 15, 35);
+        lookAt.set(mouse.x * 15, mouse.y * 15, 50);
         lookAtlerp.lerp(lookAt, 0.2);
-        coreTarget.lookAt(lookAtlerp);
+        lookAtInfluence.lookAt(lookAtlerp);
+
+        lookAtInfluenceNow.rotation.copy(lookAtInfluence.rotation);
       }
     }
   });

@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import { TabMyAvatar } from "../../../../vfx-content/TabMyAvatar/TabMyAvatar";
 import { TabTellStory } from "../../../../vfx-content/TabTellStory/TabTellStory";
+import { TabMotions } from "../../../../vfx-content/TabMotions/TabMotions";
 
 //
 function AreaAdapt({ children }) {
@@ -105,16 +106,7 @@ export default function StoryMaker() {
 
                 {/*  */}
                 <Route path="/motion">
-                  <div className="w-full bg-gray-100 ">
-                    <h1 className="text-xl px-5  py-5 bg-blue-200 text-black w-full">
-                      <span className="text-xl">Motions</span>
-                    </h1>
-
-                    <div className="px-5 py-5">123</div>
-                  </div>
-
-                  {/*  */}
-                  {/* <NegativeCanvas /> */}
+                  <TabMotions></TabMotions>
                 </Route>
 
                 <Route>
@@ -126,7 +118,7 @@ export default function StoryMaker() {
           </div>
 
           {/* <!--Sidebar--> */}
-          <div className="w-full md:w-1/6 bg-gray-900 md:bg-gray-900 px-2 text-center fixed bottom-0 md:pt-8 md:top-0 md:left-0 h-16 md:h-screen md:border-r-4 md:border-gray-600">
+          <div className="w-full md:w-1/6 bg-gray-900 md:bg-gray-900 px-2 text-center fixed bottom-0 md:pt-8 md:top-0 md:left-0 h-16 md:h-screen md:border-r-0 md:border-gray-600">
             <div className="md:relative mx-auto lg:float-right lg:px-6">
               <ul className="list-reset flex flex-row justify-around venly md:flex-col text-center md:text-left">
                 <li className="mr-3 flex-1">
