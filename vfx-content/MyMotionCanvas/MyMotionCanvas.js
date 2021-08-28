@@ -1,13 +1,6 @@
-import { Text, useFBX, useGLTF } from "@react-three/drei";
+import { Text, useGLTF } from "@react-three/drei";
 import { Canvas, createPortal, useFrame, useThree } from "@react-three/fiber";
-import {
-  ErrorBoundary,
-  Suspense,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { AnimationMixer, BackSide, Object3D, Vector3 } from "three";
 import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
@@ -18,7 +11,6 @@ import { makeShallowStore } from "../../vfx-utils/make-shallow-store";
 
 import { useEnvLight } from "../../vfx-content/Use/useEnvLight.js";
 import { Actions } from "../Actions/Actions";
-import { getID } from "../../vfx-metaverse";
 
 export function MyMotionCanvas() {
   return (
