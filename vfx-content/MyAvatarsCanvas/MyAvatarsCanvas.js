@@ -213,15 +213,15 @@ function MyCamera() {
         orbit.target.lerp(corePos, 0.1);
 
         camera.position.y = orbit.target.y;
-        camera.position.y += 0.2;
+        camera.position.y += 0.15;
         orbit.update();
 
         lookAt.set(mouse.x * 15, mouse.y * 15, 15);
-        lookAtlerp.lerp(lookAt, 0.2);
+        lookAtlerp.lerp(lookAt, 0.4);
         lookAtInfluence.lookAt(lookAtlerp);
 
-        lookAtInfluenceNow.quaternion.slerp(lookAtInfluence.quaternion, 0.2);
-        coreTarget.quaternion.slerp(lookAtInfluenceNow.quaternion, 0.2);
+        lookAtInfluenceNow.quaternion.slerp(lookAtInfluence.quaternion, 0.4);
+        coreTarget.quaternion.slerp(lookAtInfluenceNow.quaternion, 0.4);
       }
     }
   });

@@ -58,12 +58,10 @@ export function TabMyAvatar() {
                 Promise.all([
                   db
                     .ref(`/card-avatar-info/${router.query.cardID}`)
-                    .child(user.uid)
                     .child("avatarURL")
                     .set(url),
                   db
                     .ref(`/card-avatar-info/${router.query.cardID}`)
-                    .child(user.uid)
                     .child("avatarSignature")
                     .set(getID()),
                 ]).then(() => {

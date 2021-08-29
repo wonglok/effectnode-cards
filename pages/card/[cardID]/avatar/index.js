@@ -175,7 +175,7 @@ function AvatarLayer({ cardID }) {
             setLoading(true);
 
             onReady().then(({ user, db, app }) => {
-              db.ref(`/card-avatar-info/${router.query.cardID}`).set({
+              db.ref(`card-avatar-info/${router.query.cardID}`).set({
                 avatarURL: link,
                 avatarSignature: getID(),
               });
