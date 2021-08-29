@@ -59,7 +59,7 @@ export function ConfirmCard({ cardID }) {
           if (res.err) {
             console.log(res.err);
           } else {
-            router.push(`/card-room/${cardID}`);
+            router.push(`/card/${cardID}/room`);
           }
         });
     });

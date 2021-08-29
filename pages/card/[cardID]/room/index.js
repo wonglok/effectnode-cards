@@ -1,16 +1,12 @@
 //
 import { Canvas, useThree } from "@react-three/fiber";
-import { SimpleBloomer, StarSky } from "../../vfx-metaverse";
+import { SimpleBloomer, StarSky } from "../../../../vfx-metaverse";
 import { sRGBEncoding } from "three";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { getFirebase } from "../../vfx-firebase/firelib";
-import { Text } from "@react-three/drei";
+import { getFirebase } from "../../../../vfx-firebase/firelib";
 import router from "next/router";
-import { LoadingScreen } from "../../vfx-content/welcome-page/LoadingScreen";
-// import { NPCHelper } from "../../vfx-content/storymaker-page/NPCHelper";
-// import { AvatarSlots } from "../../vfx-content/storymaker-page/AvatarSlots";
-// import { LoginGate } from "../../vfx-cms/common/LoginGate";
+import { LoadingScreen } from "../../../../vfx-content/welcome-page/LoadingScreen";
 
 export async function getServerSideProps(context) {
   let cardID = context?.query?.cardID || null;
@@ -50,9 +46,9 @@ export default function StoryPage({ cardID }) {
 }
 
 let Maps = {
-  GenesisCard: dynamic(() => import("../../vfx-arc/GenesisCard")),
-  spaceship: dynamic(() => import("../../vfx-arc/SpaceStation")),
-  movie: dynamic(() => import("../../vfx-arc/MovieScene")),
+  GenesisCard: dynamic(() => import("../../../../vfx-arc/GenesisCard")),
+  spaceship: dynamic(() => import("../../../../vfx-arc/SpaceStation")),
+  movie: dynamic(() => import("../../../../vfx-arc/MovieScene")),
 };
 
 function PageRouter({ cardID }) {

@@ -25,23 +25,16 @@ export const makePlayBack = () => {
 export function MySelf({ envMap, holder, PlaybackState }) {
   let [url, setURL] = useState(false);
 
-  useEffect(() => {
-    return getFirebase()
-      .auth()
-      .onAuthStateChanged(async (user) => {
-        if (user && user.uid) {
-          let snap = await getFirebase()
-            .database()
-            .ref(`/card-avatar-info/${router.query.cardID}`)
-            .get();
-          let val = snap.val();
-
-          if (val && val.avatarURL) {
-            setURL(val.avatarURL);
-          } else {
-          }
-        }
-      });
+  useEffect(async () => {
+    let snap = await getFirebase()
+      .database()
+      .ref(`/card-avatar-info/${router.query.cardID}`)
+      .get();
+    let val = snap.val();
+    if (val && val.avatarURL) {
+      setURL(`${val.avatarURL}?avatarSignature=${val.avatarSignature}`);
+    } else {
+    }
   }, []);
 
   return (

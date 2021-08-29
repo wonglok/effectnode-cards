@@ -54,7 +54,7 @@ export async function getServerSideProps(context) {
   if (data) {
     return {
       redirect: {
-        destination: "/card-room/" + data.cardID,
+        destination: "/card/" + data.cardID + "/room",
         permanent: false,
       },
     };

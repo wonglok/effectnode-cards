@@ -83,7 +83,7 @@ export function MySelf({ envMap }) {
           let val = snap.val();
 
           if (val && val.avatarURL) {
-            setURL(val.avatarURL);
+            setURL(`${val.avatarURL}?avatarSignature=${val.avatarSignature}`);
           } else {
           }
         }
