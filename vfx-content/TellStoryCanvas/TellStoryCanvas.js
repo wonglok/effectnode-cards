@@ -227,6 +227,7 @@ function PlaybackControls() {
 
 function Sentence({ data, holder, firekey, idx }) {
   let refTextArea = useRef();
+  PlayBackState.makeKeyReactive("cursor");
   PlayBackState.makeKeyReactive("actionKey");
   PlayBackState.makeKeyReactive("autoPlayNext");
 
@@ -321,6 +322,11 @@ function Sentence({ data, holder, firekey, idx }) {
         className="inline-block px-3 ml-3 bg-white text-black"
         onClick={() => {
           remove({ firekey });
+          //
+          PlayBackState.cursor = 0;
+          PlayBackState.forceLoopActions = false;
+          PlayBackState.autoPlayNext = true;
+          PlayBackState.reload = Math.random();
         }}
       >
         Remove
