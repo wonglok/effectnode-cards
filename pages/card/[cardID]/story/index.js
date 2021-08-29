@@ -88,7 +88,7 @@ export default function StoryMaker() {
                   <TabMotions></TabMotions>
                 </Route>
                 <Route>
-                  <Redirect to="/my-story"></Redirect>
+                  <Redirect to="/avatar"></Redirect>
                 </Route>
               </Switch>
             </AreaAdapt>
