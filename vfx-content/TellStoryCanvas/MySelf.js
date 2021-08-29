@@ -182,6 +182,7 @@ function Rig({ avatar, holder, PlaybackState, envMap }) {
 
 function Sequncer({ avatar, mixer, sentences, PlaybackState, envMap }) {
   PlaybackState.makeKeyReactive("reload");
+  PlaybackState.makeKeyReactive("cursor");
 
   useEffect(() => {
     avatar.visible = false;
@@ -217,6 +218,7 @@ function Sequncer({ avatar, mixer, sentences, PlaybackState, envMap }) {
         action = weakMap.get(fbx);
       }
       action.reset();
+
       if (PlaybackState.forceLoopActions) {
         action.repetitions = Infinity;
         action.clampWhenFinished = false;
@@ -237,6 +239,10 @@ function Sequncer({ avatar, mixer, sentences, PlaybackState, envMap }) {
         let sentence = sentences[index];
 
         if (!sentence) {
+          PlaybackState.cursor = 0;
+          PlaybackState.forceLoopActions = false;
+          PlaybackState.autoPlayNext = true;
+          PlaybackState.reload = Math.random();
           return;
         }
 
@@ -258,7 +264,6 @@ function Sequncer({ avatar, mixer, sentences, PlaybackState, envMap }) {
       }
       if (!info) {
         info = await loadActionFBX(PlaybackState.cursor);
-
         if (stopped) {
           return;
         }
@@ -305,7 +310,7 @@ function Sequncer({ avatar, mixer, sentences, PlaybackState, envMap }) {
       mixer.stopAllAction();
       cleans.forEach((c) => c());
     };
-  }, [sentences, PlaybackState.reload]);
+  }, [sentences, PlaybackState.reload, PlaybackState.cursor]);
 
   return (
     <group>

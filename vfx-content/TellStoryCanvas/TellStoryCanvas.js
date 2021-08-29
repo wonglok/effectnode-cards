@@ -17,6 +17,19 @@ import { LoadingAvatar, makePlayBack, MySelf } from "./MySelf";
 // import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 export function TellStoryCanvas({ holder = "handy-editor" }) {
+  let scrollerRef = useRef();
+  useEffect(() => {
+    let scrollToBottom = () => {
+      let div = scrollerRef.current;
+      if (div) {
+        div.scrollTop = div.scrollHeight;
+      }
+    };
+    window.addEventListener("scroll-div-to-bottom", scrollToBottom);
+    return () => {
+      window.removeEventListener("scroll-div-to-bottom", scrollToBottom);
+    };
+  });
   return (
     <div className="h-full w-full relative block lg:flex lg:flex-row">
       <Canvas
@@ -40,6 +53,7 @@ export function TellStoryCanvas({ holder = "handy-editor" }) {
         <MyCamera></MyCamera>
       </Canvas>
       <div
+        ref={scrollerRef}
         style={
           window.innerWidth < 1024
             ? {
@@ -59,7 +73,7 @@ export function TellStoryCanvas({ holder = "handy-editor" }) {
 }
 
 // card-stroy-draft
-export let PlayBackState = makePlayBack();
+export let PlaybackState = makePlayBack();
 
 function Content({ holder }) {
   let { envMap } = useEnvLight({});
@@ -90,7 +104,7 @@ function Content({ holder }) {
       <MySelf
         envMap={envMap}
         holder={holder}
-        PlaybackState={PlayBackState}
+        PlaybackState={PlaybackState}
       ></MySelf>
     </group>
   );
@@ -116,6 +130,10 @@ let addSentence = ({ router, holder }) => {
       repeat: 1,
       addons: [],
     });
+
+    PlaybackState.cursor = num + 1;
+    PlaybackState.reload = Math.random();
+    window.dispatchEvent(new Event("scroll-div-to-bottom"));
   });
 };
 
@@ -191,7 +209,6 @@ function CreateSentence({ holder }) {
       className="p-3 py-4 lg:py-$ text-center boder bg-blue-400 text-white cursor-pointer"
       onClick={() => {
         addSentence({ router, holder });
-        window.dispatchEvent(new Event("scroll-div-to-bottom"));
       }}
     >
       + Add Sentence
@@ -200,23 +217,23 @@ function CreateSentence({ holder }) {
 }
 
 function PlaybackControls() {
-  PlayBackState.makeKeyReactive("autoPlayNext");
+  PlaybackState.makeKeyReactive("autoPlayNext");
   return (
     <div
       className={`p-3 text-center ${
-        PlayBackState.autoPlayNext ? "bg-green-500" : "bg-purple-500"
+        PlaybackState.autoPlayNext ? "bg-green-500" : "bg-purple-500"
       }`}
     >
       <div className={`inline-block p-3 mr-3 text-white`}>
-        Playback: {PlayBackState.autoPlayNext ? "AutoPlay" : "Looping"}
+        Playback: {PlaybackState.autoPlayNext ? "AutoPlay" : "Looping"}
       </div>
       <div
         className="inline-block py-1 p-3 border cursor-pointer bg-white  rounded-md mr-3"
         onClick={() => {
-          PlayBackState.cursor = 0;
-          PlayBackState.forceLoopActions = false;
-          PlayBackState.autoPlayNext = true;
-          PlayBackState.reload = Math.random();
+          PlaybackState.cursor = 0;
+          PlaybackState.forceLoopActions = false;
+          PlaybackState.autoPlayNext = true;
+          PlaybackState.reload = Math.random();
         }}
       >
         Auto Play
@@ -227,9 +244,9 @@ function PlaybackControls() {
 
 function Sentence({ data, holder, firekey, idx }) {
   let refTextArea = useRef();
-  PlayBackState.makeKeyReactive("cursor");
-  PlayBackState.makeKeyReactive("actionKey");
-  PlayBackState.makeKeyReactive("autoPlayNext");
+  PlaybackState.makeKeyReactive("cursor");
+  PlaybackState.makeKeyReactive("actionKey");
+  PlaybackState.makeKeyReactive("autoPlayNext");
 
   let saveText = (text = "") => {
     onReady().then(({ db, user }) => {
@@ -239,7 +256,7 @@ function Sentence({ data, holder, firekey, idx }) {
         .child("sentences")
         .child(firekey)
         .child("sentence")
-        .set(text.trim());
+        .set(text);
     });
   };
 
@@ -275,17 +292,17 @@ function Sentence({ data, holder, firekey, idx }) {
   return (
     <div
       onClick={() => {
-        PlayBackState.autoPlayNext = false;
-        PlayBackState.cursor = idx;
-        PlayBackState.forceLoopActions = Infinity;
-        PlayBackState.reload = Math.random();
+        PlaybackState.autoPlayNext = false;
+        PlaybackState.cursor = idx;
+        PlaybackState.forceLoopActions = Infinity;
+        PlaybackState.reload = Math.random();
       }}
       className={
-        (PlayBackState.actionKey === firekey
-          ? PlayBackState.autoPlayNext
+        (PlaybackState.actionKey === firekey
+          ? PlaybackState.autoPlayNext
             ? "bg-green-200"
             : "bg-purple-200"
-          : "bg-gray-200") + ` px-3 py-3`
+          : "bg-gray-200") + ` px-2 py-3`
       }
     >
       <select
@@ -312,7 +329,7 @@ function Sentence({ data, holder, firekey, idx }) {
         })}
       </select>
       <button
-        className="inline-block px-3 ml-3 bg-white text-black"
+        className="inline-block px-2 ml-3 bg-white text-black"
         onClick={() => {
           saveText(refTextArea.current.value);
         }}
@@ -321,23 +338,34 @@ function Sentence({ data, holder, firekey, idx }) {
       </button>
 
       <button
-        className="inline-block px-3 ml-3 bg-white text-black"
+        className="inline-block px-2 ml-3 bg-white text-black"
         onClick={() => {
           if (confirm === "Remove") {
             setConfrim("Confirm");
           } else if (confirm === "Confirm") {
             remove({ firekey });
             //
-            PlayBackState.cursor = 0;
-            PlayBackState.forceLoopActions = false;
-            PlayBackState.autoPlayNext = true;
-            PlayBackState.reload = Math.random();
+            PlaybackState.cursor = 0;
+            PlaybackState.forceLoopActions = false;
+            PlaybackState.autoPlayNext = true;
+            PlaybackState.reload = Math.random();
             setConfrim("Remove");
           }
         }}
       >
         {confirm}
       </button>
+
+      {confirm === "Confirm" && (
+        <button
+          className="inline-block px-2 ml-3 bg-white text-black"
+          onClick={() => {
+            setConfrim("Remove");
+          }}
+        >
+          Cancel
+        </button>
+      )}
 
       <textarea
         ref={refTextArea}
