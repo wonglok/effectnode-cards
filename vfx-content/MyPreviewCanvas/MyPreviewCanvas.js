@@ -1,6 +1,6 @@
 //
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Canvas, createPortal, useThree } from "@react-three/fiber";
+import { Canvas, createPortal, useFrame, useThree } from "@react-three/fiber";
 import { getGPUTier } from "detect-gpu";
 import { Suspense } from "react";
 import { LoadingScreen } from "../../vfx-content/welcome-page/LoadingScreen";
@@ -104,11 +104,11 @@ export function Content3D() {
         <group>
           <SceneDecorator object={map}></SceneDecorator>
 
-          <UserContorls
+          {/* <UserContorls
             higherCamera={-0.6}
             avatarSpeed={0.9}
             Now={Now}
-          ></UserContorls>
+          ></UserContorls> */}
 
           {/*
           {collider && (
@@ -148,15 +148,28 @@ export function Content3D() {
 
           {collider && (
             <group>
-              <TailCursor Now={Now} color={"#ffffff"}></TailCursor>
+              {/* <TailCursor Now={Now} color={"#ffffff"}></TailCursor>
 
-              <TheHelper Now={Now}></TheHelper>
+              <TheHelper Now={Now}></TheHelper> */}
             </group>
           )}
         </group>
       )}
+
+      <CamRig></CamRig>
     </group>
   );
+}
+
+function CamRig() {
+  useFrame(({ camera }) => {
+    camera.position.y = 1.5;
+    camera.position.z = 27.5;
+    camera.position.x = 0;
+    camera.rotation.x = -0.05 * 0.5 * Math.PI;
+  });
+
+  return null;
 }
 
 // function Avatar({ collider, envMap, map }) {
