@@ -271,6 +271,7 @@ function Sentence({ data, holder, firekey, idx }) {
     };
   }, []);
 
+  let [confirm, setConfrim] = useState("Remove");
   return (
     <div
       onClick={() => {
@@ -318,18 +319,24 @@ function Sentence({ data, holder, firekey, idx }) {
       >
         Save
       </button>
+
       <button
         className="inline-block px-3 ml-3 bg-white text-black"
         onClick={() => {
-          remove({ firekey });
-          //
-          PlayBackState.cursor = 0;
-          PlayBackState.forceLoopActions = false;
-          PlayBackState.autoPlayNext = true;
-          PlayBackState.reload = Math.random();
+          if (confirm === "Remove") {
+            setConfrim("Confirm");
+          } else if (confirm === "Confirm") {
+            remove({ firekey });
+            //
+            PlayBackState.cursor = 0;
+            PlayBackState.forceLoopActions = false;
+            PlayBackState.autoPlayNext = true;
+            PlayBackState.reload = Math.random();
+            setConfrim("Remove");
+          }
         }}
       >
-        Remove
+        {confirm}
       </button>
 
       <textarea

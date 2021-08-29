@@ -237,7 +237,7 @@ function Sequncer({ avatar, mixer, sentences, PlaybackState, envMap }) {
         let sentence = sentences[index];
 
         if (!sentence) {
-          sentence = sentences[index - 1];
+          return;
         }
 
         let actionInfo = Actions.find(
