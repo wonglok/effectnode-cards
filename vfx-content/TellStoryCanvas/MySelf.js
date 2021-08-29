@@ -86,12 +86,15 @@ function AvatarItem({ url, holder, PlaybackState, envMap }) {
   let avatar = useMemo(() => {
     let cloned = SkeletonUtils.clone(gltf.scene);
     return cloned;
-  }, [gltf]);
+  }, []);
+
+  avatar.rotation.set(0, 0, 0);
+  avatar.position.set(0, 0, 0);
 
   return (
     <group>
       {createPortal(<primitive object={avatar}></primitive>, o3d)}
-      <primitive object={o3d}></primitive>
+      <primitive position={[0, 0, 0]} object={o3d}></primitive>
 
       <Suspense fallback={null}>
         <Rig

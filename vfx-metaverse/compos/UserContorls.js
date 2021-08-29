@@ -315,6 +315,9 @@ export function UserContorls({
       note.remove();
       cte();
       cts();
+
+      orbit.dispose();
+      works.current = {};
     };
   }, []);
 
