@@ -11,6 +11,7 @@ import { makeShallowStore } from "../../vfx-utils/make-shallow-store";
 
 import { useEnvLight } from "../../vfx-content/Use/useEnvLight.js";
 import { Actions } from "../Actions/Actions";
+import router from "next/router";
 
 export function MyMotionCanvas() {
   return (
@@ -77,7 +78,7 @@ export function MySelf({ envMap }) {
         if (user && user.uid) {
           let snap = await getFirebase()
             .database()
-            .ref(`/profiles/${user.uid}`)
+            .ref(`/card-avatar-info/${router.query.cardID}`)
             .get();
           let val = snap.val();
 

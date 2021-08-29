@@ -111,19 +111,22 @@ function GetAvatar({ profileUI }) {
       .onAuthStateChanged((usr) => {
         if (usr) {
           onReady().then(({ db, user }) => {
-            db.ref(`profiles/${user.uid}`).once("value", (snap) => {
-              let profile = snap.val();
-              if (profile && profile.avatarURL) {
-                let insert = profileUI({
-                  avatarURL: profile.avatarURL,
-                  profile,
-                });
+            db.ref(`/card-avatar-info/${router.query.cardID}`).once(
+              "value",
+              (snap) => {
+                let profile = snap.val();
+                if (profile && profile.avatarURL) {
+                  let insert = profileUI({
+                    avatarURL: profile.avatarURL,
+                    profile,
+                  });
 
-                setCompos(insert);
-              } else {
-                router.push(`/card/${Card.cardID}/avatar`);
+                  setCompos(insert);
+                } else {
+                  router.push(`/card/${Card.cardID}/avatar`);
+                }
               }
-            });
+            );
           });
         } else {
           router.push(`/card/${Card.cardID}/login`);

@@ -11,8 +11,16 @@ import { makeShallowStore } from "../../vfx-utils/make-shallow-store";
 
 import { useEnvLight } from "../../vfx-content/Use/useEnvLight.js";
 import { Actions } from "../Actions/Actions";
-import router, { useRouter } from "next/router";
-import { PlaybackState } from "./TellStoryCanvas";
+import router from "next/router";
+
+export const makePlayBack = () => {
+  return makeShallowStore({
+    reload: false,
+    autoPlayNext: true,
+    actionKey: false,
+    cursor: 0,
+  });
+};
 
 export function MySelf({ envMap, holder, PlaybackState }) {
   let [url, setURL] = useState(false);
@@ -24,7 +32,7 @@ export function MySelf({ envMap, holder, PlaybackState }) {
         if (user && user.uid) {
           let snap = await getFirebase()
             .database()
-            .ref(`/profiles/${user.uid}`)
+            .ref(`/card-avatar-info/${router.query.cardID}`)
             .get();
           let val = snap.val();
 
@@ -301,18 +309,18 @@ function Sequncer({ avatar, mixer, sentences, PlaybackState, envMap }) {
   return (
     <group>
       {createPortal(
-        <SentenceDiaply
+        <DisplaySentence
           sentences={sentences}
           PlaybackState={PlaybackState}
           envMap={envMap}
-        ></SentenceDiaply>,
+        ></DisplaySentence>,
         avatar
       )}
     </group>
   );
 }
 
-function SentenceDiaply({ sentences, PlaybackState, envMap = null }) {
+function DisplaySentence({ sentences, PlaybackState, envMap = null }) {
   PlaybackState.makeKeyReactive("cursor");
   let text = sentences[PlaybackState.cursor]?.fireval?.sentence;
 

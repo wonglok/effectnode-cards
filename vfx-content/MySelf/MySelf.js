@@ -22,6 +22,8 @@ import { getFirebase } from "../../vfx-firebase/firelib";
 // import { LoginGateR3F } from "../vfx-content/LoginGateR3F/LoginGateR3F";
 // import { LoginBall } from "../vfx-content/welcome-page/LoginBall";
 
+import router from "next/router";
+
 export function MySelf({
   distance,
   envMap,
@@ -39,7 +41,7 @@ export function MySelf({
         if (user && user.uid) {
           let snap = await getFirebase()
             .database()
-            .ref(`/profiles/${user.uid}`)
+            .ref(`/card-avatar-info/${router.query.cardID}`)
             .get();
           let val = snap.val();
 

@@ -12,7 +12,7 @@ import { makeShallowStore } from "../../vfx-utils/make-shallow-store";
 import { useEnvLight } from "../../vfx-content/Use/useEnvLight.js";
 import { Actions } from "../Actions/Actions";
 import router, { useRouter } from "next/router";
-import { LoadingAvatar, MySelf } from "./MySelf";
+import { LoadingAvatar, makePlayBack, MySelf } from "./MySelf";
 
 export function TellStoryCanvas({ holder = "handy-editor" }) {
   return (
@@ -32,18 +32,14 @@ export function TellStoryCanvas({ holder = "handy-editor" }) {
         <Suspense fallback={<LoadingAvatar></LoadingAvatar>}>
           <Content holder={holder}></Content>
         </Suspense>
+        <MyCamera></MyCamera>
       </Canvas>
     </div>
   );
 }
 
 // card-stroy-draft
-export let PlayBackState = makeShallowStore({
-  reload: false,
-  autoPlayNext: true,
-  actionKey: false,
-  cursor: 0,
-});
+export let PlayBackState = makePlayBack();
 
 function Content({ holder }) {
   let { envMap } = useEnvLight({});
@@ -76,7 +72,6 @@ function Content({ holder }) {
         holder={holder}
         PlaybackState={PlayBackState}
       ></MySelf>
-      <MyCamera></MyCamera>
     </group>
   );
 }

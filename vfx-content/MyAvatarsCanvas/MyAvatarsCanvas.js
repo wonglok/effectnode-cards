@@ -5,7 +5,7 @@ import { AnimationMixer, BackSide, Object3D, Vector3 } from "three";
 import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { getFirebase } from "../../vfx-firebase/firelib";
-
+import router from "next/router";
 import { useEnvLight } from "../../vfx-content/Use/useEnvLight.js";
 export function MyAvatarsCanvas() {
   return (
@@ -64,7 +64,7 @@ export function MySelf({ envMap }) {
         if (user && user.uid) {
           let snap = await getFirebase()
             .database()
-            .ref(`/profiles/${user.uid}`)
+            .ref(`/card-avatar-info/${router.query.cardID}`)
             .get();
           let val = snap.val();
 

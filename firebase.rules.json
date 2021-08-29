@@ -59,7 +59,19 @@
         ".write": "root.child('admins/'+auth.uid).exists()"
       }
     },
+    "card-stroy-draft": {
+      "$cardID": {
+        ".read": true,
+        ".write": "root.child('card-activation-info').child($cardID).child('uid').exists() && auth != null && root.child('card-activation-info').child($cardID).child('uid').val() == auth.uid"
+      }
+    },
     "card-stroy-info": {
+      "$cardID": {
+        ".read": true,
+        ".write": "root.child('card-activation-info').child($cardID).child('uid').exists() && auth != null && root.child('card-activation-info').child($cardID).child('uid').val() == auth.uid"
+      }
+    },
+    "card-room-info": {
       "$cardID": {
         ".read": true,
         ".write": "root.child('card-activation-info').child($cardID).child('uid').exists() && auth != null && root.child('card-activation-info').child($cardID).child('uid').val() == auth.uid"

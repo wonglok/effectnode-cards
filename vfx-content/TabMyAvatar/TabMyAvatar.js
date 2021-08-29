@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { onReady } from "../../vfx-firebase/firelib";
 import { getID } from "../../vfx-metaverse";
 import { MyAvatarsCanvas } from "../MyAvatarsCanvas/MyAvatarsCanvas";
-
+import router from "next/router";
 export function TabMyAvatar() {
   let [custom, setCustom] = useState(false);
 
@@ -57,12 +57,12 @@ export function TabMyAvatar() {
               onReady().then(({ db, user }) => {
                 Promise.all([
                   db
-                    .ref(`/profiles`)
+                    .ref(`/card-avatar-info/${router.query.cardID}`)
                     .child(user.uid)
                     .child("avatarURL")
                     .set(url),
                   db
-                    .ref(`/profiles`)
+                    .ref(`/card-avatar-info/${router.query.cardID}`)
                     .child(user.uid)
                     .child("avatarSignature")
                     .set(getID()),
