@@ -1,5 +1,5 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { BackSide, Object3D, Vector3 } from "three";
 import { onReady } from "../../vfx-firebase/firelib";
 import { useEnvLight } from "../../vfx-content/Use/useEnvLight.js";
@@ -8,6 +8,10 @@ import router, { useRouter } from "next/router";
 import { LoadingAvatar, makePlayBack, MySelf } from "./MySelf";
 
 export function TellStoryCanvas({ holder = "handy-editor" }) {
+  let PlaybackState = useMemo(() => {
+    return makePlayBack();
+  }, []);
+
   let scrollerRef = useRef();
   useEffect(() => {
     let scrollToBottom = () => {
@@ -39,7 +43,7 @@ export function TellStoryCanvas({ holder = "handy-editor" }) {
         dpr={[1, 3]}
       >
         <Suspense fallback={<LoadingAvatar></LoadingAvatar>}>
-          <Content holder={holder}></Content>
+          <Content PlaybackState={PlaybackState} holder={holder}></Content>
         </Suspense>
         <MyCamera></MyCamera>
       </Canvas>
@@ -56,7 +60,10 @@ export function TellStoryCanvas({ holder = "handy-editor" }) {
         }
         className=" order-2 lg:h-full overflow-scroll"
       >
-        <SentencesList holder={holder}></SentencesList>
+        <SentencesList
+          PlaybackState={PlaybackState}
+          holder={holder}
+        ></SentencesList>
         {/*  */}
       </div>
     </div>
@@ -64,9 +71,8 @@ export function TellStoryCanvas({ holder = "handy-editor" }) {
 }
 
 // card-stroy-draft
-export let PlaybackState = makePlayBack();
 
-function Content({ holder }) {
+function Content({ holder, PlaybackState }) {
   let { envMap } = useEnvLight({});
 
   return (
@@ -128,7 +134,7 @@ let addSentence = ({ router, holder }) => {
   });
 };
 
-function SentencesList({ holder }) {
+function SentencesList({ holder, PlaybackState }) {
   let router = useRouter();
 
   let [actions, setActions] = useState([]);
@@ -177,7 +183,7 @@ function SentencesList({ holder }) {
   return (
     <div>
       <CreateSentence holder={holder}></CreateSentence>
-      <PlaybackControls></PlaybackControls>
+      <PlaybackControls PlaybackState={PlaybackState}></PlaybackControls>
       {actions.map((a, idx) => {
         return (
           <Sentence
@@ -186,6 +192,7 @@ function SentencesList({ holder }) {
             firekey={a.firekey}
             data={a.fireval}
             holder={holder}
+            PlaybackState={PlaybackState}
           ></Sentence>
         );
       })}
@@ -207,7 +214,7 @@ function CreateSentence({ holder }) {
   );
 }
 
-function PlaybackControls() {
+function PlaybackControls({ PlaybackState }) {
   PlaybackState.makeKeyReactive("autoPlayNext");
   return (
     <div
@@ -233,7 +240,7 @@ function PlaybackControls() {
   );
 }
 
-function Sentence({ data, holder, firekey, idx }) {
+function Sentence({ data, holder, firekey, idx, PlaybackState }) {
   let refTextArea = useRef();
   PlaybackState.makeKeyReactive("cursor");
   PlaybackState.makeKeyReactive("actionKey");
@@ -379,7 +386,7 @@ function Sentence({ data, holder, firekey, idx }) {
   );
 }
 
-function MyCamera({ actions }) {
+function MyCamera({}) {
   let { camera } = useThree();
   useEffect(() => {
     camera.near = 0.1;
