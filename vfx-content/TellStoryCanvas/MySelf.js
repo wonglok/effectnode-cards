@@ -182,7 +182,6 @@ function Rig({ avatar, holder, PlaybackState, envMap }) {
 
 function Sequncer({ avatar, mixer, sentences, PlaybackState, envMap }) {
   PlaybackState.makeKeyReactive("reload");
-  PlaybackState.makeKeyReactive("cursor");
 
   useEffect(() => {
     avatar.visible = false;
@@ -310,7 +309,7 @@ function Sequncer({ avatar, mixer, sentences, PlaybackState, envMap }) {
       mixer.stopAllAction();
       cleans.forEach((c) => c());
     };
-  }, [sentences, PlaybackState.reload, PlaybackState.cursor]);
+  }, [sentences, PlaybackState.reload]);
 
   return (
     <group>
