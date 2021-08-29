@@ -24,6 +24,7 @@ export const makePlayBack = () => {
 
 export function MySelf({ envMap, holder, PlaybackState }) {
   let [url, setURL] = useState(false);
+  let [sentences, setActions] = useState([]);
 
   useEffect(async () => {
     let snap = await getFirebase()
@@ -37,14 +38,76 @@ export function MySelf({ envMap, holder, PlaybackState }) {
     }
   }, []);
 
+  useEffect(() => {
+    if (router?.query?.cardID) {
+      let clean = [];
+      onReady().then(async ({ db, user }) => {
+        //
+        let sentences = db
+          .ref(`/card-stroy-draft`)
+          .child(router.query.cardID)
+          .child(holder)
+          .child("sentences");
+
+        let cleanup = sentences.on("value", async (snapshot) => {
+          if (snapshot) {
+            let arr = [];
+            let getURL = (fireval) => {
+              let obj = Actions.find((a) => a.signature === fireval.signature);
+
+              if (obj) {
+                return obj.url;
+              } else {
+                return false;
+              }
+            };
+
+            snapshot.forEach((sub) => {
+              if (sub) {
+                let val = sub.val();
+
+                arr.push({
+                  fbx: false,
+                  url: getURL(val),
+                  firekey: sub.key,
+                  fireval: val,
+                });
+              }
+            });
+
+            arr = arr.map((item) => {
+              return new Promise((resolve) => {
+                new FBXLoader().load(item.url, (v) => {
+                  item.fbx = v;
+                  resolve(item);
+                });
+              });
+            });
+
+            Promise.all(arr).then((withFBX) => {
+              setActions(withFBX);
+            });
+          }
+        });
+
+        clean.push(cleanup);
+      });
+
+      return () => {
+        clean.forEach((e) => e());
+      };
+    }
+  }, []);
+
   return (
     <group>
-      {url && (
+      {url && sentences.length > 0 && (
         <Suspense fallback={<LoadingAvatar></LoadingAvatar>}>
           <AvatarItem
             holder={holder}
             envMap={envMap}
             url={url}
+            sentences={sentences}
             PlaybackState={PlaybackState}
           ></AvatarItem>
         </Suspense>
@@ -71,7 +134,7 @@ export function LoadingAvatar() {
   );
 }
 
-function AvatarItem({ url, holder, PlaybackState, envMap }) {
+function AvatarItem({ url, sentences, PlaybackState, envMap }) {
   let o3d = new Object3D();
   o3d.name = "avatar";
 
@@ -84,22 +147,74 @@ function AvatarItem({ url, holder, PlaybackState, envMap }) {
   avatar.rotation.set(0, 0, 0);
   avatar.position.set(0, 0, 0);
 
+  let mixer = useMemo(() => {
+    return new AnimationMixer(avatar);
+  }, [avatar]);
+
+  useFrame((st, dt) => {
+    if (dt <= 1 / 60) {
+      dt = 1 / 60;
+    }
+    mixer.update(dt);
+  });
+
   return (
     <group>
       {createPortal(<primitive object={avatar}></primitive>, o3d)}
       <primitive position={[0, 0, 0]} object={o3d}></primitive>
 
-      <Suspense fallback={null}>
-        <Rig
-          holder={holder}
-          avatar={avatar}
+      <Decorate avatar={avatar}></Decorate>
+
+      {createPortal(
+        <DisplaySentence
+          sentences={sentences}
           PlaybackState={PlaybackState}
           envMap={envMap}
-        ></Rig>
-      </Suspense>
-      <Decorate avatar={avatar}></Decorate>
+        ></DisplaySentence>,
+        avatar
+      )}
+
+      <ActionsApply
+        mixer={mixer}
+        PlaybackState={PlaybackState}
+        sentences={sentences}
+        avatar={avatar}
+      ></ActionsApply>
     </group>
   );
+}
+
+function ActionsApply({ avatar, mixer, sentences, PlaybackState }) {
+  PlaybackState.makeKeyReactive("cursor");
+
+  let action = useMemo(() => {
+    let sentence = sentences[PlaybackState.cursor];
+    return mixer.clipAction(sentence.fbx.animations[0], avatar);
+  }, [PlaybackState.cursor]);
+
+  useEffect(() => {
+    action.reset();
+    action.repetitions = 1;
+    action.clampWhenFinished = true;
+    action.play();
+
+    let sentence = sentences[PlaybackState.cursor];
+    PlaybackState.actionKey = sentence.firekey;
+
+    let end = () => {
+      if (PlaybackState.autoPlayNext) {
+        PlaybackState.cursor = PlaybackState.cursor + 1;
+      }
+    };
+
+    mixer.addEventListener("finished", end);
+    return () => {
+      mixer.removeEventListener("finished", end);
+      action.fadeOut(0.1);
+    };
+  }, [action]);
+
+  return null;
 }
 
 function Decorate({ avatar }) {
@@ -116,216 +231,6 @@ function Decorate({ avatar }) {
   }, [avatar]);
 
   return null;
-}
-
-function Rig({ avatar, holder, PlaybackState, envMap }) {
-  let [sentences, setActions] = useState([]);
-  useEffect(() => {
-    if (router?.query?.cardID) {
-      let clean = [];
-      onReady().then(async ({ db, user }) => {
-        //
-        let sentences = db
-          .ref(`/card-stroy-draft`)
-          .child(router.query.cardID)
-          .child(holder)
-          .child("sentences");
-
-        let cleanup = sentences.on("value", (snapshot) => {
-          if (snapshot) {
-            let arr = [];
-            snapshot.forEach((sub) => {
-              if (sub) {
-                arr.push({
-                  firekey: sub.key,
-                  fireval: sub.val(),
-                });
-              }
-            });
-            setActions(arr);
-          }
-        });
-
-        clean.push(cleanup);
-      });
-
-      return () => {
-        clean.forEach((e) => e());
-      };
-    }
-  }, []);
-
-  let mixer = useMemo(() => {
-    return new AnimationMixer(avatar);
-  }, [avatar]);
-
-  useFrame((st, dt) => {
-    if (dt <= 1 / 60) {
-      dt = 1 / 60;
-    }
-    mixer.update(dt);
-  });
-
-  return (
-    <group>
-      {sentences.length > 0 && (
-        <group>
-          <Sequncer
-            mixer={mixer}
-            avatar={avatar}
-            sentences={sentences}
-            PlaybackState={PlaybackState}
-            envMap={envMap}
-          ></Sequncer>
-        </group>
-      )}
-    </group>
-  );
-}
-
-function Sequncer({ avatar, mixer, sentences, PlaybackState, envMap }) {
-  PlaybackState.makeKeyReactive("reload");
-
-  useEffect(() => {
-    avatar.visible = false;
-    mixer.stopAllAction();
-    let last = false;
-    let weakMap = new WeakMap();
-    let cleans = [];
-    let onClean = (v) => cleans.push(v);
-
-    let stopped = false;
-    onClean(() => {
-      stopped = true;
-    });
-    onClean(() => {
-      weakMap = new WeakMap();
-      mixer.stopAllAction();
-    });
-
-    let doAction = ({ fbx, actionInfo }) => {
-      if (stopped) {
-        return;
-      }
-      avatar.visible = true;
-      if (last) {
-        last.fadeOut(0.1);
-      }
-
-      let action = false;
-      if (!weakMap.has(fbx)) {
-        action = mixer.clipAction(fbx.animations[0], avatar);
-        weakMap.set(fbx, action);
-      } else {
-        action = weakMap.get(fbx);
-      }
-      action.reset();
-
-      if (PlaybackState.forceLoopActions) {
-        action.repetitions = Infinity;
-        action.clampWhenFinished = false;
-      } else {
-        action.repetitions = actionInfo.repeat || 1;
-        action.clampWhenFinished = true;
-      }
-
-      action.play();
-      last = action;
-      onClean(() => {
-        action.stop();
-      });
-    };
-
-    let loadActionFBX = (index) => {
-      return new Promise((resolve) => {
-        let sentence = sentences[index];
-
-        if (!sentence) {
-          PlaybackState.cursor = 0;
-          PlaybackState.forceLoopActions = false;
-          PlaybackState.autoPlayNext = true;
-          PlaybackState.reload = Math.random();
-          return;
-        }
-
-        let actionInfo = Actions.find(
-          (e) => e.signature === sentence.fireval.signature
-        );
-
-        if (actionInfo) {
-          new FBXLoader().load(actionInfo.url, (fbx) => {
-            resolve({ fbx, actionInfo, firekey: sentence.firekey });
-          });
-        }
-      });
-    };
-
-    let loop = async (info) => {
-      if (stopped) {
-        return;
-      }
-      if (!info) {
-        info = await loadActionFBX(PlaybackState.cursor);
-        if (stopped) {
-          return;
-        }
-      }
-
-      if (info) {
-        let { fbx, actionInfo, firekey } = info;
-        PlaybackState.actionKey = firekey;
-        doAction({ fbx, actionInfo });
-
-        let preload = PlaybackState.cursor + 1;
-        preload = preload % sentences.length;
-        let preloadNextProm = loadActionFBX(preload);
-
-        let finished = () => {
-          if (stopped) {
-            return;
-          }
-
-          mixer.removeEventListener("finished", finished);
-
-          preloadNextProm.then((v) => {
-            if (stopped) {
-              return;
-            }
-            if (PlaybackState.autoPlayNext) {
-              PlaybackState.cursor++;
-              PlaybackState.cursor = PlaybackState.cursor % sentences.length;
-
-              loop(v);
-            }
-          });
-        };
-        mixer.addEventListener("finished", finished);
-        onClean(() => {
-          mixer.removeEventListener("finished", finished);
-        });
-      }
-    };
-
-    loop();
-
-    return () => {
-      mixer.stopAllAction();
-      cleans.forEach((c) => c());
-    };
-  }, [sentences, PlaybackState.reload]);
-
-  return (
-    <group>
-      {createPortal(
-        <DisplaySentence
-          sentences={sentences}
-          PlaybackState={PlaybackState}
-          envMap={envMap}
-        ></DisplaySentence>,
-        avatar
-      )}
-    </group>
-  );
 }
 
 function DisplaySentence({ sentences, PlaybackState, envMap = null }) {

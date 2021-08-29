@@ -138,11 +138,7 @@ export function Content3D() {
               intensity={2}
               position={[3, 3, 3]}
             ></directionalLight>
-            <MySelf
-              envMap={envMap}
-              holder={"handy-editor"}
-              PlaybackState={PlaybackState}
-            ></MySelf>
+
             {/* <WelcomeAvatar envMap={envMap}></WelcomeAvatar> */}
           </group>
 
@@ -155,6 +151,21 @@ export function Content3D() {
           )}
         </group>
       )}
+
+      <group
+        position={[
+          //
+          map.getObjectByName("welcomeAt").position.x,
+          0,
+          map.getObjectByName("welcomeAt").position.z,
+        ]}
+      >
+        <MySelf
+          envMap={envMap}
+          holder={"handy-editor"}
+          PlaybackState={PlaybackState}
+        ></MySelf>
+      </group>
 
       <CamRig></CamRig>
     </group>
