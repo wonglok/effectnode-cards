@@ -219,11 +219,12 @@ function Sequncer({ avatar, mixer, sentences, PlaybackState, envMap }) {
       action.reset();
       if (PlaybackState.forceLoopActions) {
         action.repetitions = Infinity;
+        action.clampWhenFinished = false;
       } else {
         action.repetitions = actionInfo.repeat || 1;
+        action.clampWhenFinished = true;
       }
 
-      action.clampWhenFinished = true;
       action.play();
       last = action;
       onClean(() => {
@@ -234,6 +235,10 @@ function Sequncer({ avatar, mixer, sentences, PlaybackState, envMap }) {
     let loadActionFBX = (index) => {
       return new Promise((resolve) => {
         let sentence = sentences[index];
+
+        if (!sentence) {
+          sentence = sentences[index - 1];
+        }
 
         let actionInfo = Actions.find(
           (e) => e.signature === sentence.fireval.signature

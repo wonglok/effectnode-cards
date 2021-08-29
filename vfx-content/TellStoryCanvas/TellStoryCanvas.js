@@ -242,6 +242,17 @@ function Sentence({ data, holder, firekey, idx }) {
     });
   };
 
+  let remove = ({ firekey }) => {
+    onReady().then(({ db }) => {
+      db.ref(`/card-stroy-draft`)
+        .child(router.query.cardID)
+        .child(holder)
+        .child("sentences")
+        .child(firekey)
+        .remove();
+    });
+  };
+
   useEffect(() => {
     let last = false;
     let tt = setInterval(() => {
@@ -299,13 +310,22 @@ function Sentence({ data, holder, firekey, idx }) {
         })}
       </select>
       <button
-        className="inline-block px-3 mx-3 bg-white text-black"
+        className="inline-block px-3 ml-3 bg-white text-black"
         onClick={() => {
           saveText(refTextArea.current.value);
         }}
       >
         Save
       </button>
+      <button
+        className="inline-block px-3 ml-3 bg-white text-black"
+        onClick={() => {
+          remove({ firekey });
+        }}
+      >
+        Remove
+      </button>
+
       <textarea
         ref={refTextArea}
         className="w-full h-24 p-3"

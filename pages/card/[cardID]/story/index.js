@@ -114,7 +114,7 @@ export default function StoryMaker() {
                   >
                     <i className="fas fa-arrow-left pr-0 md:pr-3"></i>
                     <span className="pb-1 md:pb-0 text-xs md:text-base block md:inline-block lg:pr-10">
-                      Back Home
+                      Home
                     </span>
                   </span>
                 </li>
