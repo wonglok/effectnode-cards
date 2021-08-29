@@ -1,20 +1,11 @@
-import { OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { BackSide, Object3D, Vector3 } from "three";
-// import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
-// import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
-// import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { onReady } from "../../vfx-firebase/firelib";
-
-// import { makeShallowStore } from "../../vfx-utils/make-shallow-store";
-
 import { useEnvLight } from "../../vfx-content/Use/useEnvLight.js";
 import { Actions } from "../Actions/Actions";
 import router, { useRouter } from "next/router";
 import { LoadingAvatar, makePlayBack, MySelf } from "./MySelf";
-// import { PerspectiveCamera } from "@react-three/drei";
-// import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 export function TellStoryCanvas({ holder = "handy-editor" }) {
   let scrollerRef = useRef();

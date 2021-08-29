@@ -1,15 +1,15 @@
 import { Text, useGLTF } from "@react-three/drei";
-import { Canvas, createPortal, useFrame, useThree } from "@react-three/fiber";
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
-import { AnimationMixer, BackSide, DoubleSide, Object3D, Vector3 } from "three";
+import { createPortal, useFrame, useThree } from "@react-three/fiber";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { AnimationMixer, DoubleSide, Object3D } from "three";
 import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { getFirebase, onReady } from "../../vfx-firebase/firelib";
 
 import { makeShallowStore } from "../../vfx-utils/make-shallow-store";
 
-import { useEnvLight } from "../../vfx-content/Use/useEnvLight.js";
+// import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+// import { useEnvLight } from "../../vfx-content/Use/useEnvLight.js";
 import { Actions } from "../Actions/Actions";
 import router from "next/router";
 
