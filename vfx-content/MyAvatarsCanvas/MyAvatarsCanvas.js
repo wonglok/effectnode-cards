@@ -194,7 +194,10 @@ function MyCamera() {
 
   let lookAt = new Vector3(0, 0, 0);
   let lookAtlerp = new Vector3(0, 0, 0);
-  let headPos = new Vector3();
+  let lookAtInfluence = new Object3D();
+  let lookAtInfluenceNow = new Object3D();
+  let corePos = new Vector3();
+
   useFrame(({ get }) => {
     let { camera, scene, mouse } = get();
 
@@ -202,18 +205,22 @@ function MyCamera() {
     if (avatar) {
       let coreTarget = avatar.getObjectByName("Head");
       if (coreTarget) {
-        coreTarget.getWorldPosition(headPos);
-        orbit.target.lerp(headPos, 0.1);
+        coreTarget.getWorldPosition(corePos);
+        orbit.target.lerp(corePos, 0.1);
 
         camera.position.y = orbit.target.y;
-        camera.position.y += 0.1;
+        camera.position.y += 0.2;
         orbit.update();
 
-        lookAt.set(mouse.x * 15, mouse.y * 15, 35);
+        lookAt.set(mouse.x * 15, mouse.y * 15, 15);
         lookAtlerp.lerp(lookAt, 0.2);
-        coreTarget.lookAt(lookAtlerp);
+        lookAtInfluence.lookAt(lookAtlerp);
+
+        lookAtInfluenceNow.quaternion.slerp(lookAtInfluence.quaternion, 0.2);
+        coreTarget.quaternion.slerp(lookAtInfluenceNow.quaternion, 0.2);
       }
     }
   });
+
   return <group></group>;
 }

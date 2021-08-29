@@ -11,6 +11,7 @@ import Head from "next/head";
 import { TabMyAvatar } from "../../../../vfx-content/TabMyAvatar/TabMyAvatar";
 import { TabTellStory } from "../../../../vfx-content/TabTellStory/TabTellStory";
 import { TabMotions } from "../../../../vfx-content/TabMotions/TabMotions";
+import { TabMyStory } from "../../../../vfx-content/TabMyStory/TabMyStory";
 
 //
 function AreaAdapt({ children }) {
@@ -74,41 +75,18 @@ export default function StoryMaker() {
           <div className="w-full h-full md:w-5/6 bg-gray-100 ">
             <AreaAdapt>
               <Switch>
-                <Route path="/tell-story">
+                <Route path="/wrtie-story">
                   <TabTellStory></TabTellStory>
                 </Route>
-
                 <Route exact path="/my-story">
-                  <div className="w-full bg-gray-100 h-full">
-                    <h1
-                      className="text-xl px-5 bg-indigo-200 text-black flex items-center w-full"
-                      style={{ height: `4rem` }}
-                    >
-                      <span className="text-xl">My Stories</span>
-                    </h1>
-
-                    <div
-                      className="bg-red-100"
-                      style={{ height: `calc(100% - 4rem)` }}
-                    >
-                      MyStories
-                      {/* <MyStories></MyStories> */}
-                    </div>
-                  </div>
+                  <TabMyStory></TabMyStory>
                 </Route>
-
-                {/*  */}
                 <Route path="/avatar">
                   <TabMyAvatar></TabMyAvatar>
-                  {/*  */}
-                  {/* <DarkCanvas /> */}
                 </Route>
-
-                {/*  */}
                 <Route path="/motion">
                   <TabMotions></TabMotions>
                 </Route>
-
                 <Route>
                   <Redirect to="/my-story"></Redirect>
                 </Route>
@@ -168,12 +146,12 @@ export default function StoryMaker() {
                       borderColor: "hotpink",
                     }}
                     exact={true}
-                    to="/tell-story"
+                    to="/wrtie-story"
                     className="block py-1 md:py-3 border-b-2 text-gray-400  pl-1 align-middle no-underline hover:text-pink-500 hover:border-pink-500"
                   >
                     <i className="fas fa-plus pr-0 md:pr-3"></i>
                     <span className="pb-1 md:pb-0 text-xs md:text-base block md:inline-block lg:pr-10">
-                      Tell Story
+                      Write Story
                     </span>
                   </RRDLink>
                 </li>

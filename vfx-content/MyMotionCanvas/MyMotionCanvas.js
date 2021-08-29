@@ -16,6 +16,7 @@ export function MyMotionCanvas() {
   return (
     <div className="h-full w-full relative flex flex-col lg:flex-row">
       <div className=" order-2 h-52  lg:h-full overflow-scroll lg:w-3/12">
+        <h1 className="text-2xl p-5  text-right">Avatar Motions</h1>
         <RigList></RigList>
         {/*  */}
       </div>
@@ -173,7 +174,7 @@ function RigList() {
       {RigStore.actions.map((e, i) => {
         return (
           <div
-            className="px-3 mb-3 cursor-pointer"
+            className="px-3 mb-3 cursor-pointer text-right"
             key={e.id}
             onClick={() => {
               RigStore.act = i;
@@ -206,13 +207,17 @@ function Rig({ avatar }) {
     if (now && now.url) {
       new FBXLoader().load(now.url, (fbx) => {
         if (last.current) {
-          last.current.stopAllAction();
+          last.current.fadeOut(0.1);
         }
 
         let mixer = new AnimationMixer();
-        last.current = mixer;
         let action = mixer.clipAction(fbx.animations[0], avatar);
+        action.reset();
         action.play();
+        action.fadeIn(0.1);
+
+        last.current = action;
+
         let rAF = () => {
           tt = requestAnimationFrame(rAF);
           mixer.update(1 / 60);
@@ -258,25 +263,27 @@ function MyCamera() {
   let lookAtInfluence = new Object3D();
   let lookAtInfluenceNow = new Object3D();
   let corePos = new Vector3();
+
   useFrame(({ get }) => {
     let { camera, scene, mouse } = get();
 
     let avatar = scene.getObjectByName("avatar");
     if (avatar) {
-      let coreTarget = avatar.getObjectByName("Spine2");
+      let coreTarget = avatar.getObjectByName("Head");
       if (coreTarget) {
         coreTarget.getWorldPosition(corePos);
         orbit.target.lerp(corePos, 0.1);
 
         camera.position.y = orbit.target.y;
-        camera.position.y += 0.1;
+        camera.position.y += 0.2;
         orbit.update();
 
-        lookAt.set(mouse.x * 15, mouse.y * 15, 50);
-        lookAtlerp.lerp(lookAt, 0.2);
+        lookAt.set(mouse.x * 15, mouse.y * 15, 15);
+        lookAtlerp.lerp(lookAt, 0.4);
         lookAtInfluence.lookAt(lookAtlerp);
 
-        lookAtInfluenceNow.rotation.copy(lookAtInfluence.rotation);
+        lookAtInfluenceNow.quaternion.slerp(lookAtInfluence.quaternion, 0.4);
+        coreTarget.quaternion.slerp(lookAtInfluenceNow.quaternion, 0.4);
       }
     }
   });

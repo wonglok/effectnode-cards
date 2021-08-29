@@ -27,6 +27,7 @@
     "react-dom": "17.0.1",
     "react-router-dom": "^5.2.1",
     "recursive-readdir": "^2.2.2",
+    "slugify": "^1.6.0",
     "three": "^0.131.1",
     "three-mesh-bvh": "^0.4.2"
   },

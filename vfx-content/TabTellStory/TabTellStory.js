@@ -1,22 +1,27 @@
+import { TellStoryCanvas } from "../TellStoryCanvas/TellStoryCanvas";
+
 export function TabTellStory() {
   return (
-    <div className="w-full bg-gray-100">
-      <h1 className="text-xl px-5 mb-3 py-5 bg-green-200 text-black w-full">
-        <span className="text-xl">Let's Tell Stories</span>
+    <div className="w-full bg-gray-100 h-full">
+      <h1
+        className="text-xl px-5 bg-gray-900 text-white flex items-center justify-between w-full"
+        style={{ height: `4rem` }}
+      >
+        <span className="text-xl">Tell Story</span>
+
+        <span
+          onClick={() => {}}
+          className=" text-sm cursor-pointer rounded-full px-3 py-1 border border-green-300 text-white bg-green-300 shadow-lg "
+        >
+          Submit
+        </span>
       </h1>
-      <div className="px-5">
-        {/* <div className="py-3 text-lg  cursor-pointer">1. Choose an Avatar</div>
-        <div className="py-3 text-lg">2. Write 10 Lines Sentences Max</div>
-        <div className="py-3 text-lg">3. Add Action each sentence</div>
-        <div className="py-3 text-lg">4. Preview</div>
-        <div className="py-3">Content Guidelines and Regulations</div>
-        <div className="py-2 text-sm text-gray-500">
-          1. Political Content are not allowded.
-        </div>
-        <div className="py-2 text-sm text-gray-500">
-          2. Drama or Strife Content are not allowded.
-        </div> */}
+
+      <div className="bg-white" style={{ height: `calc(100% - 4rem)` }}>
+        <TellStoryCanvas></TellStoryCanvas>
       </div>
     </div>
   );
 }
+
+//

@@ -1,3 +1,4 @@
+import slugify from "slugify";
 import { getID } from "../../vfx-metaverse";
 
 export let Actions = [
@@ -88,6 +89,17 @@ export let Actions = [
 ]
   .map((e) => {
     e.id = getID();
+
+    let basename = require("path").basename;
+    e.signature = slugify("_" + e.name + "_" + basename(e.url), {
+      replacement: "_", // replace spaces with replacement character, defaults to `-`
+      remove: undefined, // remove characters that match regex, defaults to `undefined`
+      lower: true, // convert to lower case, defaults to `false`
+      strict: true, // strip special characters except replacement, defaults to `false`
+      locale: "en", // language code of the locale to use
+      trim: true, // trim leading and trailing replacement chars, defaults to `true`
+    });
+
     return e;
   })
   .filter((e) => e.name);

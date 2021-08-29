@@ -1,0 +1,290 @@
+import { Text, useGLTF } from "@react-three/drei";
+import { Canvas, createPortal, useFrame, useThree } from "@react-three/fiber";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { AnimationMixer, BackSide, Object3D, Vector3 } from "three";
+import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
+import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { getFirebase, onReady } from "../../vfx-firebase/firelib";
+
+import { makeShallowStore } from "../../vfx-utils/make-shallow-store";
+
+import { useEnvLight } from "../../vfx-content/Use/useEnvLight.js";
+import { Actions } from "../Actions/Actions";
+import router, { useRouter } from "next/router";
+import { ThisUI } from "./TellStoryCanvas";
+
+export function MySelf({ envMap, holder }) {
+  let [url, setURL] = useState(false);
+
+  useEffect(() => {
+    return getFirebase()
+      .auth()
+      .onAuthStateChanged(async (user) => {
+        if (user && user.uid) {
+          let snap = await getFirebase()
+            .database()
+            .ref(`/profiles/${user.uid}`)
+            .get();
+          let val = snap.val();
+
+          if (val && val.avatarURL) {
+            setURL(val.avatarURL);
+          } else {
+          }
+        }
+      });
+  }, []);
+
+  return (
+    <group>
+      {url && (
+        <Suspense fallback={<LoadingAvatar></LoadingAvatar>}>
+          <AvatarItem holder={holder} envMap={envMap} url={url}></AvatarItem>
+        </Suspense>
+      )}
+    </group>
+  );
+}
+
+export function LoadingAvatar() {
+  let { camera } = useThree();
+
+  return (
+    <Text
+      scale={0.7}
+      fontSize={1.05}
+      color="black"
+      outlineColor="white"
+      outlineWidth={0.002}
+      position={[0, camera.position.y, 0]}
+      lookAt={[camera.position.x, camera.position.y, camera.position.z]}
+    >
+      Loading....
+    </Text>
+  );
+}
+
+function AvatarItem({ url, holder }) {
+  let o3d = new Object3D();
+  o3d.name = "avatar";
+
+  let gltf = useGLTF(`${url}`);
+  let avatar = useMemo(() => {
+    let cloned = SkeletonUtils.clone(gltf.scene);
+    return cloned;
+  }, [gltf]);
+
+  return (
+    <group>
+      {createPortal(<primitive object={avatar}></primitive>, o3d)}
+      <primitive object={o3d}></primitive>
+
+      <Suspense fallback={null}>
+        <Rig holder={holder} avatar={avatar}></Rig>
+      </Suspense>
+      <Decorate avatar={avatar}></Decorate>
+    </group>
+  );
+}
+
+function Decorate({ avatar }) {
+  useEffect(() => {
+    avatar.traverse((it) => {
+      it.frustumCulled = false;
+    });
+
+    avatar.traverse((it) => {
+      if (it.material) {
+        it.material.envMapIntensity = 3;
+      }
+    });
+  }, [avatar]);
+
+  return null;
+}
+
+function Rig({ avatar, holder }) {
+  let [sentences, setActions] = useState([]);
+  useEffect(() => {
+    if (router?.query?.cardID) {
+      let clean = [];
+      onReady().then(async ({ db, user }) => {
+        //
+        let sentences = db
+          .ref(`/card-stroy-draft`)
+          .child(router.query.cardID)
+          .child(holder)
+          .child("sentences");
+
+        let cleanup = sentences.on("value", (snapshot) => {
+          if (snapshot) {
+            let arr = [];
+            snapshot.forEach((sub) => {
+              if (sub) {
+                arr.push({
+                  firekey: sub.key,
+                  fireval: sub.val(),
+                });
+              }
+            });
+            setActions(arr);
+          }
+        });
+
+        clean.push(cleanup);
+      });
+
+      return () => {
+        clean.forEach((e) => e());
+      };
+    }
+  }, []);
+
+  let mixer = useMemo(() => {
+    return new AnimationMixer(avatar);
+  }, [avatar]);
+
+  useFrame((st, dt) => {
+    mixer.update(dt);
+  });
+
+  return (
+    <group>
+      {sentences.length > 0 && (
+        <group>
+          <Sequncer
+            mixer={mixer}
+            avatar={avatar}
+            sentences={sentences}
+          ></Sequncer>
+        </group>
+      )}
+    </group>
+  );
+}
+
+function Sequncer({ avatar, mixer, sentences }) {
+  ThisUI.makeKeyReactive("reload");
+
+  useEffect(() => {
+    avatar.visible = false;
+    mixer.stopAllAction();
+    let last = false;
+    let weakMap = new WeakMap();
+    let cleans = [];
+    let onClean = (v) => cleans.push(v);
+
+    let stopped = false;
+    onClean(() => {
+      stopped = true;
+    });
+    onClean(() => {
+      weakMap = new WeakMap();
+      mixer.stopAllAction();
+    });
+
+    let doAction = ({ fbx, actionInfo }) => {
+      if (stopped) {
+        return;
+      }
+      avatar.visible = true;
+      if (last) {
+        last.fadeOut(0.1);
+      }
+
+      let action = false;
+      if (!weakMap.has(fbx)) {
+        action = mixer.clipAction(fbx.animations[0], avatar);
+        weakMap.set(fbx, action);
+      } else {
+        action = weakMap.get(fbx);
+      }
+      action.reset();
+      if (ThisUI.forceLoopActions) {
+        action.repetitions = Infinity;
+      } else {
+        action.repetitions = actionInfo.repeat || 1;
+      }
+
+      action.clampWhenFinished = true;
+      action.play();
+      last = action;
+      onClean(() => {
+        action.stop();
+      });
+    };
+
+    let loadActionFBX = (index) => {
+      return new Promise((resolve) => {
+        let sentence = sentences[index];
+
+        let actionInfo = Actions.find(
+          (e) => e.signature === sentence.fireval.signature
+        );
+
+        if (actionInfo) {
+          new FBXLoader().load(actionInfo.url, (fbx) => {
+            resolve({ fbx, actionInfo, firekey: sentence.firekey });
+          });
+        }
+      });
+    };
+
+    let loop = async (info) => {
+      if (stopped) {
+        return;
+      }
+      if (!info) {
+        info = await loadActionFBX(ThisUI.cursor);
+
+        if (stopped) {
+          return;
+        }
+      }
+
+      if (info) {
+        let { fbx, actionInfo, firekey } = info;
+        ThisUI.actionKey = firekey;
+        doAction({ fbx, actionInfo });
+
+        let preload = ThisUI.cursor + 1;
+        preload = preload % sentences.length;
+        let preloadNextProm = loadActionFBX(preload);
+
+        let finished = () => {
+          if (stopped) {
+            return;
+          }
+
+          mixer.removeEventListener("finished", finished);
+
+          preloadNextProm.then((v) => {
+            if (stopped) {
+              return;
+            }
+            if (ThisUI.autoPlayNext) {
+              ThisUI.cursor++;
+              ThisUI.cursor = ThisUI.cursor % sentences.length;
+
+              loop(v);
+            }
+          });
+        };
+        mixer.addEventListener("finished", finished);
+        onClean(() => {
+          mixer.removeEventListener("finished", finished);
+        });
+      }
+    };
+
+    loop();
+
+    return () => {
+      mixer.stopAllAction();
+      cleans.forEach((c) => c());
+    };
+  }, [sentences, ThisUI.reload]);
+
+  return <group></group>;
+}
