@@ -198,6 +198,7 @@ function PlaybackControls() {
       <div
         className="inline-block py-1 p-3 border cursor-pointer bg-white  rounded-md mr-3"
         onClick={() => {
+          PlayBackState.cursor = 0;
           PlayBackState.forceLoopActions = false;
           PlayBackState.autoPlayNext = true;
           PlayBackState.reload = Math.random();

@@ -303,7 +303,6 @@ function Sequncer({ avatar, mixer, sentences, PlaybackState, envMap }) {
       {createPortal(
         <SentenceDiaply
           sentences={sentences}
-          cursor={PlaybackState.cursor}
           PlaybackState={PlaybackState}
           envMap={envMap}
         ></SentenceDiaply>,
@@ -313,14 +312,13 @@ function Sequncer({ avatar, mixer, sentences, PlaybackState, envMap }) {
   );
 }
 
-function SentenceDiaply({ sentences, cursor, PlaybackState, envMap = null }) {
-  let val = useMemo(() => {
-    return sentences[PlaybackState.cursor]?.fireval;
-  }, [cursor, sentences]);
+function SentenceDiaply({ sentences, PlaybackState, envMap = null }) {
+  PlaybackState.makeKeyReactive("cursor");
+  let text = sentences[PlaybackState.cursor]?.fireval?.sentence;
 
   return (
     <group position={[0, 1.9, 0]}>
-      {val && (
+      {text && (
         <Text
           position={[0, 0, 0.5]}
           textAlign={"center"}
@@ -335,7 +333,7 @@ function SentenceDiaply({ sentences, cursor, PlaybackState, envMap = null }) {
           outlineWidth={0.005}
           userData={{ enableBloom: true }}
         >
-          {val.sentence}
+          {text}
           <meshBasicMaterial
             attach="material"
             side={DoubleSide}
