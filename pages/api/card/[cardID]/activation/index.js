@@ -68,9 +68,7 @@ async function handler(req, res) {
 
       let db = admin.database();
       let ref = db.ref(`card-activation-info`).child(cardID);
-      let metaCard = db.ref(`card-meta-info`).child(cardID);
       let data = (await ref.get()).val();
-      // let metaCardData = (await metaCard.get()).val();
 
       if (data === null) {
         let data = JSON.parse(req.body);
@@ -81,13 +79,6 @@ async function handler(req, res) {
           email: data.email || null,
           displayName: data.displayName || "User",
         });
-
-        // await db
-        // .ref(`profilddddes`)
-        // .child(data.uid)
-        // .child(`cards`)
-        // .child(cardID)
-        // .set(metaCardData);
 
         res.json({
           cardID: data.cardID,

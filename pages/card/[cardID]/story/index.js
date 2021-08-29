@@ -78,9 +78,9 @@ export default function StoryMaker() {
                 <Route path="/wrtie-story">
                   <TabTellStory></TabTellStory>
                 </Route>
-                <Route exact path="/my-story">
+                {/* <Route exact path="/my-story">
                   <TabMyStory></TabMyStory>
-                </Route>
+                </Route> */}
                 <Route path="/avatar">
                   <TabMyAvatar></TabMyAvatar>
                 </Route>
@@ -100,14 +100,13 @@ export default function StoryMaker() {
             <div className="md:relative mx-auto lg:float-right lg:px-6">
               <ul className="list-reset flex flex-row justify-around venly md:flex-col text-center md:text-left">
                 <li className="mr-3 flex-1">
-                  {/*  */}
                   <span
                     style={{
                       color: "lime",
                       borderColor: "lime",
                     }}
                     onClick={() => {
-                      router.push(`/card-room/${cardID}`);
+                      router.push(`/card/${cardID}/room`);
                       //
                       //
                     }}
@@ -120,8 +119,7 @@ export default function StoryMaker() {
                   </span>
                 </li>
 
-                <li className="mr-3 flex-1">
-                  {/*  */}
+                {/* <li className="mr-3 flex-1">
                   <RRDLink
                     activeStyle={{
                       color: "hotpink",
@@ -136,7 +134,7 @@ export default function StoryMaker() {
                       My Stories
                     </span>
                   </RRDLink>
-                </li>
+                </li> */}
 
                 <li className="mr-3 flex-1">
                   {/*  */}

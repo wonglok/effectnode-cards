@@ -17,7 +17,6 @@ export async function getServerSideProps(context) {
 
   // Enter values for the following parameters below this code step,
   // These get passed to the initializeApp method below.
-
   // Before passing the privateKey to the initializeApp constructor,
   // we have to replace newline characters with literal newlines
 

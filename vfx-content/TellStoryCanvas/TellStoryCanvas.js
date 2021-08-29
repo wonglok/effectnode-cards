@@ -18,17 +18,20 @@ import { LoadingAvatar, makePlayBack, MySelf } from "./MySelf";
 
 export function TellStoryCanvas({ holder = "handy-editor" }) {
   return (
-    <div className="h-full w-full relative flex flex-col lg:flex-row">
-      <div className=" order-2 h-5/6 lg:h-full overflow-scroll lg:w-3/12">
-        <SentencesList holder={holder}></SentencesList>
-        {/*  */}
-      </div>
+    <div className="h-full w-full relative block lg:flex lg:flex-row">
       <Canvas
-        className="  lg:order-3 lg:w-9/12"
+        className=" lg:h-full  lg:order-3 lg:w-9/12"
         concurrent
         onCreated={(st) => {
           st.gl.physicallyCorrectLights = true;
         }}
+        style={
+          window.innerWidth < 1024
+            ? {
+                height: `calc(25%)`,
+              }
+            : {}
+        }
         dpr={[1, 3]}
       >
         <Suspense fallback={<LoadingAvatar></LoadingAvatar>}>
@@ -36,6 +39,21 @@ export function TellStoryCanvas({ holder = "handy-editor" }) {
         </Suspense>
         <MyCamera></MyCamera>
       </Canvas>
+      <div
+        style={
+          window.innerWidth < 1024
+            ? {
+                height: `calc(75%)`,
+              }
+            : {
+                minWidth: "255px",
+              }
+        }
+        className=" order-2 lg:h-full overflow-scroll"
+      >
+        <SentencesList holder={holder}></SentencesList>
+        {/*  */}
+      </div>
     </div>
   );
 }
@@ -331,7 +349,7 @@ function MyCamera({ actions }) {
     camera.position.x = 0;
     camera.position.y = 1.5;
     camera.position.z = 5;
-    camera.lookAt(0, 1.4, 0);
+    camera.lookAt(0, 1.25, 0);
 
     let avatar = scene.getObjectByName("avatar");
     if (avatar) {
