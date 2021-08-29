@@ -17,7 +17,7 @@ import { LoadingAvatar, MySelf } from "./MySelf";
 export function TellStoryCanvas({ holder = "handy-editor" }) {
   return (
     <div className="h-full w-full relative flex flex-col lg:flex-row">
-      <div className=" order-2 h-52  lg:h-full overflow-scroll lg:w-3/12">
+      <div className=" order-2 h-5/6 lg:h-full overflow-scroll lg:w-3/12">
         <SentencesList holder={holder}></SentencesList>
         {/*  */}
       </div>
@@ -38,7 +38,7 @@ export function TellStoryCanvas({ holder = "handy-editor" }) {
 }
 
 // card-stroy-draft
-export let ThisUI = makeShallowStore({
+export let PlayBackState = makeShallowStore({
   reload: false,
   autoPlayNext: true,
   actionKey: false,
@@ -71,7 +71,11 @@ function Content({ holder }) {
         ></meshBasicMaterial>
       </mesh>
 
-      <MySelf envMap={envMap} holder={holder}></MySelf>
+      <MySelf
+        envMap={envMap}
+        holder={holder}
+        PlaybackState={PlayBackState}
+      ></MySelf>
       <MyCamera></MyCamera>
     </group>
   );
@@ -169,9 +173,10 @@ function CreateSentence({ holder }) {
   let router = useRouter();
   return (
     <div
-      className="p-3"
+      className="p-3 py-4 lg:py-$ text-center boder bg-blue-400 text-white cursor-pointer"
       onClick={() => {
         addSentence({ router, holder });
+        window.dispatchEvent(new Event("scroll-div-to-bottom"));
       }}
     >
       + Add Sentence
@@ -180,23 +185,22 @@ function CreateSentence({ holder }) {
 }
 
 function PlaybackControls() {
-  ThisUI.makeKeyReactive("autoPlayNext");
-  ThisUI.makeKeyReactive("reload");
+  PlayBackState.makeKeyReactive("autoPlayNext");
   return (
-    <div className="p-3">
-      <div
-        className={`inline-block p-3 mr-3 ${
-          ThisUI.autoPlayNext ? "text-green-500" : "text-purple-500"
-        }`}
-      >
-        AutoPlay: {ThisUI.autoPlayNext ? "ON" : "OFF"}
+    <div
+      className={`p-3 text-center ${
+        PlayBackState.autoPlayNext ? "bg-green-500" : "bg-purple-500"
+      }`}
+    >
+      <div className={`inline-block p-3 mr-3 text-white`}>
+        Playback: {PlayBackState.autoPlayNext ? "AutoPlay" : "Looping"}
       </div>
       <div
-        className="inline-block p-3 border cursor-pointer bg-green-400  text-white rounded-xl mr-3"
+        className="inline-block py-1 p-3 border cursor-pointer bg-white  rounded-md mr-3"
         onClick={() => {
-          ThisUI.forceLoopActions = false;
-          ThisUI.autoPlayNext = true;
-          ThisUI.reload = Math.random();
+          PlayBackState.forceLoopActions = false;
+          PlayBackState.autoPlayNext = true;
+          PlayBackState.reload = Math.random();
         }}
       >
         Reset
@@ -206,24 +210,57 @@ function PlaybackControls() {
 }
 
 function Sentence({ data, holder, firekey, idx }) {
-  ThisUI.makeKeyReactive("actionKey");
+  let refTextArea = useRef();
+  PlayBackState.makeKeyReactive("actionKey");
+  PlayBackState.makeKeyReactive("autoPlayNext");
+
+  let saveText = (text = "") => {
+    onReady().then(({ db, user }) => {
+      db.ref(`/card-stroy-draft`)
+        .child(router.query.cardID)
+        .child(holder)
+        .child("sentences")
+        .child(firekey)
+        .child("sentence")
+        .set(text.trim());
+    });
+  };
+
+  useEffect(() => {
+    let last = false;
+    let tt = setInterval(() => {
+      if (last && refTextArea.current) {
+        if (last !== refTextArea.current.value) {
+          saveText(refTextArea.current.value);
+          last = refTextArea.current.value;
+        }
+      }
+    }, 1000);
+
+    return () => {
+      last = false;
+      clearInterval(tt);
+    };
+  }, []);
+
   return (
     <div
       onClick={() => {
-        ThisUI.autoPlayNext = false;
-        ThisUI.cursor = idx;
-        ThisUI.forceLoopActions = Infinity;
-        ThisUI.reload = Math.random();
+        PlayBackState.autoPlayNext = false;
+        PlayBackState.cursor = idx;
+        PlayBackState.forceLoopActions = Infinity;
+        PlayBackState.reload = Math.random();
       }}
       className={
-        (ThisUI.actionKey === firekey
-          ? ThisUI.autoPlayNext
+        (PlayBackState.actionKey === firekey
+          ? PlayBackState.autoPlayNext
             ? "bg-green-200"
             : "bg-purple-200"
-          : "") + ` px-3 py-3`
+          : "bg-gray-200") + ` px-3 py-3`
       }
     >
       <select
+        className="mb-3"
         defaultValue={data.signature}
         onChange={(ev) => {
           onReady().then(({ db, user }) => {
@@ -245,6 +282,30 @@ function Sentence({ data, holder, firekey, idx }) {
           );
         })}
       </select>
+      <button
+        className="inline-block px-3 mx-3 bg-white text-black"
+        onClick={() => {
+          saveText(refTextArea.current.value);
+        }}
+      >
+        Save
+      </button>
+      <textarea
+        ref={refTextArea}
+        className="w-full h-24 p-3"
+        defaultValue={data.sentence}
+        onKeyDown={(ev) => {
+          if (ev.key.toLowerCase() === "s" && ev.metaKey) {
+            ev.preventDefault();
+            saveText(ev.target.value);
+          }
+          if (ev.key.toLowerCase() === "enter" && ev.metaKey) {
+            ev.preventDefault();
+            saveText(ev.target.value);
+          }
+        }}
+      ></textarea>
+
       {/* <pre>{JSON.stringify(data)}</pre> */}
     </div>
   );
@@ -270,7 +331,8 @@ function MyCamera({ actions }) {
 
     camera.position.x = 0;
     camera.position.y = 1.5;
-    camera.position.z = 10;
+    camera.position.z = 5;
+    camera.lookAt(0, 1.4, 0);
 
     let avatar = scene.getObjectByName("avatar");
     if (avatar) {
@@ -279,12 +341,12 @@ function MyCamera({ actions }) {
         coreTarget.getWorldPosition(corePos);
 
         //
-        lookAt.set(mouse.x * 30, mouse.y * 30, 50);
-        lookAtlerp.lerp(lookAt, 0.3);
+        lookAt.set(mouse.x * 30, mouse.y * 30 + corePos.y, 40);
+        lookAtlerp.lerp(lookAt, 0.5);
         lookAtInfluence.lookAt(lookAtlerp);
 
-        lookAtInfluenceNow.quaternion.slerp(lookAtInfluence.quaternion, 0.3);
-        coreTarget.quaternion.slerp(lookAtInfluenceNow.quaternion, 0.3);
+        lookAtInfluenceNow.quaternion.slerp(lookAtInfluence.quaternion, 0.5);
+        coreTarget.quaternion.slerp(lookAtInfluenceNow.quaternion, 0.5);
       }
     }
   });

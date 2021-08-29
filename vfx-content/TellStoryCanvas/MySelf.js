@@ -1,7 +1,7 @@
 import { Text, useGLTF } from "@react-three/drei";
 import { Canvas, createPortal, useFrame, useThree } from "@react-three/fiber";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
-import { AnimationMixer, BackSide, Object3D, Vector3 } from "three";
+import { AnimationMixer, BackSide, DoubleSide, Object3D, Vector3 } from "three";
 import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
@@ -12,9 +12,9 @@ import { makeShallowStore } from "../../vfx-utils/make-shallow-store";
 import { useEnvLight } from "../../vfx-content/Use/useEnvLight.js";
 import { Actions } from "../Actions/Actions";
 import router, { useRouter } from "next/router";
-import { ThisUI } from "./TellStoryCanvas";
+import { PlaybackState } from "./TellStoryCanvas";
 
-export function MySelf({ envMap, holder }) {
+export function MySelf({ envMap, holder, PlaybackState }) {
   let [url, setURL] = useState(false);
 
   useEffect(() => {
@@ -40,7 +40,12 @@ export function MySelf({ envMap, holder }) {
     <group>
       {url && (
         <Suspense fallback={<LoadingAvatar></LoadingAvatar>}>
-          <AvatarItem holder={holder} envMap={envMap} url={url}></AvatarItem>
+          <AvatarItem
+            holder={holder}
+            envMap={envMap}
+            url={url}
+            PlaybackState={PlaybackState}
+          ></AvatarItem>
         </Suspense>
       )}
     </group>
@@ -53,7 +58,7 @@ export function LoadingAvatar() {
   return (
     <Text
       scale={0.7}
-      fontSize={1.05}
+      fontSize={0.25}
       color="black"
       outlineColor="white"
       outlineWidth={0.002}
@@ -65,7 +70,7 @@ export function LoadingAvatar() {
   );
 }
 
-function AvatarItem({ url, holder }) {
+function AvatarItem({ url, holder, PlaybackState, envMap }) {
   let o3d = new Object3D();
   o3d.name = "avatar";
 
@@ -81,7 +86,12 @@ function AvatarItem({ url, holder }) {
       <primitive object={o3d}></primitive>
 
       <Suspense fallback={null}>
-        <Rig holder={holder} avatar={avatar}></Rig>
+        <Rig
+          holder={holder}
+          avatar={avatar}
+          PlaybackState={PlaybackState}
+          envMap={envMap}
+        ></Rig>
       </Suspense>
       <Decorate avatar={avatar}></Decorate>
     </group>
@@ -104,7 +114,7 @@ function Decorate({ avatar }) {
   return null;
 }
 
-function Rig({ avatar, holder }) {
+function Rig({ avatar, holder, PlaybackState, envMap }) {
   let [sentences, setActions] = useState([]);
   useEffect(() => {
     if (router?.query?.cardID) {
@@ -157,6 +167,8 @@ function Rig({ avatar, holder }) {
             mixer={mixer}
             avatar={avatar}
             sentences={sentences}
+            PlaybackState={PlaybackState}
+            envMap={envMap}
           ></Sequncer>
         </group>
       )}
@@ -164,8 +176,8 @@ function Rig({ avatar, holder }) {
   );
 }
 
-function Sequncer({ avatar, mixer, sentences }) {
-  ThisUI.makeKeyReactive("reload");
+function Sequncer({ avatar, mixer, sentences, PlaybackState, envMap }) {
+  PlaybackState.makeKeyReactive("reload");
 
   useEffect(() => {
     avatar.visible = false;
@@ -201,7 +213,7 @@ function Sequncer({ avatar, mixer, sentences }) {
         action = weakMap.get(fbx);
       }
       action.reset();
-      if (ThisUI.forceLoopActions) {
+      if (PlaybackState.forceLoopActions) {
         action.repetitions = Infinity;
       } else {
         action.repetitions = actionInfo.repeat || 1;
@@ -236,7 +248,7 @@ function Sequncer({ avatar, mixer, sentences }) {
         return;
       }
       if (!info) {
-        info = await loadActionFBX(ThisUI.cursor);
+        info = await loadActionFBX(PlaybackState.cursor);
 
         if (stopped) {
           return;
@@ -245,10 +257,10 @@ function Sequncer({ avatar, mixer, sentences }) {
 
       if (info) {
         let { fbx, actionInfo, firekey } = info;
-        ThisUI.actionKey = firekey;
+        PlaybackState.actionKey = firekey;
         doAction({ fbx, actionInfo });
 
-        let preload = ThisUI.cursor + 1;
+        let preload = PlaybackState.cursor + 1;
         preload = preload % sentences.length;
         let preloadNextProm = loadActionFBX(preload);
 
@@ -263,9 +275,9 @@ function Sequncer({ avatar, mixer, sentences }) {
             if (stopped) {
               return;
             }
-            if (ThisUI.autoPlayNext) {
-              ThisUI.cursor++;
-              ThisUI.cursor = ThisUI.cursor % sentences.length;
+            if (PlaybackState.autoPlayNext) {
+              PlaybackState.cursor++;
+              PlaybackState.cursor = PlaybackState.cursor % sentences.length;
 
               loop(v);
             }
@@ -284,7 +296,55 @@ function Sequncer({ avatar, mixer, sentences }) {
       mixer.stopAllAction();
       cleans.forEach((c) => c());
     };
-  }, [sentences, ThisUI.reload]);
+  }, [sentences, PlaybackState.reload]);
 
-  return <group></group>;
+  return (
+    <group>
+      {createPortal(
+        <SentenceDiaply
+          sentences={sentences}
+          cursor={PlaybackState.cursor}
+          PlaybackState={PlaybackState}
+          envMap={envMap}
+        ></SentenceDiaply>,
+        avatar
+      )}
+    </group>
+  );
+}
+
+function SentenceDiaply({ sentences, cursor, PlaybackState, envMap = null }) {
+  let val = useMemo(() => {
+    return sentences[PlaybackState.cursor]?.fireval;
+  }, [cursor, sentences]);
+
+  return (
+    <group position={[0, 1.9, 0]}>
+      {val && (
+        <Text
+          position={[0, 0, 0.5]}
+          textAlign={"center"}
+          anchorX={"center"}
+          anchorY={"bottom"}
+          maxWidth={2}
+          fontSize={0.12}
+          font={`/font/Cronos-Pro-Light_12448.ttf`}
+          frustumCulled={false}
+          color={"white"}
+          outlineColor={"black"}
+          outlineWidth={0.005}
+          userData={{ enableBloom: true }}
+        >
+          {val.sentence}
+          <meshBasicMaterial
+            attach="material"
+            side={DoubleSide}
+            envMap={envMap}
+            transparent={true}
+            opacity={1}
+          />
+        </Text>
+      )}
+    </group>
+  );
 }
