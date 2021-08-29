@@ -160,6 +160,9 @@ function Rig({ avatar, holder, PlaybackState, envMap }) {
   }, [avatar]);
 
   useFrame((st, dt) => {
+    if (dt <= 1 / 60) {
+      dt = 1 / 60;
+    }
     mixer.update(dt);
   });
 
