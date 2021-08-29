@@ -12,6 +12,7 @@ import { TabMyAvatar } from "../../../../vfx-content/TabMyAvatar/TabMyAvatar";
 import { TabTellStory } from "../../../../vfx-content/TabTellStory/TabTellStory";
 import { TabMotions } from "../../../../vfx-content/TabMotions/TabMotions";
 import { TabMyStory } from "../../../../vfx-content/TabMyStory/TabMyStory";
+import { TabPreview } from "../../../../vfx-content/TabPreview/TabPreview";
 
 //
 function AreaAdapt({ children }) {
@@ -75,7 +76,7 @@ export default function StoryMaker() {
           <div className="w-full h-full md:w-5/6 bg-gray-100 ">
             <AreaAdapt>
               <Switch>
-                <Route path="/wrtie-story">
+                <Route path="/write">
                   <TabTellStory></TabTellStory>
                 </Route>
                 {/* <Route exact path="/my-story">
@@ -84,8 +85,8 @@ export default function StoryMaker() {
                 <Route path="/avatar">
                   <TabMyAvatar></TabMyAvatar>
                 </Route>
-                <Route path="/motion">
-                  <TabMotions></TabMotions>
+                <Route path="/preview">
+                  <TabPreview></TabPreview>
                 </Route>
                 <Route>
                   <Redirect to="/avatar"></Redirect>
@@ -144,7 +145,7 @@ export default function StoryMaker() {
                       borderColor: "hotpink",
                     }}
                     exact={true}
-                    to="/wrtie-story"
+                    to="/write"
                     className="block py-1 md:py-3 border-b-2 text-gray-400  pl-1 align-middle no-underline hover:text-pink-500 hover:border-pink-500"
                   >
                     <i className="fas fa-plus pr-0 md:pr-3"></i>
@@ -179,12 +180,12 @@ export default function StoryMaker() {
                       borderColor: "hotpink",
                     }}
                     exact={true}
-                    to="/motion"
+                    to="/preview"
                     className="block py-1 md:py-3 border-b-2 text-gray-400  pl-1 align-middle no-underline hover:text-pink-500 hover:border-pink-500"
                   >
                     <i className="fas fa-running pr-0 md:pr-3"></i>
                     <span className="pb-1 md:pb-0 text-xs md:text-base block md:inline-block lg:pr-10">
-                      Motions
+                      Preview
                     </span>
                   </RRDLink>
                 </li>
