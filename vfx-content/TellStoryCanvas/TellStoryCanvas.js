@@ -219,7 +219,7 @@ function PlaybackControls() {
           PlayBackState.reload = Math.random();
         }}
       >
-        Reset
+        Auto Play
       </div>
     </div>
   );
