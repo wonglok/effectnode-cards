@@ -210,6 +210,8 @@ function AvatarItem({ url, sentences, PlaybackState, envMap }) {
     return cloned;
   }, []);
 
+  let { update } = useHeadTracker({ avatar });
+
   avatar.rotation.set(0, 0, 0);
   avatar.position.set(0, 0, 0);
 
@@ -222,6 +224,7 @@ function AvatarItem({ url, sentences, PlaybackState, envMap }) {
       dt = 1 / 60;
     }
     mixer.update(dt);
+    update();
   });
 
   return (
@@ -246,13 +249,12 @@ function AvatarItem({ url, sentences, PlaybackState, envMap }) {
         sentences={sentences}
         avatar={avatar}
       ></ActionsApply>
-
-      {o3d && <HeadTracker avatar={o3d}></HeadTracker>}
     </group>
   );
 }
 
-function HeadTracker({ avatar }) {
+function useHeadTracker({ avatar }) {
+  let { get } = useThree();
   let lookAt = new Vector3(0, 0, 0);
   let lookAtlerp = new Vector3(0, 0, 0);
   let lookAtInfluence = new Object3D();
@@ -297,7 +299,7 @@ function HeadTracker({ avatar }) {
     object.quaternion.slerp(lookAtInfluenceNow.quaternion, 0.4);
   };
 
-  useFrame(({ get }) => {
+  let handler = () => {
     let { mouse } = get();
 
     if (avatar) {
@@ -305,9 +307,9 @@ function HeadTracker({ avatar }) {
       onEye({ mouse, bone: "LeftEye", avatar });
       onEye({ mouse, bone: "RightEye", avatar });
     }
-  });
+  };
 
-  return null;
+  return { update: handler };
 }
 
 function ActionsApply({ avatar, mixer, sentences, PlaybackState }) {

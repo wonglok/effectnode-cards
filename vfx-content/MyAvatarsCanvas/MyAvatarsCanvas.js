@@ -7,6 +7,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { getFirebase } from "../../vfx-firebase/firelib";
 import router from "next/router";
 import { useEnvLight } from "../../vfx-content/Use/useEnvLight.js";
+
 export function MyAvatarsCanvas() {
   return (
     <Canvas
