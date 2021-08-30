@@ -107,7 +107,7 @@ function Content({ holder, PlaybackState }) {
   );
 }
 
-let addSentence = ({ router, holder }) => {
+let addSentence = ({ router, holder, PlaybackState }) => {
   onReady().then(async ({ db, user }) => {
     //
     let draft = db
@@ -154,7 +154,7 @@ function SentencesList({ holder, PlaybackState }) {
       // console.log(num);
 
       if (num === 0) {
-        addSentence({ router, holder });
+        addSentence({ router, holder, PlaybackState });
       }
 
       let cleanup = sentences.on("value", (snapshot) => {
@@ -182,7 +182,10 @@ function SentencesList({ holder, PlaybackState }) {
 
   return (
     <div>
-      <CreateSentence holder={holder}></CreateSentence>
+      <CreateSentence
+        holder={holder}
+        PlaybackState={PlaybackState}
+      ></CreateSentence>
       <PlaybackControls PlaybackState={PlaybackState}></PlaybackControls>
       {actions.map((a, idx) => {
         return (
@@ -200,13 +203,13 @@ function SentencesList({ holder, PlaybackState }) {
   );
 }
 
-function CreateSentence({ holder }) {
+function CreateSentence({ holder, PlaybackState }) {
   let router = useRouter();
   return (
     <div
       className="p-3 py-4 lg:py-$ text-center boder bg-blue-400 text-white cursor-pointer"
       onClick={() => {
-        addSentence({ router, holder });
+        addSentence({ router, holder, PlaybackState });
       }}
     >
       + Add Sentence
@@ -369,6 +372,9 @@ function Sentence({ data, holder, firekey, idx, PlaybackState }) {
         ref={refTextArea}
         className="w-full h-24 p-3"
         defaultValue={data.sentence}
+        onBlur={() => {
+          saveText(refTextArea.current.value);
+        }}
         onKeyDown={(ev) => {
           if (ev.key.toLowerCase() === "s" && ev.metaKey) {
             ev.preventDefault();

@@ -92,21 +92,49 @@ export function MySelf({ envMap }) {
 }
 
 function LoadingAvatar() {
+  let ref = useRef();
   let { camera } = useThree();
-  useEffect(() => {
+
+  useFrame(() => {
     camera.position.y = 1.6;
     camera.position.z = 1;
     camera.lookAt(0, 1.6, 0.2);
+
+    if (ref.current) {
+      ref.current.position.y = camera.position.y;
+      ref.current.rotation.x = 0;
+      ref.current.rotation.y = 0;
+      ref.current.rotation.z = 0;
+    }
   });
+
+  // return (
+  //   <Text
+  //     scale={0.7}
+  //     fontSize={0.05}
+  //     color="black"
+  //     outlineColor="white"
+  //     outlineWidth={0.002}
+  //     position={[0, 1.6, 0.2]}
+  //   >
+  //     Loading....
+  //   </Text>
+  // );
 
   return (
     <Text
-      scale={0.7}
-      fontSize={0.05}
-      color="black"
-      outlineColor="white"
-      outlineWidth={0.002}
-      position={[0, 1.6, 0.2]}
+      ref={ref}
+      textAlign={"center"}
+      anchorX={"center"}
+      anchorY={"bottom"}
+      maxWidth={0.7}
+      fontSize={0.12}
+      font={`/font/Cronos-Pro-Light_12448.ttf`}
+      frustumCulled={false}
+      color={"white"}
+      outlineColor={"black"}
+      outlineWidth={0.005}
+      userData={{ enableBloom: true }}
     >
       Loading....
     </Text>
@@ -186,7 +214,7 @@ function MyCamera() {
     camera.position.z = 1;
 
     let orbit = new OrbitControls(camera, gl.domElement);
-    orbit.minDistance = 0.4;
+    orbit.minDistance = 0.5;
     orbit.maxDistance = 5.5;
     orbit.enableDamping = true;
     orbit.dampingFactor = 0.1;
@@ -202,6 +230,35 @@ function MyCamera() {
   let lookAtInfluenceNow = new Object3D();
   let corePos = new Vector3();
 
+  let onEye = ({ mouse, avatar, bone = LeftEye }) => {
+    //
+    let leftEye = avatar.getObjectByName(bone);
+    lookAt.set(mouse.x * 15, mouse.y * 15, 15);
+    lookAtlerp.lerp(lookAt, 0.1);
+    lookAtInfluence.lookAt(lookAtlerp);
+    lookAtInfluenceNow.quaternion.slerp(lookAtInfluence.quaternion, 0.1);
+    leftEye.quaternion.slerp(lookAtInfluenceNow.quaternion, 0.1);
+
+    if (leftEye.rotation.x >= 0.1) {
+      leftEye.rotation.x = 0.1;
+    }
+    if (leftEye.rotation.x <= -0.1) {
+      leftEye.rotation.x = -0.1;
+    }
+    if (leftEye.rotation.y >= 0.1) {
+      leftEye.rotation.y = 0.1;
+    }
+    if (leftEye.rotation.y <= -0.1) {
+      leftEye.rotation.y = -0.1;
+    }
+    if (leftEye.rotation.z >= 0.1) {
+      leftEye.rotation.z = 0.1;
+    }
+    if (leftEye.rotation.z <= -0.1) {
+      leftEye.rotation.z = -0.1;
+    }
+  };
+
   useFrame(({ get }) => {
     let { camera, scene, mouse } = get();
 
@@ -210,19 +267,23 @@ function MyCamera() {
       let coreTarget = avatar.getObjectByName("Head");
       if (coreTarget) {
         coreTarget.getWorldPosition(corePos);
+        corePos.y += 0.05;
         orbit.target.lerp(corePos, 0.1);
 
         camera.position.y = orbit.target.y;
-        camera.position.y += 0.15;
+        camera.position.y += 0.0;
         orbit.update();
 
         lookAt.set(mouse.x * 15, mouse.y * 15, 15);
         lookAtlerp.lerp(lookAt, 0.4);
         lookAtInfluence.lookAt(lookAtlerp);
-
         lookAtInfluenceNow.quaternion.slerp(lookAtInfluence.quaternion, 0.4);
+
         coreTarget.quaternion.slerp(lookAtInfluenceNow.quaternion, 0.4);
       }
+
+      onEye({ mouse, bone: "LeftEye", avatar });
+      onEye({ mouse, bone: "RightEye", avatar });
     }
   });
 

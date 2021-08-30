@@ -1,7 +1,7 @@
 import { Text, useGLTF } from "@react-three/drei";
 import { createPortal, useFrame, useThree } from "@react-three/fiber";
 import { Suspense, useEffect, useMemo, useState } from "react";
-import { AnimationMixer, DoubleSide, Object3D } from "three";
+import { AnimationMixer, DoubleSide, Object3D, Vector3 } from "three";
 import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import { getFirebase, onReady } from "../../vfx-firebase/firelib";
@@ -26,6 +26,10 @@ export function MySelf({ envMap, holder, PlaybackState }) {
   let [url, setURL] = useState(false);
   let [sentences, setActions] = useState([]);
 
+  let cache = useMemo(() => {
+    return new Map();
+  }, [holder]);
+
   useEffect(async () => {
     let snap = await getFirebase()
       .database()
@@ -40,6 +44,7 @@ export function MySelf({ envMap, holder, PlaybackState }) {
 
   useEffect(() => {
     if (router?.query?.cardID) {
+      let ended = false;
       let clean = [];
       onReady().then(async ({ db, user }) => {
         //
@@ -50,6 +55,8 @@ export function MySelf({ envMap, holder, PlaybackState }) {
           .child("sentences");
 
         let cleanup = sentences.on("value", async (snapshot) => {
+          setActions([]);
+
           if (snapshot) {
             let arr = [];
             let getURL = (fireval) => {
@@ -77,14 +84,23 @@ export function MySelf({ envMap, holder, PlaybackState }) {
 
             arr = arr.map((item) => {
               return new Promise((resolve) => {
-                new FBXLoader().load(item.url, (v) => {
-                  item.fbx = v;
+                if (cache.has(item.url)) {
+                  item.fbx = cache.get(item.url);
                   resolve(item);
-                });
+                } else {
+                  new FBXLoader().load(item.url, (v) => {
+                    item.fbx = v;
+                    cache.set(item.url, v);
+                    resolve(item);
+                  });
+                }
               });
             });
 
             Promise.all(arr).then((withFBX) => {
+              if (ended) {
+                return;
+              }
               setActions(withFBX);
             });
           }
@@ -94,6 +110,7 @@ export function MySelf({ envMap, holder, PlaybackState }) {
       });
 
       return () => {
+        ended = true;
         clean.forEach((e) => e());
       };
     }
@@ -121,12 +138,18 @@ export function LoadingAvatar() {
 
   return (
     <Text
-      scale={0.7}
-      fontSize={0.25}
-      color="black"
-      outlineColor="white"
-      outlineWidth={0.002}
-      position={[0, camera.position.y, 0]}
+      position={[0, 1.5, 0]}
+      textAlign={"center"}
+      anchorX={"center"}
+      anchorY={"bottom"}
+      maxWidth={0.7}
+      fontSize={0.12}
+      font={`/font/Cronos-Pro-Light_12448.ttf`}
+      frustumCulled={false}
+      color={"white"}
+      outlineColor={"black"}
+      outlineWidth={0.005}
+      userData={{ enableBloom: true }}
       lookAt={[camera.position.x, camera.position.y, camera.position.z]}
     >
       Loading....
@@ -180,21 +203,94 @@ function AvatarItem({ url, sentences, PlaybackState, envMap }) {
         sentences={sentences}
         avatar={avatar}
       ></ActionsApply>
+
+      {o3d && <HeadTracker avatar={o3d}></HeadTracker>}
     </group>
   );
 }
 
+function HeadTracker({ avatar }) {
+  let lookAt = new Vector3(0, 0, 0);
+  let lookAtlerp = new Vector3(0, 0, 0);
+  let lookAtInfluence = new Object3D();
+  let lookAtInfluenceNow = new Object3D();
+
+  let onEye = ({ mouse, avatar, bone = LeftEye }) => {
+    //
+    let leftEye = avatar.getObjectByName(bone);
+    lookAt.set(mouse.x * 15, mouse.y * 15, 15);
+    lookAtlerp.lerp(lookAt, 0.1);
+    lookAtInfluence.lookAt(lookAtlerp);
+    lookAtInfluenceNow.quaternion.slerp(lookAtInfluence.quaternion, 0.1);
+    leftEye.quaternion.slerp(lookAtInfluenceNow.quaternion, 0.1);
+
+    if (leftEye.rotation.x >= 0.1) {
+      leftEye.rotation.x = 0.1;
+    }
+    if (leftEye.rotation.x <= -0.1) {
+      leftEye.rotation.x = -0.1;
+    }
+    if (leftEye.rotation.y >= 0.1) {
+      leftEye.rotation.y = 0.1;
+    }
+    if (leftEye.rotation.y <= -0.1) {
+      leftEye.rotation.y = -0.1;
+    }
+    if (leftEye.rotation.z >= 0.1) {
+      leftEye.rotation.z = 0.1;
+    }
+    if (leftEye.rotation.z <= -0.1) {
+      leftEye.rotation.z = -0.1;
+    }
+  };
+
+  let onHead = ({ mouse, avatar, bone = "Head" }) => {
+    let object = avatar.getObjectByName(bone);
+    lookAt.set(mouse.x * 30, mouse.y * 30, 30);
+    lookAtlerp.lerp(lookAt, 0.4);
+    lookAtInfluence.lookAt(lookAtlerp);
+    lookAtInfluenceNow.quaternion.slerp(lookAtInfluence.quaternion, 0.4);
+
+    object.quaternion.slerp(lookAtInfluenceNow.quaternion, 0.4);
+  };
+
+  useFrame(({ get }) => {
+    let { mouse } = get();
+    if (avatar) {
+      onHead({ mouse, bone: "Head", avatar });
+      onEye({ mouse, bone: "LeftEye", avatar });
+      onEye({ mouse, bone: "RightEye", avatar });
+    }
+  });
+
+  return null;
+}
+
 function ActionsApply({ avatar, mixer, sentences, PlaybackState }) {
   PlaybackState.makeKeyReactive("cursor");
+  PlaybackState.makeKeyReactive("autoPlayNext");
 
   let action = useMemo(() => {
     let sentence = sentences[PlaybackState.cursor];
-    return mixer.clipAction(sentence.fbx.animations[0], avatar);
-  }, [PlaybackState.cursor]);
+    if (sentence) {
+      return mixer.clipAction(sentence.fbx.animations[0], avatar);
+    }
+  }, [sentences, PlaybackState.cursor]);
 
   useEffect(() => {
+    if (!action) {
+      return;
+    }
+
+    let stopped = false;
+
     action.reset();
-    action.repetitions = 1;
+
+    if (PlaybackState.autoPlayNext) {
+      action.repetitions = 1;
+    } else {
+      action.repetitions = Infinity;
+    }
     action.clampWhenFinished = true;
     action.play();
 
@@ -202,17 +298,23 @@ function ActionsApply({ avatar, mixer, sentences, PlaybackState }) {
     PlaybackState.actionKey = sentence.firekey;
 
     let end = () => {
+      if (stopped) {
+        return;
+      }
+      //
       if (PlaybackState.autoPlayNext) {
         PlaybackState.cursor = PlaybackState.cursor + 1;
+        PlaybackState.cursor %= sentences.length;
       }
     };
 
     mixer.addEventListener("finished", end);
     return () => {
+      stopped = true;
       mixer.removeEventListener("finished", end);
       action.fadeOut(0.1);
     };
-  }, [action]);
+  }, [action, PlaybackState.autoPlayNext, PlaybackState.cursor]);
 
   return null;
 }
@@ -238,6 +340,7 @@ function DisplaySentence({ sentences, PlaybackState, envMap = null }) {
   let text = sentences[PlaybackState.cursor]?.fireval?.sentence;
 
   return (
+    //
     <group position={[0, 1.9, 0]}>
       {text && (
         <Text
@@ -245,7 +348,7 @@ function DisplaySentence({ sentences, PlaybackState, envMap = null }) {
           textAlign={"center"}
           anchorX={"center"}
           anchorY={"bottom"}
-          maxWidth={2}
+          maxWidth={0.85}
           fontSize={0.12}
           font={`/font/Cronos-Pro-Light_12448.ttf`}
           frustumCulled={false}
