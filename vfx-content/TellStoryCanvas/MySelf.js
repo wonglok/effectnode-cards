@@ -25,6 +25,7 @@ export const makePlayBack = () => {
 export function MySelf({ envMap, holder, PlaybackState }) {
   let [url, setURL] = useState(false);
   let [sentences, setActions] = useState([]);
+  let [progressText, setProgressText] = useState("");
 
   let cache = useMemo(() => {
     return new Map();
@@ -82,15 +83,19 @@ export function MySelf({ envMap, holder, PlaybackState }) {
               }
             });
 
-            arr = arr.map((item) => {
+            let n = arr.length;
+            arr = arr.map((item, i) => {
               return new Promise((resolve) => {
                 if (cache.has(item.url)) {
                   item.fbx = cache.get(item.url);
+
+                  setProgressText(`Loading ${((i / n) * 100).toFixed(1)}%`);
                   resolve(item);
                 } else {
                   new FBXLoader().load(item.url, (v) => {
                     item.fbx = v;
                     cache.set(item.url, v);
+                    setProgressText(`Loading ${((i / n) * 100).toFixed(1)}%`);
                     resolve(item);
                   });
                 }
@@ -101,6 +106,7 @@ export function MySelf({ envMap, holder, PlaybackState }) {
               if (ended) {
                 return;
               }
+              setProgressText("");
               setActions(withFBX);
             });
           }
@@ -118,6 +124,7 @@ export function MySelf({ envMap, holder, PlaybackState }) {
 
   return (
     <group>
+      <LoadingActions>{progressText}</LoadingActions>
       {url && sentences.length > 0 && (
         <Suspense fallback={<LoadingAvatar></LoadingAvatar>}>
           <AvatarItem
@@ -130,6 +137,30 @@ export function MySelf({ envMap, holder, PlaybackState }) {
         </Suspense>
       )}
     </group>
+  );
+}
+
+export function LoadingActions({ children }) {
+  let { camera } = useThree();
+
+  return (
+    <Text
+      position={[0, 1.5, 0]}
+      textAlign={"center"}
+      anchorX={"center"}
+      anchorY={"bottom"}
+      maxWidth={0.7}
+      fontSize={0.12}
+      font={`/font/Cronos-Pro-Light_12448.ttf`}
+      frustumCulled={false}
+      color={"white"}
+      outlineColor={"black"}
+      outlineWidth={0.005}
+      userData={{ enableBloom: true }}
+      lookAt={[camera.position.x, camera.position.y, camera.position.z]}
+    >
+      {children}
+    </Text>
   );
 }
 
