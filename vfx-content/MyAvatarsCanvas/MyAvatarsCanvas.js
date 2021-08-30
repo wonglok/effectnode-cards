@@ -262,6 +262,11 @@ function MyCamera() {
   useFrame(({ get }) => {
     let { camera, scene, mouse } = get();
 
+    if (mouse.length() <= 0.01) {
+      mouse.x = 1;
+      mouse.y = 1;
+    }
+
     let avatar = scene.getObjectByName("avatar");
     if (avatar) {
       let coreTarget = avatar.getObjectByName("Head");

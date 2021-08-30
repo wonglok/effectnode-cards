@@ -299,6 +299,7 @@ function HeadTracker({ avatar }) {
 
   useFrame(({ get }) => {
     let { mouse } = get();
+
     if (avatar) {
       onHead({ mouse, bone: "Head", avatar });
       onEye({ mouse, bone: "LeftEye", avatar });
