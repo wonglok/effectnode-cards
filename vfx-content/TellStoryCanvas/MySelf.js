@@ -92,12 +92,24 @@ export function MySelf({ envMap, holder, PlaybackState }) {
                   setProgressText(`Loading ${((i / n) * 100).toFixed(1)}%`);
                   resolve(item);
                 } else {
-                  new FBXLoader().load(item.url, (v) => {
-                    item.fbx = v;
-                    cache.set(item.url, v);
-                    setProgressText(`Loading ${((i / n) * 100).toFixed(1)}%`);
-                    resolve(item);
-                  });
+                  new FBXLoader().load(
+                    item.url,
+                    (v) => {
+                      item.fbx = v;
+                      cache.set(item.url, v);
+                      setProgressText(`Loading ${((i / n) * 100).toFixed(1)}%`);
+                      resolve(item);
+                    },
+                    (prg) => {
+                      setProgressText(
+                        `Loading ${(
+                          ((i / n) * 0.9 + (0.1 * prg.loaded) / prg.total) *
+                          100
+                        ).toFixed(1)}%`
+                      );
+                    },
+                    () => {}
+                  );
                 }
               });
             });
