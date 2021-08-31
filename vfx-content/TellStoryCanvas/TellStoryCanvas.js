@@ -237,7 +237,7 @@ function PlaybackControls({ PlaybackState }) {
           PlaybackState.reload = Math.random();
         }}
       >
-        Auto Play
+        Play from beginning
       </div>
     </div>
   );
