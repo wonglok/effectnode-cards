@@ -179,7 +179,7 @@ function AvatarLayer({ cardID }) {
                 avatarURL: link,
                 avatarSignature: getID(),
               });
-              router.push(`/card/${cardID}`);
+              router.push(`/card/${cardID}/room`);
             });
 
             // getFire().database.ref('players/' + FBStore.user.uid)

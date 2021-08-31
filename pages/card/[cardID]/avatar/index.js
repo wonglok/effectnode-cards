@@ -176,11 +176,13 @@ function AvatarLayer({ cardID }) {
             setLoading(true);
 
             onReady().then(({ user, db, app }) => {
+              //
               db.ref(`card-avatar-info/${router.query.cardID}`).set({
                 avatarURL: link,
                 avatarSignature: getID(),
               });
-              router.push(`/card/${cardID}/confirm`);
+              //
+              router.push(`/card/${cardID}/story`);
             });
 
             // getFire().database.ref('players/' + FBStore.user.uid)
