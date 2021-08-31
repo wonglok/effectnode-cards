@@ -89,7 +89,7 @@ export default function StoryMaker() {
                   <TabPreview></TabPreview>
                 </Route>
                 <Route>
-                  <Redirect to="/avatar"></Redirect>
+                  <Redirect to="/write"></Redirect>
                 </Route>
               </Switch>
             </AreaAdapt>
@@ -115,7 +115,7 @@ export default function StoryMaker() {
                   >
                     <i className="fas fa-arrow-left pr-0 md:pr-3"></i>
                     <span className="pb-1 md:pb-0 text-xs md:text-base block md:inline-block lg:pr-10">
-                      Home
+                      My Home
                     </span>
                   </span>
                 </li>
