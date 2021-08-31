@@ -59,7 +59,7 @@ export function ConfirmCard({ cardID }) {
           if (res.err) {
             console.log(res.err);
           } else {
-            router.push(`/card/${cardID}/room`);
+            router.push(`/card/${cardID}`);
           }
         });
     });
@@ -68,7 +68,27 @@ export function ConfirmCard({ cardID }) {
   //
   return (
     <Suspense fallback={<LoadingScreen></LoadingScreen>}>
-      <GetAvatar
+      <FloatingCard scale={2} position={[0, 0, 0]}>
+        <PortalPlane
+          onClick={onRun}
+          attachToCard={() => {
+            return (
+              <group>
+                <HeroText></HeroText>
+                <Subtitle></Subtitle>
+              </group>
+            );
+          }}
+        >
+          {({ internalCamera }) => {
+            return (
+              <BallArea envMap={envMap} camera={internalCamera}></BallArea>
+            );
+          }}
+        </PortalPlane>
+      </FloatingCard>
+
+      {/* <GetAvatar
         profileUI={({ avatarURL }) => {
           return (
             <AvatarShowCard avatarURL={avatarURL} envMap={envMap}>
@@ -97,7 +117,7 @@ export function ConfirmCard({ cardID }) {
             </AvatarShowCard>
           );
         }}
-      ></GetAvatar>
+      ></GetAvatar> */}
     </Suspense>
   );
 }
@@ -108,32 +128,39 @@ function GetAvatar({ profileUI }) {
     if (!router.query.cardID) {
       return;
     }
-    //
-    getFirebase()
-      .auth()
-      .onAuthStateChanged((usr) => {
-        if (usr) {
-          onReady().then(({ db, user }) => {
-            db.ref(`/card-avatar-info`)
-              .child(router.query.cardID)
-              .once("value", (snap) => {
-                let profile = snap.val();
-                if (profile && profile.avatarURL) {
-                  let insert = profileUI({
-                    avatarURL: profile.avatarURL,
-                    profile,
-                  });
 
-                  setCompos(insert);
-                } else {
-                  // router.push(`/card/${Card.cardID}/avatar`);
-                }
-              });
-          });
-        } else {
-          router.push(`/card/${Card.cardID}/login`);
+    onReady().then(({ db, user }) => {
+      db.ref(`/card-avatar-info/${router.query.cardID}`).once(
+        "value",
+        (snap) => {
+          let profile = snap.val();
+
+          if (profile && profile.avatarURL) {
+            let insert = profileUI({
+              avatarURL: profile.avatarURL,
+              profile,
+            });
+
+            console.log(profile);
+
+            setCompos(insert);
+          } else {
+            // router.push(`/card/${Card.cardID}/avatar`);
+          }
         }
-      });
+      );
+    });
+
+    //
+    // getFirebase()
+    //   .auth()
+    //   .onAuthStateChanged((usr) => {
+    //     if (usr) {
+
+    //     } else {
+    //       router.push(`/card/${Card.cardID}/login`);
+    //     }
+    //   });
   }, [router.query.cardID]);
 
   return compos || null;

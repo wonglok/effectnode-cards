@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 //   // getProfileID,
 //   // saveProfileData,
 // } from "../../../../pages-code/Game3D/GameState";
-import router from "next/router";
+import router, { useRouter } from "next/router";
 import { setup, onReady, firebase } from "../../../../vfx-firebase/firelib";
 // import { Card } from "../../../../vfx-content/CardOOBE/Card";
 import localforage from "localforage";
@@ -75,6 +75,7 @@ function AvatarChooser({
 }
 
 function AvatarLayer({ cardID }) {
+  let router = useRouter();
   let [isLoading, setLoading] = useState(false);
   //
   // let goLogin = () => {
