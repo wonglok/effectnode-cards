@@ -122,8 +122,8 @@ let addSentence = ({ router, holder, PlaybackState }) => {
 
     newObj.set({
       order: num + 1,
-      signature: Actions[0].signature,
-      sentence: "Hello! Welcome to my Story",
+      signature: Actions[1].signature,
+      sentence: "I'm excited!!!",
       repeat: 1,
       addons: [],
     });
