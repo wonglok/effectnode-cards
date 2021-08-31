@@ -105,15 +105,18 @@ export function ConfirmCard({ cardID }) {
 function GetAvatar({ profileUI }) {
   let [compos, setCompos] = useState(null);
   useEffect(() => {
+    if (!router.query.cardID) {
+      return;
+    }
     //
     getFirebase()
       .auth()
       .onAuthStateChanged((usr) => {
         if (usr) {
           onReady().then(({ db, user }) => {
-            db.ref(`/card-avatar-info/${router.query.cardID}`).once(
-              "value",
-              (snap) => {
+            db.ref(`/card-avatar-info`)
+              .child(router.query.cardID)
+              .once("value", (snap) => {
                 let profile = snap.val();
                 if (profile && profile.avatarURL) {
                   let insert = profileUI({
@@ -123,16 +126,15 @@ function GetAvatar({ profileUI }) {
 
                   setCompos(insert);
                 } else {
-                  router.push(`/card/${Card.cardID}/avatar`);
+                  // router.push(`/card/${Card.cardID}/avatar`);
                 }
-              }
-            );
+              });
           });
         } else {
           router.push(`/card/${Card.cardID}/login`);
         }
       });
-  }, []);
+  }, [router.query.cardID]);
 
   return compos || null;
 }
