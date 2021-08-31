@@ -42,8 +42,7 @@ export default function System({ cardID }) {
   }, []);
 
   let tryContinue = () => {
-    ///
-    router.push(`/card/${cardID}/avatar`);
+    router.push(`/card/${cardID}/confirm`);
   };
 
   //
@@ -71,10 +70,10 @@ export default function System({ cardID }) {
         firebase.auth.EmailAuthProvider.PROVIDER_ID,
       ],
       //
-      credentialHelper:
-        "ontouchstart" in window
-          ? firebaseui.auth.CredentialHelper.NONE
-          : firebaseui.auth.CredentialHelper.GOOGLE_YOLO,
+      credentialHelper: firebaseui.auth.CredentialHelper.NONE,
+      // "ontouchstart" in window
+      //   ? firebaseui.auth.CredentialHelper.NONE
+      //   : firebaseui.auth.CredentialHelper.GOOGLE_YOLO,
 
       callbacks: {
         signInSuccess: function (authResult, redirectUrl) {
