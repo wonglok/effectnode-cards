@@ -1,6 +1,6 @@
 //
-import { useEffect, useMemo, useState } from "react";
-import { createPortal, useThree } from "@react-three/fiber";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal, useFrame, useThree } from "@react-three/fiber";
 import { Suspense } from "react";
 import { LoadingScreen } from "../vfx-content/welcome-page/LoadingScreen";
 import { useGLTF } from "@react-three/drei";
@@ -21,6 +21,10 @@ import { LoginGateR3F } from "../vfx-content/LoginGateR3F/LoginGateR3F";
 import { LoginBall } from "../vfx-content/welcome-page/LoginBall";
 import { MySelf } from "../vfx-content/MySelf/MySelf";
 import { StoryPortal } from "../vfx-content/StoryPortal/StoryPortal";
+import {
+  makePlayBack,
+  MySelf as StorySelf,
+} from "../vfx-content/TellStoryCanvas/MySelf";
 
 export default function Page() {
   return (
@@ -49,6 +53,7 @@ function UseBG() {
 }
 
 export function Content3D() {
+  let { get } = useThree();
   let { envMap } = useShaderEnvLight({});
   let [collider, setCollider] = useState(false);
   let mapGLTF = useGLTF(`/map/GenesisCard/GenesisCard.glb`);
@@ -59,12 +64,15 @@ export function Content3D() {
     return map;
   }, [mapGLTF]);
 
+  let PlaybackState = useMemo(() => {
+    return makePlayBack();
+  }, []);
+
   let o3d = new Object3D();
   return (
     <group>
       {createPortal(<primitive object={map}></primitive>, o3d)}
       <primitive object={o3d}></primitive>
-      {/* {collider && <primitive object={collider}></primitive>} */}
       <directionalLight intensity={2} position={[0, 3, 3]}></directionalLight>
       <UseBG></UseBG>
 
@@ -82,7 +90,8 @@ export function Content3D() {
           <StoryPortal></StoryPortal>
         </group>
 
-        {collider && (
+        {/* {collider && <primitive object={collider}></primitive>} */}
+        {/* {collider && (
           <MySelf
             isSwim={true}
             enableLight={true}
@@ -91,8 +100,20 @@ export function Content3D() {
             map={map}
             distance={6.5}
           ></MySelf>
-        )}
+        )} */}
       </LoginGateR3F>
+
+      {
+        <group rotation={[0, Math.PI * 0.5 + -0.35, 0]} position={[3, 0, 7]}>
+          <FaceCam>
+            <StorySelf
+              envMap={envMap}
+              holder={"handy-editor"}
+              PlaybackState={PlaybackState}
+            ></StorySelf>
+          </FaceCam>
+        </group>
+      }
 
       {map && (
         <group>
@@ -120,4 +141,23 @@ export function Content3D() {
       )}
     </group>
   );
+}
+
+function FaceCam({ children }) {
+  let ref = useRef();
+
+  //
+  useFrame(({ camera }) => {
+    if (ref.current) {
+      //
+      ref.current.lookAt(
+        camera.position.x,
+        ref.current.position.y,
+        camera.position.z
+      );
+    }
+    //
+  });
+
+  return <group ref={ref}>{children}</group>;
 }

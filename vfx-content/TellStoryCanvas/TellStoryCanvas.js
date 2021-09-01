@@ -25,6 +25,7 @@ export function TellStoryCanvas({ holder = "handy-editor" }) {
       window.removeEventListener("scroll-div-to-bottom", scrollToBottom);
     };
   });
+
   return (
     <div className="h-full w-full relative block lg:flex lg:flex-row">
       <Canvas

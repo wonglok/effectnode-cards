@@ -5,10 +5,11 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { applyAutoEvent, useAutoEvent } from "../utils/use-auto-event";
 // import { useMiniEngine } from '../utils/use-mini-engine'
 // import { CursorTrackerTail } from '../lib/CursorTrackerTail'
-import { PerspectiveCamera } from "@react-three/drei";
+// import { PerspectiveCamera } from "@react-three/drei";
 // import nipplejs from "nipplejs";
 
 export function UserContorls({
+  //
   Now,
   //
   avatarSpeed = 2,
@@ -261,10 +262,6 @@ export function UserContorls({
       //   Now.avatarAt.copy(Now.avatarAt);
       // }
     };
-
-    //
-
-    //
 
     // grid of raycaster
 

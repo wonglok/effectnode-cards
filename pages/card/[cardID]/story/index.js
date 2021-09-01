@@ -10,8 +10,8 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import { TabMyAvatar } from "../../../../vfx-content/TabMyAvatar/TabMyAvatar";
 import { TabTellStory } from "../../../../vfx-content/TabTellStory/TabTellStory";
-import { TabMotions } from "../../../../vfx-content/TabMotions/TabMotions";
-import { TabMyStory } from "../../../../vfx-content/TabMyStory/TabMyStory";
+// import { TabMotions } from "../../../../vfx-content/TabMotions/TabMotions";
+// import { TabMyStory } from "../../../../vfx-content/TabMyStory/TabMyStory";
 import { TabPreview } from "../../../../vfx-content/TabPreview/TabPreview";
 
 //
@@ -82,12 +82,15 @@ export default function StoryMaker() {
                 {/* <Route exact path="/my-story">
                   <TabMyStory></TabMyStory>
                 </Route> */}
+                {/*  */}
                 <Route path="/avatar">
                   <TabMyAvatar></TabMyAvatar>
                 </Route>
+                {/*  */}
                 <Route path="/preview">
                   <TabPreview></TabPreview>
                 </Route>
+                {/*  */}
                 <Route>
                   <Redirect to="/write"></Redirect>
                 </Route>
