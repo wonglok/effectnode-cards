@@ -145,7 +145,6 @@ export function Content3D() {
           {collider && (
             <group>
               {/* <TailCursor Now={Now} color={"#ffffff"}></TailCursor>
-
               <TheHelper Now={Now}></TheHelper> */}
             </group>
           )}
@@ -162,7 +161,7 @@ export function Content3D() {
       >
         <MySelf
           envMap={envMap}
-          holder={"handy-editor"}
+          holder={"genesis-story-teller-1"}
           PlaybackState={PlaybackState}
         ></MySelf>
       </group>

@@ -19,7 +19,7 @@ import { Color, Object3D } from "three";
 import { AvatarPortal } from "../vfx-content/AvatarPortal/AvatarPortal";
 import { LoginGateR3F } from "../vfx-content/LoginGateR3F/LoginGateR3F";
 import { LoginBall } from "../vfx-content/welcome-page/LoginBall";
-import { MySelf } from "../vfx-content/MySelf/MySelf";
+// import { MySelf } from "../vfx-content/MySelf/MySelf";
 import { StoryPortal } from "../vfx-content/StoryPortal/StoryPortal";
 import {
   makePlayBack,
@@ -108,7 +108,7 @@ export function Content3D() {
           <FaceCam>
             <StorySelf
               envMap={envMap}
-              holder={"handy-editor"}
+              holder={"genesis-story-teller-1"}
               PlaybackState={PlaybackState}
             ></StorySelf>
           </FaceCam>

@@ -7,7 +7,7 @@ import { Actions } from "../Actions/Actions";
 import router, { useRouter } from "next/router";
 import { LoadingAvatar, makePlayBack, MySelf } from "./MySelf";
 
-export function TellStoryCanvas({ holder = "handy-editor" }) {
+export function TellStoryCanvas({ holder = "genesis-story-teller-1" }) {
   let PlaybackState = useMemo(() => {
     return makePlayBack();
   }, []);

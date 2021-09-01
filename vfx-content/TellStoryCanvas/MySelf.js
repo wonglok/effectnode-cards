@@ -47,7 +47,7 @@ export function MySelf({ envMap, holder, PlaybackState }) {
     if (router?.query?.cardID) {
       let ended = false;
       let clean = [];
-      onReady().then(async ({ db, user }) => {
+      Promise.resolve({ db: getFirebase().database() }).then(async ({ db }) => {
         //
         let sentences = db
           .ref(`/card-stroy-draft`)
@@ -291,7 +291,7 @@ function useHeadTracker({ avatar }) {
 
   let onHead = ({ mouse, avatar, bone = "Head" }) => {
     let object = avatar.getObjectByName(bone);
-    lookAt.set(mouse.x * 35, mouse.y * 35 + 2, 35);
+    lookAt.set(mouse.x * 35, (mouse.y + 0.25) * 35, 35);
     lookAtlerp.lerp(lookAt, 0.4);
     lookAtInfluence.lookAt(lookAtlerp);
     lookAtInfluenceNow.quaternion.slerp(lookAtInfluence.quaternion, 0.4);
