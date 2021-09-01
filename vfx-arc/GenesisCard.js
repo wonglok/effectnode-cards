@@ -105,7 +105,7 @@ export function Content3D() {
 
       {
         <FaceCam>
-          <group rotation={[0, 0, 0]} position={[-1.5, 0, 6.3]}>
+          <group rotation={[0, 0, 0]} position={[-1.5, 0, 6]}>
             <StorySelf
               envMap={envMap}
               holder={"genesis-story-teller-1"}
