@@ -337,6 +337,12 @@ function ActionsApply({ avatar, mixer, sentences, PlaybackState }) {
     } else {
       action.repetitions = Infinity;
     }
+
+    // override
+    if (sentences.length === 1) {
+      action.repetitions = Infinity;
+    }
+
     action.clampWhenFinished = true;
     action.play();
 
