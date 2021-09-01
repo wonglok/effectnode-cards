@@ -104,15 +104,15 @@ export function Content3D() {
       </LoginGateR3F>
 
       {
-        <FaceCam>
-          <group rotation={[0, 0, 0]} position={[-1.5, 0, 6]}>
+        <group rotation={[0, 0, 0]} position={[2.1, 0, 6]}>
+          <FaceCam>
             <StorySelf
               envMap={envMap}
               holder={"genesis-story-teller-1"}
               PlaybackState={PlaybackState}
             ></StorySelf>
-          </group>
-        </FaceCam>
+          </FaceCam>
+        </group>
       }
 
       {map && (
