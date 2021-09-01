@@ -104,7 +104,7 @@ export function Content3D() {
       </LoginGateR3F>
 
       {
-        <group rotation={[0, Math.PI * 0.5 + -0.35, 0]} position={[3, 0, 7]}>
+        <group rotation={[0, 0, 0]} position={[3, 0, 7]}>
           <FaceCam>
             <StorySelf
               envMap={envMap}
