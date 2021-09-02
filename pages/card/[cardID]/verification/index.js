@@ -25,7 +25,6 @@ export default function OOBE({ cardID }) {
   Card.makeKeyReactive("cardID");
 
   useEffect(() => {
-    //
     if (cardID) {
       Card.cardID = cardID;
       Card.loading = true;
@@ -49,6 +48,7 @@ export default function OOBE({ cardID }) {
             Card.sharpChangeColor.set(`#f00`);
             Card.loading = false;
             Card.bottomText = "Please this web link to @wonglok831 on IG";
+
             return Promise.reject();
           }
         })

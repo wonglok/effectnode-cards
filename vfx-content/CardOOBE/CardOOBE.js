@@ -9,7 +9,7 @@ import { BallArea } from "../Card/BallArea";
 import { useEnvLight } from "../Use/useEnvLight";
 import { Card } from "./Card";
 import router from "next/router";
-import { loginRedirectGoogle } from "../../vfx-firebase/firelib";
+import { loginGoogle, loginRedirectGoogle } from "../../vfx-firebase/firelib";
 import { HeroText } from "../Card/HeroText";
 import { Subtitle } from "../Card/SubTitle";
 
@@ -99,7 +99,11 @@ function VerificationContent() {
             onClick={() => {
               if (Card.cardValid === true) {
                 // loginRedirectGoogle();
-                router.push(`/card/${Card.cardID}/login`);
+                Card.centerText = "Logging you in";
+                loginGoogle().then(() => {
+                  Card.centerText = "Loading...";
+                  router.push(`/card/${Card.cardID}/confirm`);
+                });
               } else if (Card.cardValid === false) {
                 window.location.assign(`https://www.instagram.com/wonglok831/`);
               }
