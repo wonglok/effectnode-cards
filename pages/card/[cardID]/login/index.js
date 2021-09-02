@@ -106,7 +106,7 @@ export default function System({ cardID }) {
             </div>
 
             <div className="flex flex-col justify-center md:justify-start my-auto pt-8 md:pt-0 px-8 md:px-24 lg:px-32">
-              <p className="text-center text-3xl mb-3">Welcome.</p>
+              <p className="text-center text-2xl mb-3">Card Activation Login</p>
 
               <div className="block lg:hidden h-24"></div>
               <div ref={loginRef}></div>
@@ -115,9 +115,17 @@ export default function System({ cardID }) {
                 <button
                   className="bg-blue-300 border border-blue-400 text-white inline-block px-6 py-3"
                   onClick={() => {
-                    loginGoogle().then(() => {
-                      tryContinue();
-                    });
+                    msgRef.current.innerHTML = "Loading...";
+                    loginGoogle().then(
+                      () => {
+                        msgRef.current.innerHTML =
+                          "Logging you into the system";
+                        tryContinue();
+                      },
+                      () => {
+                        msgRef.current.innerHTML = "";
+                      }
+                    );
                   }}
                 >
                   Login with Google

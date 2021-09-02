@@ -383,7 +383,7 @@ function Decorate({ avatar }) {
 
     avatar.traverse((it) => {
       if (it.material) {
-        it.material.envMapIntensity = 3;
+        it.material.envMapIntensity = 2;
       }
     });
   }, [avatar]);
