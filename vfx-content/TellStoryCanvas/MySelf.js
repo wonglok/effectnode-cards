@@ -89,7 +89,9 @@ export function MySelf({ envMap, holder, PlaybackState }) {
                 if (cache.has(item.url)) {
                   item.fbx = cache.get(item.url);
 
-                  setProgressText(`Loading ${((i / n) * 100).toFixed(1)}%`);
+                  setProgressText(
+                    `Downloading Avatar ${((i / n) * 100).toFixed(1)}%`
+                  );
                   resolve(item);
                 } else {
                   new FBXLoader().load(
@@ -97,12 +99,14 @@ export function MySelf({ envMap, holder, PlaybackState }) {
                     (v) => {
                       item.fbx = v;
                       cache.set(item.url, v);
-                      setProgressText(`Loading ${((i / n) * 100).toFixed(1)}%`);
+                      setProgressText(
+                        `Downloading Avatar ${((i / n) * 100).toFixed(1)}%`
+                      );
                       resolve(item);
                     },
                     (prg) => {
                       setProgressText(
-                        `Loading ${(
+                        `Downloading Avatar ${(
                           ((i / n) * 0.9 + (0.1 * prg.loaded) / prg.total) *
                           100
                         ).toFixed(1)}%`

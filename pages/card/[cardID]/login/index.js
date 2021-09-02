@@ -8,11 +8,7 @@
 import router from "next/router";
 import { useEffect, useRef } from "react";
 import "firebaseui/dist/firebaseui.css";
-import {
-  getFirebase,
-  getUI,
-  loginGoogle,
-} from "../../../../vfx-firebase/firelib";
+import { loginGoogle } from "../../../../vfx-firebase/firelib";
 // import { Card } from "../../../../vfx-content/CardOOBE/Card";
 
 export async function getServerSideProps(context) {
