@@ -119,7 +119,7 @@ export default function System({ cardID }) {
                     loginGoogle().then(
                       () => {
                         msgRef.current.innerHTML =
-                          "Logging you into the system";
+                          "Logging you into the system...";
                         tryContinue();
                       },
                       () => {
