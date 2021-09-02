@@ -291,7 +291,7 @@ function useHeadTracker({ avatar }) {
 
   let onHead = ({ mouse, avatar, bone = "Head" }) => {
     let object = avatar.getObjectByName(bone);
-    lookAt.set(mouse.x * 35, (mouse.y + 0.25) * 35, 35);
+    lookAt.set(mouse.x * 35, mouse.y * 35, 35);
     lookAtlerp.lerp(lookAt, 0.4);
     lookAtInfluence.lookAt(lookAtlerp);
     lookAtInfluenceNow.quaternion.slerp(lookAtInfluence.quaternion, 0.4);
