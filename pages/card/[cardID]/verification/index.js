@@ -37,10 +37,12 @@ export default function OOBE({ cardID }) {
         .then((data) => {
           if (data.valid === true) {
             Card.cardValid = true;
-            Card.centerText = "This Card is valid in the Database";
+            Card.centerText = `${data.type} is ready To be claimed by you.`;
             Card.bottomText = "Click to continue";
             Card.sharpChangeColor.set(`#0ff`);
             Card.loading = false;
+
+            document.body.style.cursor = "pointer";
           } else {
             Card.cardValid = false;
             Card.centerText = "Card Not Found in the Database";

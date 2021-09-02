@@ -73,8 +73,10 @@ async function handler(req, res) {
       let snap = db.ref(`card-private-info`).child(cardID).get();
       let val = (await snap).val();
 
+      console.log(val);
       res.json({
         cardID: cardID,
+        type: val.type,
         valid: val?.cardID === cardID,
       });
     } catch (e) {

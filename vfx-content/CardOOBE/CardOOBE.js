@@ -98,7 +98,7 @@ function VerificationContent() {
           <PortalPlane
             onClick={() => {
               if (Card.cardValid === true) {
-                loginRedirectGoogle();
+                // loginRedirectGoogle();
                 router.push(`/card/${Card.cardID}/login`);
               } else if (Card.cardValid === false) {
                 window.location.assign(`https://www.instagram.com/wonglok831/`);
