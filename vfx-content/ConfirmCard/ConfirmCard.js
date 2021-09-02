@@ -28,10 +28,8 @@ export function ConfirmCard({ cardID }) {
 
     onReady().then(({ user }) => {
       Card.sharpChangeColor.set(`#fff`);
-      Card.centerText = `Welcome to \n our metaverse! \n\n${
-        user.displayName || "Dear User"
-      }`;
-      Card.bottomText = "Click to Activate Card";
+      Card.centerText = `Final Confirm to Activate Card`;
+      Card.bottomText = "Click to Continue";
     });
   }, []);
 
@@ -59,7 +57,18 @@ export function ConfirmCard({ cardID }) {
           if (res.err) {
             console.log(res.err);
           } else {
-            router.push(`/card/${cardID}/avatar`);
+            Card.centerText = `Successfully Activated!  \n\n${
+              user.displayName || "Dear User"
+            }`;
+            Card.bottomText = "Click to Get Your Avatar";
+            Card.sharpChangeColor.set(`#0f0`);
+
+            onRun = () => {
+              router.push(`/card/${cardID}/avatar`);
+            };
+            // setTimeout(() => {
+            //   router.push(`/card/${cardID}/avatar`);
+            // })
           }
         });
     });
@@ -70,7 +79,9 @@ export function ConfirmCard({ cardID }) {
     <Suspense fallback={<LoadingScreen></LoadingScreen>}>
       <FloatingCard scale={2} position={[0, 0, 0]}>
         <PortalPlane
-          onClick={onRun}
+          onClick={() => {
+            onRun();
+          }}
           attachToCard={() => {
             return (
               <group>
