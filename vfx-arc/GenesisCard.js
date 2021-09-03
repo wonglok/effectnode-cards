@@ -81,9 +81,9 @@ export function Content3D() {
       </group>
 
       <LoginGateR3F>
-        <group position={[-6.7, 1, 9.3]}>
+        {/* <group position={[-6.7, 1, 9.3]}>
           <AvatarPortal></AvatarPortal>
-        </group>
+        </group> */}
 
         <group rotation={[0, Math.PI * 0.5, 0]} position={[-6.7, 1, 1 + 9.3]}>
           {/*  */}

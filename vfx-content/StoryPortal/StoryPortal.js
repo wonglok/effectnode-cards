@@ -11,7 +11,7 @@ export function StoryPortal({ envMap }) {
         onClick: () => {
           router.push(`/card/${router.query.cardID}/story`);
         },
-        hint: "Stroy Maker",
+        hint: "Story Maker",
       }}
     >
       <sphereBufferGeometry args={[0.3, 23, 23]}></sphereBufferGeometry>

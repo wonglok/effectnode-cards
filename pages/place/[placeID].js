@@ -4,7 +4,6 @@ import { SimpleBloomer } from "../../vfx-metaverse";
 import { sRGBEncoding } from "three";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { driver } from "localforage";
 
 // import { NPCHelper } from "../../vfx-content/storymaker-page/NPCHelper";
 // import { AvatarSlots } from "../../vfx-content/storymaker-page/AvatarSlots";

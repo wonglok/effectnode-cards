@@ -130,7 +130,7 @@ export function Content3D() {
           )} */}
           {/* {map && <AvatarSlots envMap={envMap} map={map}></AvatarSlots>} */}
 
-          <AvatarNPC collider={collider} envMap={envMap} map={map}></AvatarNPC>
+          {/* <AvatarNPC collider={collider} envMap={envMap} map={map}></AvatarNPC> */}
           <group
             position={[
               //

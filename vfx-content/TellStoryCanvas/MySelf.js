@@ -1,7 +1,13 @@
 import { Text, useGLTF } from "@react-three/drei";
 import { createPortal, useFrame, useThree } from "@react-three/fiber";
-import { Suspense, useEffect, useMemo, useState } from "react";
-import { AnimationMixer, DoubleSide, Object3D, Vector3 } from "three";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import {
+  AnimationMixer,
+  CanvasTexture,
+  DoubleSide,
+  Object3D,
+  Vector3,
+} from "three";
 import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import { getFirebase, onReady } from "../../vfx-firebase/firelib";
@@ -422,7 +428,73 @@ function DisplaySentence({ sentences, PlaybackState, envMap = null }) {
             opacity={1}
           />
         </Text>
+
+        // <TextInPic text={text}></TextInPic>
       )}
+    </group>
+  );
+}
+
+function TextInPic({ text = "😎" }) {
+  const ref = useRef();
+
+  let { ww, hh, canvas } = useMemo(() => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 500;
+    canvas.height = 300;
+
+    let ww = canvas.width / 300;
+    let hh = canvas.height / 300;
+
+    return { ww, hh, canvas };
+  }, [text]);
+
+  useEffect(() => {
+    if (ref.current) {
+      var font = new window.FontFace(
+        "Cronos",
+        "url(/font/Cronos-Pro-Light_12448.ttf)"
+      );
+      font.load().then(() => {
+        const ctx = canvas.getContext("2d");
+        const canvasTxt = require("canvas-txt").default;
+
+        let mm = canvas.height * 0.05;
+        let x = 0;
+        let y = -mm;
+        let width = canvas.width;
+        let height = canvas.height;
+
+        ctx.fillStyle = "#000000";
+        ctx.strokeStyle = "#ffffff";
+
+        canvasTxt.font = "Cronos Pro, Arial";
+        canvasTxt.align = "center";
+        canvasTxt.vAlign = "bottom"; // middle / top / bottom
+        canvasTxt.fontSize = 40;
+        canvasTxt.fontWeight = 100;
+        canvasTxt.lineHeight = null;
+        canvasTxt.debug = false; //shows debug info
+        canvasTxt.justify = false;
+
+        canvasTxt.drawText(ctx, text, x, y, width, height);
+        ctx.strokeText(ctx, text, x, y, width, height);
+
+        let mat = ref.current?.material;
+        if (mat) {
+          mat.map = new CanvasTexture(canvas);
+          mat.map.generateMipmaps = true;
+        }
+      });
+    }
+  }, [canvas, text]);
+
+  return (
+    <group>
+      <mesh ref={ref} position={[0, hh / 2, 0]}>
+        <planeBufferGeometry args={[ww, hh, 2, 2]}></planeBufferGeometry>
+        <meshStandardMaterial transparent={true}></meshStandardMaterial>
+      </mesh>
     </group>
   );
 }
