@@ -138,7 +138,6 @@ export function Content3D() {
 
   let o3d = new Object3D();
 
-  useBVH(map);
   return (
     <group>
       {createPortal(<primitive object={map}></primitive>, o3d)}
@@ -151,22 +150,21 @@ export function Content3D() {
 
       <UseBG></UseBG>
 
-      <group rotation={[0, 0, 0]} position={[-6.7, 1, 2 + 9.3]}>
+      {/* <group rotation={[0, 0, 0]} position={[-6.7, 1, 2 + 9.3]}>
         <LoginBall></LoginBall>
-      </group>
+      </group> */}
 
-      <LoginGateR3F>
-        {/* <group position={[-6.7, 1, 9.3]}>
+      {/* <LoginGateR3F> */}
+      {/* <group position={[-6.7, 1, 9.3]}>
           <AvatarPortal></AvatarPortal>
         </group> */}
 
-        <group rotation={[0, 0, 0]} position={[-6.7, 1, 1 + 9.3]}>
-          {/*  */}
+      {/* <group rotation={[0, 0, 0]} position={[-6.7, 1, 1 + 9.3]}>
           <StoryPortal></StoryPortal>
-        </group>
+        </group> */}
 
-        {/* {collider && <primitive object={collider}></primitive>} */}
-        {/* {collider && (
+      {/* {collider && <primitive object={collider}></primitive>} */}
+      {/* {collider && (
           <MySelf
             isSwim={true}
             enableLight={true}
@@ -176,7 +174,7 @@ export function Content3D() {
             distance={6.5}
           ></MySelf>
         )} */}
-      </LoginGateR3F>
+      {/* </LoginGateR3F> */}
 
       {/* {
         <group rotation={[0, 0, 0]} position={[2.1, 0, 6]}>
@@ -206,6 +204,7 @@ export function Content3D() {
                 avatarSpeed={0.9}
                 Now={Now}
               ></UserContorls> */}
+
               <AvatarNPC
                 collider={collider}
                 envMap={envMap}
@@ -222,6 +221,7 @@ export function Content3D() {
                   Now={Now}
                 ></SkyViewControls>
               )}
+
               {NPC && <Beacon NPC={NPC} />}
 
               {/* <SceneDecorator object={map}></SceneDecorator> */}

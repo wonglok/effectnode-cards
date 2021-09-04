@@ -1,8 +1,7 @@
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
-import { Euler, Vector3 } from "three";
 import { MapControls } from "three/examples/jsm/controls/OrbitControls";
-import { applyAutoEvent, useAutoEvent } from "../../vfx-metaverse";
+import { useAutoEvent } from "../../vfx-metaverse";
 import { usePinch, useWheel } from "@use-gesture/react";
 import { MathUtils } from "three";
 export function SkyViewControls({ collider, NPC, Now }) {
@@ -14,7 +13,9 @@ export function SkyViewControls({ collider, NPC, Now }) {
     let orbit = new MapControls(get().camera, get().gl.domElement);
     orbit.screenSpacePanning = true;
     orbit.enableRotate = false;
-    orbit.zoomSpeed = 0.1;
+    orbit.enableZoom = false;
+
+    // orbit.zoomSpeed = 0.1;
     orbit.object.position.x = Now.startAt.x + 0;
     orbit.object.position.y = Now.startAt.y + 10;
     orbit.object.position.z = Now.startAt.z + 10;
@@ -27,7 +28,7 @@ export function SkyViewControls({ collider, NPC, Now }) {
 
     NPC.goingTo.set(
       //
-      Now.startAt.x + 0.5,
+      Now.startAt.x,
       Now.startAt.y,
       Now.startAt.z
     );
@@ -42,7 +43,7 @@ export function SkyViewControls({ collider, NPC, Now }) {
     return orbit;
   }, [get().camera]);
 
-  let zoom = useRef(1);
+  let zoom = useRef(2);
   useWheel(
     (st) => {
       zoom.current += -st.delta[0] / 6;
