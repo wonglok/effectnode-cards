@@ -157,14 +157,14 @@ export const PreviewGameCards = {
 export function onTapCard({ cardID, isActivated }) {
   if (process.env.NODE_ENV === "production") {
     if (cardID === PreviewGameCards.WongTaiSin) {
-      analytics.logEvent("card_open_store", {
+      getFirebase().analytics().logEvent("card_open_store", {
         name: "Wong Tai Sin Box Store",
         isActivated,
         cardID: cardID,
       });
     }
 
-    analytics.logEvent("card_open_general", {
+    getFirebase().analytics().logEvent("card_open_general", {
       name: "Activating General",
       isActivated,
       cardID: cardID,
