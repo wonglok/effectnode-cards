@@ -3,10 +3,10 @@
 // import { useRef, useState } from "react";
 // import { BackSide, SphereBufferGeometry, Vector2, Vector3 } from "three";
 
-import { Box, Sphere, Text, useFBX, useGLTF } from "@react-three/drei";
-import { createPortal, useFrame, useThree } from "@react-three/fiber";
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
-import { AnimationMixer, Object3D, Vector3 } from "three";
+import { useFBX } from "@react-three/drei";
+import { useFrame } from "@react-three/fiber";
+import { useEffect, useMemo, useRef } from "react";
+import { AnimationMixer, Vector3 } from "three";
 // import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
 import { useMiniEngine } from "../../vfx-metaverse";
 import { MapNPC } from "../../vfx-metaverse/lib/MapNPC";

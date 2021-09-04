@@ -136,6 +136,26 @@ export function SkyViewControls({ collider, NPC, Now }) {
     get().gl.domElement
   );
 
+  useAutoEvent(
+    "touchstart",
+    () => {
+      NPC.isDown = true;
+      castSync();
+    },
+    { passive: false },
+    get().gl.domElement
+  );
+
+  useAutoEvent(
+    "touchend",
+    () => {
+      NPC.isDown = false;
+      castSync();
+    },
+    { passive: false },
+    get().gl.domElement
+  );
+
   useFrame(() => {
     if (NPC.isDown) {
       castSync();

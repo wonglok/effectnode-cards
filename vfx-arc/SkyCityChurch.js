@@ -136,10 +136,6 @@ export function Content3D() {
     return map;
   }, [mapGLTF]);
 
-  let PlaybackState = useMemo(() => {
-    return makePlayBack();
-  }, []);
-
   let o3d = new Object3D();
 
   useBVH(map);
@@ -155,7 +151,7 @@ export function Content3D() {
 
       <UseBG></UseBG>
 
-      <group rotation={[0, Math.PI * 0.5, 0]} position={[-6.7, 1, 2 + 9.3]}>
+      <group rotation={[0, 0, 0]} position={[-6.7, 1, 2 + 9.3]}>
         <LoginBall></LoginBall>
       </group>
 
@@ -164,7 +160,7 @@ export function Content3D() {
           <AvatarPortal></AvatarPortal>
         </group> */}
 
-        <group rotation={[0, Math.PI * 0.5, 0]} position={[-6.7, 1, 1 + 9.3]}>
+        <group rotation={[0, 0, 0]} position={[-6.7, 1, 1 + 9.3]}>
           {/*  */}
           <StoryPortal></StoryPortal>
         </group>
@@ -226,7 +222,6 @@ export function Content3D() {
                   Now={Now}
                 ></SkyViewControls>
               )}
-
               {NPC && <Beacon NPC={NPC} />}
 
               {/* <SceneDecorator object={map}></SceneDecorator> */}
