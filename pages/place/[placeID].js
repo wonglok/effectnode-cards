@@ -31,16 +31,7 @@ export async function getServerSideProps(context) {
 export default function StoryPage({ placeID }) {
   return (
     <div className="full">
-      <Canvas
-        concurrent
-        dpr={[1, 3]}
-        onCreated={({ gl }) => {
-          gl.outputEncoding = sRGBEncoding;
-        }}
-        style={{ width: "100%", height: "100%" }}
-      >
-        <PageRouter placeID={placeID}></PageRouter>
-      </Canvas>
+      <PageRouter placeID={placeID}></PageRouter>
     </div>
   );
 }
@@ -48,28 +39,16 @@ export default function StoryPage({ placeID }) {
 let Pages = {
   //
   church: dynamic(() => import("../../vfx-arc/SkyCityChurch")),
-  spaceship: dynamic(() => import("../../vfx-arc/SpaceStation")),
-  movie: dynamic(() => import("../../vfx-arc/MovieScene")),
+  // spaceship: dynamic(() => import("../../vfx-arc/SpaceStation")),
+  // movie: dynamic(() => import("../../vfx-arc/MovieScene")),
 };
 
 function PageRouter({ placeID }) {
-  let { scene } = useThree();
-  let [outlet, setCompos] = useState(<group></group>);
+  let MyPage = <div></div>;
 
-  useEffect(() => {
-    if (Pages[placeID]) {
-      let MyPage = Pages[placeID];
-      setCompos(<MyPage></MyPage>);
-    }
+  if (Pages[placeID]) {
+    MyPage = Pages[placeID];
+  }
 
-    return () => {
-      scene.traverse((it) => {
-        if (it?.userData?.bloomAPI) {
-          it.userData.bloomAPI.shine();
-        }
-      });
-    };
-  }, [placeID]);
-
-  return outlet;
+  return <MyPage placeID={placeID}></MyPage>;
 }

@@ -87,6 +87,7 @@ export class Collider {
       if (
         it.geometry &&
         it.userData &&
+        !it?.material?.userData?.discard &&
         (it?.userData?.isHoverable ||
           it?.material?.userData?.isFloor ||
           it?.userData?.isFloor ||

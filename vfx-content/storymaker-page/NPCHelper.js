@@ -32,14 +32,22 @@ import { makeNow } from "../../vfx-metaverse/utils/make-now";
 // };
 
 export function NPCHelper({
-  enableLight = true,
+  enableLight = false,
   isSwim = false,
   avatarGLTF,
   envMap,
   collider,
-  distance = 6,
+  setNPC = () => {},
 }) {
-  let NPC = useMemo(() => makeNow(), []);
+  let NPC = useMemo(() => {
+    let now = makeNow();
+    return now;
+  }, []);
+
+  useEffect(() => {
+    setNPC(NPC);
+  }, [NPC]);
+
   let group = useRef();
   let { mini } = useMiniEngine();
 
@@ -61,24 +69,26 @@ export function NPCHelper({
   let dir = new Vector3();
   let dir2 = new Vector3();
   let forward = new Vector3();
+  let lastWP = new Vector3();
+
   useFrame(({ camera }) => {
     NPC.avatarSpeed = isSwim ? 0.35 : 0.45;
 
-    forward
-      .copy({
-        x: 0,
-        y: 0,
-        z: 1,
-      })
-      .applyEuler(camera.rotation)
-      .multiplyScalar(-1 * distance);
+    // forward
+    //   .copy({
+    //     x: 0,
+    //     y: 0,
+    //     z: 1,
+    //   })
+    //   .applyEuler(camera.rotation)
+    //   .multiplyScalar(-1 * distance);
 
-    Now.followerPt.copy(Now.avatarAt).add(forward);
-    NPC.goingTo.set(
-      Number((Now.followerPt.x * 1).toFixed(0) / 1),
-      Number((Now.followerPt.y * 1).toFixed(0) / 1),
-      Number((Now.followerPt.z * 1).toFixed(0) / 1)
-    );
+    // Now.followerPt.copy(Now.avatarAt).add(forward);
+    // NPC.goingTo.set(
+    //   Number((Now.followerPt.x * 1).toFixed(0) / 1),
+    //   Number((Now.followerPt.y * 1).toFixed(0) / 1),
+    //   Number((Now.followerPt.z * 1).toFixed(0) / 1)
+    // );
 
     // NPC.goingTo.set(
     //   Number((Now.cursorPos.x * 1).toFixed(0) / 1),
@@ -96,17 +106,29 @@ export function NPCHelper({
         NPC.avatarAt.z
       );
 
-      if (NPC.avatarMode === "standing") {
-        ava.getWorldPosition(wp);
-        dir.set(camera.position.x, wp.y, camera.position.z);
-        dir2.lerp(dir, 0.0023);
-        ava.lookAt(dir2);
-      } else {
-        ava.getWorldPosition(wp);
-        dir.fromArray([NPC.goingTo.x, wp.y, NPC.goingTo.z]);
-        dir2.lerp(dir, 0.1);
-        ava.lookAt(dir2);
-      }
+      // if (NPC.avatarMode === "standing") {
+      //   ava.getWorldPosition(wp);
+      //   dir.set(camera.position.x, wp.y, camera.position.z);
+      //   dir2.lerp(dir, 0.0023);
+      //   ava.lookAt(dir2);
+      // } else {
+      //   ava.getWorldPosition(wp);
+      //   dir.fromArray([NPC.goingTo.x, wp.y, NPC.goingTo.z]);
+      //   dir2.lerp(dir, 0.1);
+      //   ava.lookAt(dir2);
+      // }
+
+      NPC.avatarAtDelta.copy(lastWP);
+      ava.getWorldPosition(wp);
+      NPC.avatarAtDelta.sub(wp);
+
+      dir.fromArray([NPC.goingTo.x, wp.y, NPC.goingTo.z]);
+      dir2.lerp(dir, 0.2);
+      ava.lookAt(dir2);
+
+      NPC.avatarRot.x = ava.rotation.x;
+      NPC.avatarRot.y = ava.rotation.y;
+      NPC.avatarRot.z = ava.rotation.z;
     }
   });
 

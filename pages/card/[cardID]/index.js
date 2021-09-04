@@ -75,6 +75,8 @@ export async function getServerSideProps(context) {
 }
 
 //
+//
+//
 
 export default function CARDID({ cardID, isActivated }) {
   //

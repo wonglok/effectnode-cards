@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 export default function Home() {
   useEffect(() => {
-    router.push(`/place/spaceship`);
+    router.push(`/place/church`);
   }, []);
   return <div></div>;
 }
