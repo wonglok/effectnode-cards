@@ -9,23 +9,23 @@ import {
   Map3D,
   SimpleBloomer,
   StarSky,
-  TailCursor,
-  TheHelper,
-  UserContorls,
+  // TailCursor,
+  // TheHelper,
+  // UserContorls,
 } from "../vfx-metaverse";
 import { useShaderEnvLight } from "../vfx-content/welcome-page/useShaderEnvLight";
 import { Now } from "../vfx-metaverse/lib/Now";
-import { SceneDecorator } from "../vfx-metaverse/compos/SceneDecorator";
+// import { SceneDecorator } from "../vfx-metaverse/compos/SceneDecorator";
 import { Color, Object3D, sRGBEncoding } from "three";
-import { LoginGateR3F } from "../vfx-content/LoginGateR3F/LoginGateR3F";
-import { LoginBall } from "../vfx-content/welcome-page/LoginBall";
-import { StoryPortal } from "../vfx-content/StoryPortal/StoryPortal";
+// import { LoginGateR3F } from "../vfx-content/LoginGateR3F/LoginGateR3F";
+// import { LoginBall } from "../vfx-content/welcome-page/LoginBall";
+// import { StoryPortal } from "../vfx-content/StoryPortal/StoryPortal";
+// import {
+//   makePlayBack,
+//   MySelf as StorySelf,
+// } from "../vfx-content/TellStoryCanvas/MySelf";
 import {
-  makePlayBack,
-  MySelf as StorySelf,
-} from "../vfx-content/TellStoryCanvas/MySelf";
-import {
-  ApplyNowStateToNPCState,
+  // ApplyNowStateToNPCState,
   AvatarNPC,
 } from "../vfx-content/AvatarNPC/AvatarNPC";
 import { SkyViewControls } from "../vfx-content/SkyViewContorls/SkyViewControls";
