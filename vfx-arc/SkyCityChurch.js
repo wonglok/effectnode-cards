@@ -222,6 +222,8 @@ export function Content3D() {
                 url={`https://d1a370nemizbjq.cloudfront.net/08cf5815-ab1d-4b6f-ab5e-5ec1858ec885.glb`}
               ></AvatarNPC>
 
+              {/* <LoginGateR3F></LoginGateR3F> */}
+
               {NPC && <Beacon NPC={NPC} />}
 
               {/* <SceneDecorator object={map}></SceneDecorator> */}
