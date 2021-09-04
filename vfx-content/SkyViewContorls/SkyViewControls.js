@@ -8,7 +8,19 @@ export function SkyViewControls({ collider, NPC, Now }) {
   let { get } = useThree();
 
   let orbit = useMemo(() => {
-    NPC.avatarAt.copy(Now.startAt);
+    NPC.goingTo.set(
+      //
+      Now.startAt.x,
+      Now.startAt.y,
+      Now.startAt.z
+    );
+
+    NPC.avatarAt.set(
+      //
+      Now.startAt.x,
+      Now.startAt.y,
+      Now.startAt.z
+    );
 
     let orbit = new MapControls(get().camera, get().gl.domElement);
     orbit.screenSpacePanning = true;
@@ -25,20 +37,6 @@ export function SkyViewControls({ collider, NPC, Now }) {
 
     orbit.object.fov = 35;
     orbit.object.updateProjectionMatrix();
-
-    NPC.goingTo.set(
-      //
-      Now.startAt.x,
-      Now.startAt.y,
-      Now.startAt.z
-    );
-
-    NPC.startAt.set(
-      //
-      Now.goingTo.x,
-      Now.goingTo.y,
-      Now.goingTo.z
-    );
 
     return orbit;
   }, [get().camera]);

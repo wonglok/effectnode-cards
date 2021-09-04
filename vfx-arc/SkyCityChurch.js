@@ -205,6 +205,14 @@ export function Content3D() {
                 Now={Now}
               ></UserContorls> */}
 
+              {NPC && (
+                <SkyViewControls
+                  collider={collider}
+                  NPC={NPC}
+                  Now={Now}
+                ></SkyViewControls>
+              )}
+
               <AvatarNPC
                 collider={collider}
                 envMap={envMap}
@@ -213,14 +221,6 @@ export function Content3D() {
                 setNPC={setNPC}
                 url={`https://d1a370nemizbjq.cloudfront.net/08cf5815-ab1d-4b6f-ab5e-5ec1858ec885.glb`}
               ></AvatarNPC>
-
-              {NPC && (
-                <SkyViewControls
-                  collider={collider}
-                  NPC={NPC}
-                  Now={Now}
-                ></SkyViewControls>
-              )}
 
               {NPC && <Beacon NPC={NPC} />}
 
