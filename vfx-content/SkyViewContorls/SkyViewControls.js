@@ -43,9 +43,10 @@ export function SkyViewControls({ collider, NPC, Now }) {
     return orbit;
   }, [get().camera]);
 
-  let zoom = useRef(2);
+  let zoom = useRef(1);
   useWheel(
     (st) => {
+      st.event.preventDefault();
       zoom.current += -st.delta[0] / 6;
 
       if (zoom.current <= 0.1) {
@@ -54,16 +55,19 @@ export function SkyViewControls({ collider, NPC, Now }) {
       if (zoom.current >= 2) {
         zoom.current = 2;
       }
-      console.log(st);
+      // console.log(st);
     },
     {
       target: get().gl.domElement,
+      eventOptions: {
+        passive: false,
+      },
     }
   );
 
   usePinch(
     (st) => {
-      zoom.current = st.offset[0];
+      zoom.current = 1 / st.offset[0];
 
       if (zoom.current <= 0.1) {
         zoom.current = 0.1;
@@ -71,6 +75,9 @@ export function SkyViewControls({ collider, NPC, Now }) {
       if (zoom.current >= 2) {
         zoom.current = 2;
       }
+
+      NPC.goingTo.copy(NPC.avatarAt);
+      NPC.isDown = false;
     },
     {
       target: get().gl.domElement,
