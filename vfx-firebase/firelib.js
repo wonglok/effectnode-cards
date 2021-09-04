@@ -149,3 +149,25 @@ export const onReady = () => {
     });
   });
 };
+
+export const PreviewGameCards = {
+  WongTaiSin: "_szjcl6vco_jdplughmk_wx8y8wqzf",
+};
+
+export function onTapCard({ cardID, isActivated }) {
+  if (process.env.NODE_ENV === "production") {
+    if (cardID === PreviewGameCards.WongTaiSin) {
+      analytics.logEvent("card_open_store", {
+        name: "Wong Tai Sin Box Store",
+        isActivated,
+        cardID: cardID,
+      });
+    }
+
+    analytics.logEvent("card_open_general", {
+      name: "Activating General",
+      isActivated,
+      cardID: cardID,
+    });
+  }
+}

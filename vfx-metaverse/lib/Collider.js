@@ -25,6 +25,7 @@ export class Collider {
     environment.traverse((c) => {
       if (c.geometry && !c.userData.skipFloor) {
         const cloned = c.geometry.clone();
+
         cloned.applyMatrix4(c.matrixWorld);
 
         for (const key in cloned.attributes) {
@@ -39,7 +40,13 @@ export class Collider {
     });
 
     scene.traverse((it) => {
-      if (it && it.userData && it.userData.isFloor && it.geometry) {
+      if (
+        it &&
+        it.geometry &&
+        it.userData &&
+        it.userData.isFloor &&
+        it.material.userData.isFloor
+      ) {
         const cloned = it.geometry.clone();
         it.updateMatrixWorld();
 

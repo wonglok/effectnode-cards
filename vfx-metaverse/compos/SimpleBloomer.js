@@ -196,6 +196,9 @@ export class BloomLayer {
         if (it?.userData?.discard) {
           it.visible = false;
         }
+        if (it?.material?.userData?.discard) {
+          it.visible = false;
+        }
         if (it?.userData?.disableBloom) {
           it.visible = false;
         }
@@ -223,6 +226,9 @@ export class BloomLayer {
 
         if (it?.userData?.discard) {
           it.visible = true;
+        }
+        if (it?.material?.userData?.discard) {
+          it.visible = false;
         }
         if (it?.userData?.disableBloom) {
           it.visible = true;
@@ -382,7 +388,7 @@ export class Compositor {
   }
 }
 
-export function SimpleBloomer({ placeID }) {
+export function SimpleBloomer({ placeID = "" }) {
   let { mini } = useMiniEngine();
 
   let task = useRef(() => {});

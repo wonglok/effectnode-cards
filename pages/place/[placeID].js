@@ -39,7 +39,6 @@ export default function StoryPage({ placeID }) {
         }}
         style={{ width: "100%", height: "100%" }}
       >
-        <SimpleBloomer placeID={placeID}></SimpleBloomer>
         <PageRouter placeID={placeID}></PageRouter>
       </Canvas>
     </div>
@@ -47,6 +46,8 @@ export default function StoryPage({ placeID }) {
 }
 
 let Pages = {
+  //
+  church: dynamic(() => import("../../vfx-arc/SkyCityChurch")),
   spaceship: dynamic(() => import("../../vfx-arc/SpaceStation")),
   movie: dynamic(() => import("../../vfx-arc/MovieScene")),
 };

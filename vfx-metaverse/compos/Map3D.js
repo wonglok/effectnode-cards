@@ -22,6 +22,9 @@ export const Map3D = ({ object, onReadyCollider = () => {} }) => {
         if (it.geometry) {
           it.userData.isFloor = true;
         }
+        if (it.material) {
+          it.material.userData.isFloor = true;
+        }
 
         if (it.userData.startAt) {
           it.getWorldPosition(Now.startAt);

@@ -7,6 +7,7 @@ import { useGLTF } from "@react-three/drei";
 import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
 import {
   Map3D,
+  SimpleBloomer,
   StarSky,
   TailCursor,
   TheHelper,
@@ -57,7 +58,7 @@ export function Content3D() {
   // let { get } = useThree();
   let { envMap } = useShaderEnvLight({});
   let [collider, setCollider] = useState(false);
-  let mapGLTF = useGLTF(`/map/GenesisCard/GenesisCard.glb`);
+  let mapGLTF = useGLTF(`/map/skycity/church-sky-city.glb`);
 
   let map = useMemo(() => {
     // let map = mapGLTF.scene;
@@ -72,9 +73,13 @@ export function Content3D() {
   let o3d = new Object3D();
   return (
     <group>
+      <SimpleBloomer></SimpleBloomer>
       {createPortal(<primitive object={map}></primitive>, o3d)}
+
       <primitive object={o3d}></primitive>
+
       <directionalLight intensity={2} position={[0, 3, 3]}></directionalLight>
+
       <UseBG></UseBG>
 
       <group rotation={[0, Math.PI * 0.5, 0]} position={[-6.7, 1, 2 + 9.3]}>

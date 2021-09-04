@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import router from "next/router";
+import { onTapCard } from "../../../vfx-firebase/firelib";
 
 export async function getServerSideProps(context) {
   let cardID = context?.query?.cardID || null;
@@ -52,15 +53,22 @@ export async function getServerSideProps(context) {
 
   if (data) {
     return {
-      redirect: {
-        destination: "/card/" + data.cardID + "/room",
-        permanent: false,
+      props: {
+        isActivated: true,
+        cardID,
       },
+
+      // redirect: {
+      //   destination: "/card/" + data.cardID + "/room",
+      //   permanent: false,
+      // },
     };
   }
 
   return {
     props: {
+      isActivated: false,
+
       cardID,
     },
   };
@@ -68,17 +76,16 @@ export async function getServerSideProps(context) {
 
 //
 
-export default function CARDID({ cardID }) {
+export default function CARDID({ cardID, isActivated }) {
   //
   useEffect(() => {
-    router.push(`/card/${cardID}/verification`);
+    onTapCard({ cardID, isActivated });
+    if (isActivated) {
+      router.push(`/card/${cardID}/room`);
+    } else {
+      router.push(`/card/${cardID}/verification`);
+    }
   }, []);
 
   return <div className="bg-blue-900"></div>;
 }
-
-//
-
-//
-
-//
