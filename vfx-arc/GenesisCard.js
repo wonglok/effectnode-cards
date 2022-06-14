@@ -4,7 +4,7 @@ import { createPortal, useFrame, useThree } from "@react-three/fiber";
 import { Suspense } from "react";
 import { LoadingScreen } from "../vfx-content/welcome-page/LoadingScreen";
 import { useGLTF } from "@react-three/drei";
-import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
+import { clone } from "three/examples/jsm/utils/SkeletonUtils";
 import {
   Map3D,
   StarSky,
@@ -27,6 +27,9 @@ import {
 // import { AvatarPortal } from "../vfx-content/AvatarPortal/AvatarPortal";
 // import { MySelf } from "../vfx-content/MySelf/MySelf";
 
+let SkeletonUtils = {
+  clone,
+};
 export default function Page() {
   return (
     <group>
