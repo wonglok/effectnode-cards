@@ -13,7 +13,8 @@ import {
   Color,
 } from "three";
 // import { GPUComputationRenderer } from 'three-stdlib'
-import { Geometry } from "three/examples/jsm/deprecated/Geometry.js";
+// import { Geometry } from "three/examples/jsm/deprecated/Geometry.js";
+import { Geometry } from "./Geo.js";
 import { GPUComputationRenderer } from "three/examples/jsm/misc/GPUComputationRenderer";
 
 class LokLokWiggleSimulation {

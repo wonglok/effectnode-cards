@@ -2,7 +2,7 @@ import { Text, useFBX, useGLTF } from "@react-three/drei";
 import { Canvas, createPortal, useFrame, useThree } from "@react-three/fiber";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { AnimationMixer, BackSide, Object3D, Vector3 } from "three";
-import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
+import { clone } from "three/examples/jsm/utils/SkeletonUtils";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { getFirebase } from "../../vfx-firebase/firelib";
 import router from "next/router";
@@ -11,7 +11,6 @@ import { useEnvLight } from "../../vfx-content/Use/useEnvLight.js";
 export function MyAvatarsCanvas() {
   return (
     <Canvas
-      concurrent
       onCreated={(st) => {
         st.gl.physicallyCorrectLights = true;
       }}
@@ -29,8 +28,8 @@ function Content() {
 
   return (
     <group>
-      <pointLight intensity={30} position={[-10, 10, 10]}></pointLight>
-
+      {/* <pointLight intensity={30} position={[-10, 10, 10]}></pointLight> */}
+      {/*
       <directionalLight
         intensity={1}
         position={[10, 10, 10]}
@@ -39,7 +38,7 @@ function Content() {
       <directionalLight
         intensity={2}
         position={[-10, 10, -10]}
-      ></directionalLight>
+      ></directionalLight> */}
 
       <mesh position={[0, 0, 0]}>
         <sphereBufferGeometry args={[8, 32, 32]}></sphereBufferGeometry>
@@ -148,7 +147,7 @@ function AvatarItem({ url }) {
 
   let gltf = useGLTF(`${url}`);
   let avatar = useMemo(() => {
-    let cloned = SkeletonUtils.clone(gltf.scene);
+    let cloned = clone(gltf.scene);
     return cloned;
   }, [gltf]);
 

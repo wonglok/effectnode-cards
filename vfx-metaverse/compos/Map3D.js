@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Collider } from "../lib/Collider";
 import { useMiniEngine } from "../utils/use-mini-engine";
 import { MapPlayer } from "../lib/MapPlayer";
-import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
+import { clone } from "three/examples/jsm/utils/SkeletonUtils";
 import { PCFSoftShadowMap, PointLight } from "three";
 import { Now } from "../lib/Now";
 
@@ -16,7 +16,7 @@ export const Map3D = ({ object, onReadyCollider = () => {} }) => {
   // const [floor, setFloor] = useState(false);
 
   let floor = useMemo(() => {
-    let floor = SkeletonUtils.clone(object);
+    let floor = clone(object);
     floor.traverse((it) => {
       if (it) {
         if (it.geometry) {

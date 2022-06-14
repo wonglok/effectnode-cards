@@ -8,7 +8,7 @@ import {
   Object3D,
   Vector3,
 } from "three";
-import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
+import { clone } from "three/examples/jsm/utils/SkeletonUtils";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import { getFirebase, onReady } from "../../vfx-firebase/firelib";
 
@@ -37,16 +37,19 @@ export function MySelf({ envMap, holder, PlaybackState }) {
     return new Map();
   }, [holder]);
 
-  useEffect(async () => {
-    let snap = await getFirebase()
-      .database()
-      .ref(`/card-avatar-info/${router.query.cardID}`)
-      .get();
-    let val = snap.val();
-    if (val && val.avatarURL) {
-      setURL(`${val.avatarURL}?avatarSignature=${val.avatarSignature}`);
-    } else {
-    }
+  useEffect(() => {
+    let a = async () => {
+      let snap = await getFirebase()
+        .database()
+        .ref(`/card-avatar-info/${router.query.cardID}`)
+        .get();
+      let val = snap.val();
+      if (val && val.avatarURL) {
+        setURL(`${val.avatarURL}?avatarSignature=${val.avatarSignature}`);
+      } else {
+      }
+    };
+    a();
   }, []);
 
   useEffect(() => {
@@ -214,9 +217,9 @@ function AvatarItem({ url, sentences, PlaybackState, envMap }) {
   let o3d = new Object3D();
   o3d.name = "avatar";
 
-  let gltf = useGLTF(`${url}`);
+  let gltf = useGLTF(`${url}`, true);
   let avatar = useMemo(() => {
-    let cloned = SkeletonUtils.clone(gltf.scene);
+    let cloned = clone(gltf.scene);
     return cloned;
   }, []);
 

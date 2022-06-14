@@ -1,6 +1,6 @@
 import { Mesh, MeshBasicMaterial, Raycaster, Vector2 } from "three";
-import { BufferGeometryUtils } from "three/examples/jsm/utils/BufferGeometryUtils";
-import { SkeletonUtils } from "three/examples/jsm/utils/SkeletonUtils";
+import { mergeBufferGeometries } from "three/examples/jsm/utils/BufferGeometryUtils";
+import { clone } from "three/examples/jsm/utils/SkeletonUtils";
 import { MeshBVH } from "three-mesh-bvh";
 
 export class Collider {
@@ -17,7 +17,7 @@ export class Collider {
   makeCollider() {
     const { scene, floor } = this;
 
-    const environment = SkeletonUtils.clone(floor);
+    const environment = clone(floor);
 
     const geometries = [];
 
@@ -60,10 +60,7 @@ export class Collider {
       }
     });
 
-    const mergedGeometry = BufferGeometryUtils.mergeBufferGeometries(
-      geometries,
-      false
-    );
+    const mergedGeometry = mergeBufferGeometries(geometries, false);
 
     mergedGeometry.boundsTree = new MeshBVH(mergedGeometry);
 
