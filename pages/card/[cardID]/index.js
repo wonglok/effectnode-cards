@@ -14,6 +14,14 @@ export async function getServerSideProps(context) {
     };
   }
 
+  return {
+    props: {
+      isActivated: false,
+
+      cardID,
+    },
+  };
+
   const admin = require("firebase-admin");
 
   // Enter values for the following parameters below this code step,
@@ -22,7 +30,8 @@ export async function getServerSideProps(context) {
   // we have to replace newline characters with literal newlines
 
   if (process.env.NODE_ENV === "development") {
-    var serviceAccount = require("../../../../serviceprivatekey/my3dworld-club-firebase-adminsdk-ra466-da8918ed40.json");
+    var serviceAccount = require("../../../nogit-key.json");
+    // var serviceAccount = require("../../../../serviceprivatekey/my3dworld-club-firebase-adminsdk-ra466-da8918ed40.json");
     // See https://firebase.google.com/docs/reference/admin/node/admin.credential.html#cert
     if (!admin.apps.length) {
       admin.initializeApp({

@@ -181,8 +181,10 @@ function AvatarLayer({ cardID }) {
                 avatarURL: link,
                 avatarSignature: getID(),
               });
+
               //
-              router.push(`/card/${cardID}/story`);
+              //
+              router.push(`/card/${cardID}/story#/avatar`);
             });
 
             // getFire().database.ref('players/' + FBStore.user.uid)

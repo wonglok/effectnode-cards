@@ -9,7 +9,8 @@ const admin = require("firebase-admin");
 // we have to replace newline characters with literal newlines
 
 if (process.env.NODE_ENV === "development") {
-  var serviceAccount = require("../../../../../../serviceprivatekey/3dworld.firebase.private.json");
+  var serviceAccount = require("../../../../../nogit-key.json");
+  // var serviceAccount = require("../../../../../../serviceprivatekey/3dworld.firebase.private.json");
   // See https://firebase.google.com/docs/reference/admin/node/admin.credential.html#cert
   if (!admin.apps.length) {
     admin.initializeApp({
