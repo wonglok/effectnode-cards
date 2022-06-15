@@ -90,19 +90,25 @@ async function handler(req, res) {
         });
       } else {
         let body = JSON.parse(req.body);
-        if (data.cardID === body.cardID && data.uid === body.uid) {
-          res.json({
-            cardID: data.cardID,
-            uid: data.uid,
-            email: data.email || null,
-            displayName: data.displayName || "User",
-          });
-        } else {
-          res.status(403).json({
-            err: "card already activated",
-          });
-          console.log("card already activated");
-        }
+        res.json({
+          cardID: data.cardID,
+          uid: data.uid,
+          email: data.email || null,
+          displayName: data.displayName || "User",
+        });
+        // if (data.cardID === body.cardID && data.uid === body.uid) {
+        //   res.json({
+        //     cardID: data.cardID,
+        //     uid: data.uid,
+        //     email: data.email || null,
+        //     displayName: data.displayName || "User",
+        //   });
+        // } else {
+        //   res.status(403).json({
+        //     err: "card already activated",
+        //   });
+        //   console.log("card already activated");
+        // }
       }
     } catch (e) {
       console.log("error during activation", e);
